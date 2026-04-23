@@ -3,7 +3,7 @@ name: 기능 제안 (Feature request)
 about: 새 기능이나 개선 아이디어를 제안해주세요
 title: "[Feature] "
 labels: enhancement
-assignees: ''
+assignees: ""
 ---
 
 ## 해결하려는 문제

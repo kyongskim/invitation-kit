@@ -59,18 +59,21 @@ Push to GitHub, then import the repo on [Vercel](https://vercel.com/new).
 ## 📦 Features
 
 ### v0.1.0 (MVP)
+
 - 📸 Photo gallery with lightbox
 - 📍 Venue map buttons (Naver / Kakao / Google)
 - 💰 One-tap bank-account copy
 - 💬 KakaoTalk share + URL copy
 
 ### v1.0.0
+
 - ✍️ Guestbook (Firebase Firestore)
 - ⏰ D-day countdown
 - 📅 Add to Google Calendar
 - 🎨 3+ themes
 
 ### Roadmap (v1.1+)
+
 - RSVP form
 - Background music (respects silent mode)
 - Web-based config editor

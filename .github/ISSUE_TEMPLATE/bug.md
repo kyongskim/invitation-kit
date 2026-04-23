@@ -3,7 +3,7 @@ name: 버그 리포트 (Bug report)
 about: 재현 가능한 버그를 알려주세요
 title: "[Bug] "
 labels: bug
-assignees: ''
+assignees: ""
 ---
 
 ## 무엇이 잘못됐나요?

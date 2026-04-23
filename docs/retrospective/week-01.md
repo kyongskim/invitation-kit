@@ -7,21 +7,25 @@
 ## 완료한 것
 
 ### Day 1~3 · 프로젝트 베이스 (선행 완료)
+
 - 레포 `kyongskim/invitation-kit` 생성 (public, MIT)
 - README 한국어/영어 초안
 - `invitation.config.ts` 스키마 초안 (5.6KB)
 - 초기 커밋: `9e8202c chore: initial project setup with docs and config schema`
 
 ### Day 4 · ADR 2건 (`abb81f7`)
+
 - `docs/adr/001-use-nextjs-app-router.md` — App Router 채택, `"use client"` 경계 규칙
 - `docs/adr/002-config-driven-approach.md` — 단일 `invitation.config.ts` 원칙, breaking change 처리
 
 ### Day 5 · 디자인 결정 (`e299b47`)
+
 - `docs/04-design-decisions.md` 작성 (텍스트 사양서로 Figma 대체)
 - **Classic 프리셋 확정** — 팔레트 A (Warm Beige) + 폰트 P1 (Pretendard + Cormorant Garamond)
 - 다중 테마 / 팔레트·폰트 오버라이드는 v1.0.0으로 이월
 
 ### Day 6 · GitHub 템플릿 (`6d9a6af`)
+
 - `.github/ISSUE_TEMPLATE/bug.md`
 - `.github/ISSUE_TEMPLATE/feature_request.md` (스키마 영향 체크박스 포함)
 - `.github/PULL_REQUEST_TEMPLATE.md` (모바일 Safari + 개인정보 체크)
@@ -34,16 +38,21 @@
 ## 막혔던 것 / 고민한 것
 
 ### 1. Issue #1 본문과 ADR 충돌
+
 최초 Issue #1의 DoD에 `invitation.config.example.ts` 파일 언급이 있었는데, 이는 **ADR 002에서 명시적으로 "도입하지 않는다"고 결정한 패턴**이었음. 작성 직후 내부 검토에서 발견해 `gh issue edit`으로 수정.
+
 - **교훈:** ADR을 작성한 직후에도 관련 문서에 과거 관례가 스며들 수 있다. ADR이 늘어나면 PR/이슈 템플릿에 "관련 ADR 위반 여부 확인" 체크박스 추가를 고려.
 
 ### 2. 팔레트/폰트 분리 제공 아이디어
+
 사용자가 "팔레트와 폰트를 따로 골라서 조합하는 방식"을 제안. 장점(유연성, 9개 조합)과 단점(비전문가의 궁합 실패, 선택 피로, "5분 배포"와의 충돌)을 비교 후 **v1.0.0으로 이월 결정**. v0.1.0에서는 프리셋 단일 적용이 일정과 QA 비용 면에서 안전.
 
 ### 3. Figma 와이어프레임 필수 여부
+
 가이드 문서에 "Figma/종이 와이어프레임"이 명시되어 있어 사용자가 부담을 느낌. Config-driven 템플릿 특성상 레이아웃이 섹션 단위로 정형화되어 있어 **텍스트 사양서(섹션 순서 + vh 높이)로 충분**하다고 판단. 실제로 `docs/04-design-decisions.md`만으로 진행 가능.
 
 ### 4. 칸반 보드 도입 여부
+
 원래 Day 6에 포함되어 있었으나, **혼자 하는 사이드 프로젝트**에서 이미 `docs/02-week01-daily-guide.md`가 태스크 리스트 역할을 하고 있어 중복. 외부 기여자가 생기는 v0.1.0 릴리스 이후로 연기.
 
 ---
@@ -67,15 +76,18 @@
 ## 2주차로 넘어가는 결정사항
 
 ### 기술 스택 확정 (ADR에 의해 고정)
+
 - Next.js 15 (App Router) · TypeScript · Tailwind CSS
 - Firebase Firestore (방명록/RSVP, v1.0.0부터)
 - Vercel 배포
 
 ### v0.1.0 범위 고정 (Issue #1)
+
 - 메인 · 인사말 · 갤러리 · 오시는 길 · 계좌 복사 · 카카오톡 공유 — 6개 Must 기능만
 - 테마는 Classic 하나
 
 ### 2주차 주요 태스크 (`docs/02-week01-daily-guide.md` 이어서 2주차 가이드가 없으므로 여기서 정의)
+
 1. `npx create-next-app@latest . --typescript --tailwind --app --eslint` — 기존 파일 충돌 주의 (CLAUDE.md, README, invitation.config.ts, docs/, .github/ 보존)
 2. Tailwind config에 Classic 팔레트 hex 값 토큰 등록
 3. Pretendard + Cormorant Garamond self-host 설정 (CDN 아님)
@@ -84,6 +96,7 @@
 6. `app/page.tsx`에서 `invitation.config.ts` import해 신랑/신부 이름만 출력하는 최소 페이지
 
 ### 2주차 첫 세션 시작 방법 (권장)
+
 ```
 cd ~/projects/invitation-kit && claude
 → "2주차 시작. docs/retrospective/week-01.md와 CLAUDE.md를 읽고

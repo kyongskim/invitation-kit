@@ -46,15 +46,15 @@ npm install
 
 ```ts
 export const config: InvitationConfig = {
-  groom: { name: '김철수', father: '김아버지', mother: '박어머니' },
-  bride: { name: '이영희', father: '이아버지', mother: '최어머니' },
-  date: '2026-05-17T12:00:00+09:00',
+  groom: { name: "김철수", father: "김아버지", mother: "박어머니" },
+  bride: { name: "이영희", father: "이아버지", mother: "최어머니" },
+  date: "2026-05-17T12:00:00+09:00",
   venue: {
-    name: '예식홀 2층 그랜드볼룸',
-    address: '서울시 강남구 ...',
+    name: "예식홀 2층 그랜드볼룸",
+    address: "서울시 강남구 ...",
     coords: { lat: 37.5, lng: 127.0 },
   },
-  theme: 'modern', // 'modern' | 'classic' | 'floral' | 'minimal' | 'vintage'
+  theme: "modern", // 'modern' | 'classic' | 'floral' | 'minimal' | 'vintage'
   // ... 자세한 내용은 아래 '설정 가이드' 참고
 };
 ```
@@ -74,18 +74,21 @@ GitHub에 푸시하고 [Vercel](https://vercel.com/new)에서 저장소를 Impor
 ## 📦 주요 기능
 
 ### 기본 (v0.1.0)
+
 - 📸 사진 갤러리 (lightbox 확대 뷰)
 - 📍 오시는 길 (네이버/카카오/구글 지도 버튼)
 - 💰 계좌번호 원클릭 복사
 - 💬 카카오톡 공유하기 + URL 복사
 
 ### v1.0.0
+
 - ✍️ 방명록 (Firebase Firestore)
 - ⏰ D-day 카운트다운
 - 📅 구글 캘린더 일정 추가
 - 🎨 테마 3종 이상
 
 ### 로드맵 (v1.1+)
+
 - RSVP 참석 여부 응답
 - 배경 음악 (무음 모드 존중)
 - 웹 기반 config 편집기 UI

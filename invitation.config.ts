@@ -5,7 +5,7 @@
  * 사용하지 않는 섹션은 `null` 또는 `{ enabled: false }` 로 비활성화할 수 있어요.
  */
 
-export type ThemeName = 'modern' | 'classic' | 'floral' | 'minimal' | 'vintage';
+export type ThemeName = "modern" | "classic" | "floral" | "minimal" | "vintage";
 
 export interface Person {
   /** 이름 (예: '김철수') */
@@ -141,67 +141,92 @@ export interface InvitationConfig {
 
 export const config: InvitationConfig = {
   meta: {
-    title: '김철수 ♥ 이영희의 결혼식에 초대합니다',
-    description: '2026년 5월 17일, 저희 두 사람의 시작을 함께해 주세요.',
-    siteUrl: 'https://example.vercel.app',
+    title: "김철수 ♥ 이영희의 결혼식에 초대합니다",
+    description: "2026년 5월 17일, 저희 두 사람의 시작을 함께해 주세요.",
+    siteUrl: "https://example.vercel.app",
   },
 
-  theme: 'modern',
+  theme: "modern",
 
   groom: {
-    name: '김철수',
-    order: '장남',
-    father: '김아버지',
-    mother: '박어머니',
+    name: "김철수",
+    order: "장남",
+    father: "김아버지",
+    mother: "박어머니",
   },
   bride: {
-    name: '이영희',
-    order: '차녀',
-    father: '이아버지',
-    mother: '최어머니',
+    name: "이영희",
+    order: "차녀",
+    father: "이아버지",
+    mother: "최어머니",
   },
 
-  date: '2026-05-17T12:00:00+09:00',
+  date: "2026-05-17T12:00:00+09:00",
 
   venue: {
-    name: '더채플 광화문',
-    hall: '2층 그랜드볼룸',
-    address: '서울특별시 종로구 세종대로 175',
+    name: "더채플 광화문",
+    hall: "2층 그랜드볼룸",
+    address: "서울특별시 종로구 세종대로 175",
     coords: { lat: 37.5725, lng: 126.9769 },
     transportation: {
-      subway: '5호선 광화문역 2번 출구 도보 5분',
-      bus: '간선 101, 103 광화문 정류장 하차',
+      subway: "5호선 광화문역 2번 출구 도보 5분",
+      bus: "간선 101, 103 광화문 정류장 하차",
       car: '내비게이션에 "더채플 광화문" 검색',
-      parking: '건물 지하 주차장 2시간 무료',
+      parking: "건물 지하 주차장 2시간 무료",
     },
   },
 
   greeting: {
-    title: '소중한 분들을 모십니다',
+    title: "소중한 분들을 모십니다",
     message:
-      '서로의 다름을 존중하고 같음을 기뻐하며\n\n한 길을 걸어가려 합니다.\n\n축복해 주시면 감사하겠습니다.',
+      "서로의 다름을 존중하고 같음을 기뻐하며\n\n한 길을 걸어가려 합니다.\n\n축복해 주시면 감사하겠습니다.",
   },
 
   gallery: [
-    { src: '/images/gallery/01.jpg', alt: '웨딩촬영 01', width: 1200, height: 1800 },
-    { src: '/images/gallery/02.jpg', alt: '웨딩촬영 02', width: 1800, height: 1200 },
+    {
+      src: "/images/gallery/01.jpg",
+      alt: "웨딩촬영 01",
+      width: 1200,
+      height: 1800,
+    },
+    {
+      src: "/images/gallery/02.jpg",
+      alt: "웨딩촬영 02",
+      width: 1800,
+      height: 1200,
+    },
     // ...
   ],
 
   accounts: {
     groomSide: [
-      { label: '신랑', bank: '국민은행', number: '123-45-678901', holder: '김철수' },
-      { label: '신랑 아버지', bank: '신한은행', number: '110-123-456789', holder: '김아버지' },
+      {
+        label: "신랑",
+        bank: "국민은행",
+        number: "123-45-678901",
+        holder: "김철수",
+      },
+      {
+        label: "신랑 아버지",
+        bank: "신한은행",
+        number: "110-123-456789",
+        holder: "김아버지",
+      },
     ],
     brideSide: [
-      { label: '신부', bank: '카카오뱅크', number: '3333-01-1234567', holder: '이영희' },
+      {
+        label: "신부",
+        bank: "카카오뱅크",
+        number: "3333-01-1234567",
+        holder: "이영희",
+      },
     ],
   },
 
   share: {
-    title: '김철수 ♥ 이영희 결혼합니다',
-    description: '2026년 5월 17일 토요일 낮 12시 · 더채플 광화문',
-    thumbnailUrl: 'https://example.vercel.app/images/og.jpg',
+    title: "김철수 ♥ 이영희 결혼합니다",
+    description: "2026년 5월 17일 토요일 낮 12시 · 더채플 광화문",
+    thumbnailUrl: "https://example.vercel.app/images/og.jpg",
   },
 
   guestbook: {
@@ -211,7 +236,7 @@ export const config: InvitationConfig = {
   },
 
   closing: {
-    message: '귀한 걸음으로 축복해 주시면 감사하겠습니다.',
-    signature: '김철수 · 이영희 드림',
+    message: "귀한 걸음으로 축복해 주시면 감사하겠습니다.",
+    signature: "김철수 · 이영희 드림",
   },
 };

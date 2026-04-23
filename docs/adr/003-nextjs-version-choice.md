@@ -37,12 +37,14 @@
 ## 결과 (Consequences)
 
 **긍정:**
+
 - React 19.2 의 View Transitions, Activity 등 UI 애니메이션 관련 신기능을 즉시 활용할 수 있어 청첩장의 부드러운 섹션 전환 UX 와 잘 맞는다.
 - `next/image` 기본 캐시 TTL 이 4h 로 늘어나 갤러리 이미지의 재검증 비용이 감소 — 청첩장 같이 **거의 변하지 않는 콘텐츠**에는 오히려 이상적.
 - `next lint` 제거에 따라 스캐폴드가 생성한 `"lint": "eslint"` 스크립트가 이미 신규 CLI 방식이므로 추후 마이그레이션 불필요.
 - Turbopack 기본화로 개발 경험이 개선된다.
 
 **부정 / 주의:**
+
 - **훈련 데이터 불일치 위험.** AGENTS.md 가 명시하듯 AI 보조 코드 생성 시 Next 15 이하 패턴(동기 `params`, `middleware.ts`, `images.domains` 등)이 튀어나올 수 있다. CLAUDE.md 의 "Next.js 16 주의사항" 섹션과 `node_modules/next/dist/docs/` 로 가드레일을 둔다.
 - **튜토리얼·블로그 생태계가 아직 15 중심.** 공식 docs 와 release blog 가 1차 레퍼런스.
 - 추후 서드파티 라이브러리(Framer Motion, Kakao SDK 등)가 React 19 호환 이슈를 보일 경우 임시 우회가 필요할 수 있다.

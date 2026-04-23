@@ -41,7 +41,7 @@
 
 ### 커밋 컨벤션 — Conventional Commits
 - `feat:` 새 기능 · `fix:` 버그 수정 · `docs:` 문서 · `style:` 포매팅 · `refactor:` 리팩터 · `test:` 테스트 · `chore:` 설정·빌드
-- 메시지는 한국어 또는 영어 둘 다 OK, 프로젝트 내에서 일관성만 유지
+- 커밋 메시지는 한국어로 작성. Conventional Commits 타입 (`feat:`, `fix:`, `chore:` 등) 은 영어 유지. 예: `feat(theme): 폰트 self-host`. 2주차 Day 1, Day 2 커밋 2건은 영어로 남아있는데, git history 일관성보다 force-push 회피를 우선해 그대로 둠.
 
 ### 파일 구조 (목표)
 ```

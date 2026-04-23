@@ -21,7 +21,7 @@
 ## HOW (기술 스택과 개발 방식)
 
 ### 스택
-- Next.js 15 (App Router) · TypeScript · Tailwind CSS
+- Next.js 16 (App Router, Turbopack 기본) · TypeScript · Tailwind CSS
 - Framer Motion (애니메이션)
 - Firebase Firestore (방명록/RSVP)
 - Vercel (배포)
@@ -55,6 +55,17 @@ public/images/gallery/ # 사용자 사진
 invitation.config.ts   # 유일한 설정 진입점
 docs/                  # 기획, 가이드, ADR, 회고
 ```
+
+## Next.js 16 주의사항
+
+Next.js 16 으로 시작했다. **학습 데이터에 기반한 구형 API 사용 방지**를 위한 체크리스트:
+
+- **`cookies()`, `headers()`, `draftMode()`, `params`, `searchParams` 는 모두 async.** 접근 시 반드시 `await` — Next 15 까지 남아있던 동기 호환이 16 에서 완전히 제거됨.
+- **미들웨어는 `proxy.ts`.** `middleware.ts` 는 deprecated. 새 코드는 `proxy.ts` 에, 함수 이름도 `proxy` 로. (edge runtime 필요 시만 `middleware.ts` 유지)
+- **`<Image quality={x} />` 사용 시 주의.** 기본 허용값이 `[75]` 로 축소됐다. 다른 값을 쓰려면 `next.config.ts` 의 `images.qualities` 에 명시적으로 추가해야 하며, 허용 목록 밖의 값은 가장 가까운 값으로 강제된다.
+- **AGENTS.md 경고 엄수.** 스캐폴드가 루트에 `AGENTS.md` 를 생성했고 요지는 "이전 Next.js 와 다름, 훈련 데이터의 API 를 우선 의심하고 공식 docs 확인". `node_modules/next/dist/docs/` 내 가이드를 최우선 참조.
+
+상세 배경: `docs/adr/003-nextjs-version-choice.md`.
 
 ## 자주 쓰는 명령어
 

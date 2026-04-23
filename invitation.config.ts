@@ -68,6 +68,17 @@ export interface ShareConfig {
   description: string;
   /** 카카오톡 공유 썸네일 이미지 URL (절대 URL) */
   thumbnailUrl: string;
+  /**
+   * 공유 카드 내 버튼. 카카오 feed 템플릿은 최대 2개까지 렌더.
+   * URL 은 사용자가 직접 쓰지 않고 구현이 자동 유도한다 — 자세한 근거는 `docs/adr/004-share-buttons-schema.md`.
+   * 미설정 시 `site` 만 활성 (카드 전체가 `meta.siteUrl` 로 이동하는 효과).
+   */
+  buttons?: {
+    /** 청첩장 보기 — URL 은 `meta.siteUrl` 에서 자동 유도. `enabled` 미설정 시 `true`. */
+    site?: { enabled?: boolean; label?: string };
+    /** 지도 보기 — URL 은 `venue.coords` + `venue.name` 으로 카카오맵 딥링크 자동 조립. `enabled` 미설정 시 `false`. */
+    map?: { enabled?: boolean; label?: string };
+  };
 }
 
 export interface GuestbookConfig {
@@ -227,6 +238,10 @@ export const config: InvitationConfig = {
     title: "김철수 ♥ 이영희 결혼합니다",
     description: "2026년 5월 17일 토요일 낮 12시 · 더채플 광화문",
     thumbnailUrl: "https://example.vercel.app/images/og.jpg",
+    buttons: {
+      site: { enabled: true },
+      map: { enabled: true },
+    },
   },
 
   guestbook: {

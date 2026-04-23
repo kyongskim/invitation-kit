@@ -71,10 +71,10 @@ if (
   - `imageUrl` — `share.thumbnailUrl` (**반드시 절대 URL**, 호스트가 등록 도메인이어야 함)
   - `imageWidth`, `imageHeight` — 최소 Kakao 권장값 (현재 800×400 권장, 공식 docs 확인 후 반영)
   - `link.mobileWebUrl` / `link.webUrl` — 둘 다 `meta.siteUrl`
-- **buttons 는 2개 이하 유지**:
-  1. `"청첩장 보기"` → `meta.siteUrl`
-  2. (선택) `"지도 보기"` → 아래 카카오맵 딥링크
-- 버튼을 비우면 카드 전체가 링크 영역이 됨 (기본 동작). MVP 는 1번만으로도 충분.
+- **buttons 는 2개 이하 유지**. 스키마는 `invitation.config.ts` 의 `share.buttons.site` / `share.buttons.map` 고정 시그니처 — 배열 아님. URL 은 각각 `meta.siteUrl` · `venue.coords` 에서 자동 유도하고 사용자는 `enabled` / `label` 만 지정 (설계 근거는 `docs/adr/004-share-buttons-schema.md`):
+  1. `site` — `"청첩장 보기"` → `meta.siteUrl` (기본 ON)
+  2. `map` — `"지도 보기"` → 아래 카카오맵 딥링크 (기본 OFF)
+- `buttons` 를 전부 끄거나 미설정 시 카드 전체가 `meta.siteUrl` 로 이동하는 효과 (Kakao feed 기본 동작). MVP 는 `site` 하나만으로도 충분.
 
 ## 카카오맵 딥링크 (SDK 미사용)
 

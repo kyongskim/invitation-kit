@@ -1,3 +1,4 @@
+import { DDayBadge } from "@/components/DDayBadge";
 import { config } from "@/invitation.config";
 
 export function Main() {
@@ -13,6 +14,7 @@ export function Main() {
           <span>{config.bride.name}</span>
         </h1>
       </div>
+      <DDayBadge />
     </section>
   );
 }

@@ -3,7 +3,7 @@
 > **살아있는 문서 (Living document).** 매 주차 끝날 때 이 문서를 업데이트하세요.
 > 지난 주차는 "실제 한 것" 기준으로 기록하고, 남은 주차는 필요에 따라 재설계해도 됩니다.
 
-**마지막 업데이트:** 2026-04-24 (5주차 완료 시점)
+**마지막 업데이트:** 2026-04-25 (6주차 완료 시점)
 
 ---
 
@@ -20,13 +20,13 @@
 | 단계                      |    주차    |    상태    | 마일스톤                     |
 | ------------------------- | :--------: | :--------: | ---------------------------- |
 | 1단계: 기획 + 셋업        |  Week 1-2  |  ✅ 완료   | 자동 배포 환경 + 디자인 토큰 |
-| 2단계: Must 기능 개발     |  Week 3-6  | 🔄 진행 중 | v0.1.0 MVP                   |
-| 3단계: Should 기능 + 테마 |  Week 7-8  |  ⏳ 예정   | 다중 테마 + 방명록           |
+| 2단계: Must 기능 개발     |  Week 3-6  |  ✅ 완료   | v0.1.0 MVP                   |
+| 3단계: Should 기능 + 테마 |  Week 7-8  | 🔄 진행 중 | 다중 테마 + 방명록           |
 | 4단계: 문서화 + QA        |   Week 9   |  ⏳ 예정   | 비개발자도 5분 배포          |
 | 5단계: 릴리스 + 홍보      | Week 10-11 |  ⏳ 예정   | v1.0.0 + 커뮤니티 공개       |
 | 6단계: 유지보수 기반      |  Week 12   |  ⏳ 예정   | 루틴 정착                    |
 
-**현재 진행도:** ⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜ 5/12 주 (42%)
+**현재 진행도:** ⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜ 6/12 주 (50%)
 
 ---
 
@@ -131,57 +131,73 @@
   - 태스크 3: D-day 카운트다운 (난이도 낮아 MVP 로 당길 수도)
   - 태스크 4: 인앱 웹뷰 안내 UI (UA 분기로 "외부 브라우저에서 열어주세요" 토스트)
 
+### Week 6 · MVP Must 마감 + Should 당겨 포함 (v0.1.0 릴리스 직전)
+
+- **원래 계획:** 계좌 복사 · 사진 갤러리 · D-day · 인앱 웹뷰 안내 — 5 주차 회고의 우선 후보 4 건
+- **실제 결과물:**
+  - `b704fb5` 계좌번호 복사 섹션 — `lib/clipboard.ts` (`copyText`) · `components/sections/Accounts.tsx` (아코디언 + 신랑/신부 토글 + 하이픈 제거 복사) · Share 섹션 헬퍼 공용화
+  - `fa9b78f` 사진 갤러리 + 라이트박스 — CSS `columns-2 sm:columns-3` masonry + framer-motion `AnimatePresence` 조건부 마운트 라이트박스 (좌우 버튼 · ArrowLeft/Right · 스와이프 · 백드롭 · Escape · wrap-around) + body scroll lock. 사진 9 장 `sample-01 ~ sample-09.jpg`
+  - `e059dcb` D-day 배지 (`lib/date.ts` · `components/DDayBadge.tsx`) → `61a468d` fix(dday): React 19 신규 rule `react-hooks/set-state-in-effect` 대응, `useSyncExternalStore` 기반 `useIsClient` 훅으로 리팩터
+  - `84f1037` 인앱 웹뷰 감지 상단 배너 — `lib/userAgent.ts` + `components/InAppBrowserNotice.tsx`, sessionStorage dismiss
+  - 사진 자원 정리 — `wed*.{jpg,png}` → `sample-*.jpg` 리네이밍 (wed02.png 는 q90 JPG 변환 914KB→128KB), `.gitignore` 의 `!sample-*.jpg` 예외 활용해 Vercel 배포 자산으로 편입
+- **배운 것:**
+  - React 19 `react-hooks/set-state-in-effect` rule 은 `useEffect` 안 `setState` 를 cascading render 로 경고. 로컬 `.eslintcache` 가 규칙을 캐시에서 놓쳐 "로컬 통과/CI 실패" 갈림 — 이후 품질 게이트에 `rm .eslintcache` 습관 편입. `useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot)` 기반 `useIsClient` 훅이 Client Component 의 마운트 감지 기본 템플릿으로 자리 잡음 (2 곳에서 사용)
+  - `AnimatePresence` 자식은 **조건부 마운트** 라 SSR HTML 에 요소 자체가 없음 → iOS Safari invisible 인라인 스타일 회귀와 무관. CLAUDE.md 애니메이션 규칙이 명시 허용한 "JS-only 영역" 첫 실사용 (Gallery 라이트박스)
+  - OSS 템플릿의 `.gitignore` 에서 `!sample-*.jpg` 예외는 "교체 전제 데모 사진" 자리를 위한 설계. 본인 실사용 자원은 `wed*.jpg` 같은 다른 이름으로 fork 로컬에만 — 파일명 규칙으로 OSS 정체성과 개인 사이트 정체성 분리
+- **7주차로 넘긴 것:**
+  - 태스크 1: `v0.1.0` 태그 + `CHANGELOG.md` + GitHub Release 노트 (릴리스 가능 상태 도달, 7 주차 첫 세션 기본 추천)
+  - 태스크 2: 다중 테마 시스템 설계 — Classic 외 Modern/Floral 2 종, `theme` config 값으로 폰트·팔레트·섹션 스타일 분기
+  - 태스크 3: 방명록 (Firebase) — 원 Week 6 계획의 이월. `.claude/rules/firebase.md` 신규 필요
+  - 태스크 4: 구글 캘린더 버튼 (`google.com/calendar/render` 딥링크, Venue 섹션)
+  - **프로젝트 정체성 재확인 결과 v1.1 이후로 연기**: 웹 에디터 UI — 사용자 의도였으나 3 개월 로드맵 scope 밖. v0.1.0 릴리스 후 실사용 수요 보고 v1.1 방향 재검토
+
 ---
 
 ## 🔜 남은 주차 계획
 
 > 지난 5주 경험을 반영해 재조정합니다. 여기 적힌 건 계획일 뿐, 주차가 끝날 때 "실제 한 것"으로 위 섹션에 옮겨 적으세요.
 
-### Week 6 · Should 기능 1 (방명록 + D-day)
+### Week 7 · v0.1.0 릴리스 + 다중 테마 시스템 설계 시작
 
-**목표:** Firebase 연동으로 첫 인터랙티브 기능 구현.
+**목표:** MVP 외부 공개 신호 + 핵심 차별화 기능 설계 진입.
 
-- [ ] Firebase 프로젝트 생성 + Firestore 설정
+- [ ] `v0.1.0` 태그 + `CHANGELOG.md` 신규 + GitHub Release 노트 (6 주차에 MVP Must 마감 상태)
+- [ ] 테마 구조 리팩터링 — `theme` config 값 하나로 전체 룩 전환. Tailwind v4 `@theme` 토큰의 런타임 전환 방식 실험 (CSS 변수 override vs 멀티 theme 클래스 토글)
+- [ ] 테마 2종 추가: Modern, Floral (또는 Minimal, Vintage) 중 1 종 먼저 착수
+- [ ] 구글 캘린더 일정 추가 버튼 (난이도 낮음, Venue 섹션 추가) — 스케줄에 여유 있으면 함께
+
+**주의점**
+
+- 테마 3종이 "명확히 다른 인상" 을 줘야 차별화. 컬러만 바꾼 수준이면 약함. 폰트/여백/섹션 구성까지 조금씩 달라야 함.
+- 릴리스 노트는 v0.1.0 시점 기능 목록 + 설치·배포 가이드 + 알려진 제약 (인앱 웹뷰 · 저해상 샘플 사진 등) 정직하게 포함
+
+### Week 8 · 다중 테마 완성 + 방명록 진입
+
+**목표:** 남은 테마 1 종 마감 + Firebase 연동 첫 인터랙티브 기능.
+
+- [ ] 남은 테마 1 종 완성 + 섹션 스타일 분기 마감
+- [ ] Firebase 프로젝트 생성 + Firestore 설정 (`.claude/rules/firebase.md` 신규)
 - [ ] 방명록 CRUD (작성/조회/삭제, 비밀번호 해싱)
 - [ ] 욕설 필터 (간단한 금칙어 리스트)
-- [ ] D-day 카운트다운
-- [ ] 구글 캘린더 일정 추가 버튼
 
 **주의점**
 
 - Firestore 보안 규칙 꼭 설정 — 방치하면 누구나 쓰기/삭제 가능
 - `NEXT_PUBLIC_` 프리픽스 이해 (클라이언트 노출)
-- Firebase 관련 작업 시 `.claude/rules/firebase.md` 참조 (없으면 이 주차에 생성)
+- Firebase 관련 작업 시 `.claude/rules/firebase.md` 참조 (이 주차에 생성)
 
-### Week 7 · 다중 테마 시스템
+### Week 9 · 문서화 + 최종 QA + v1.0 준비
 
-**목표:** 프로젝트의 핵심 차별화 기능. Classic 외 2종 추가.
+**목표:** "비개발자도 5분 배포" 약속을 실제로 지킬 수 있도록 + 릴리스 직전 QA.
 
-- [ ] 테마 구조 리팩터링 — `theme` config 값 하나로 전체 룩 전환
-- [ ] 테마 2종 추가: Modern, Floral (또는 Minimal, Vintage)
-- [ ] 각 테마별 폰트 조합, 컬러 토큰, 섹션별 스타일 분기
-- [ ] 테마 전환 데모 페이지 (개발자용)
-
-**생각해볼 것:** 테마 3종이 각각 "명확히 다른 인상"을 주는가? 그냥 컬러만 바꾼 수준이면 차별화가 약함. 폰트/여백/섹션 구성까지 조금씩 달라야 함.
-
-### Week 8 · 문서화 + 배포 가이드
-
-**목표:** "비개발자도 5분 배포" 약속을 실제로 지킬 수 있도록.
-
-- [ ] `README.md` 다듬기 (스크린샷, GIF, 데모 링크)
 - [ ] `docs/config-guide.md` — 모든 config 필드 설명
 - [ ] `docs/api-keys.md` — 카카오/네이버/Firebase 키 발급 단계별 스크린샷
 - [ ] `docs/theme-guide.md` — 새 테마 기여 방법
-- [ ] 영상 튜토리얼 1개 (5~10분, YouTube 또는 loom)
-
-### Week 9 · 최종 QA + v1.0 준비
-
-- [ ] 테스트 커버리지 체크 (핵심 로직 70%+)
-- [ ] 브라우저/기기 매트릭스 테스트
+- [ ] `README.md` 스크린샷 · GIF · 데모 링크 최종 정리 (5 주차에 한 번 현실화, v1.0 대비 재정비)
+- [ ] 영상 튜토리얼 1개 (5~10분, YouTube 또는 Loom) — 선택
+- [ ] 브라우저/기기 매트릭스 테스트 · Lighthouse 90+ 목표
 - [ ] 성능 최적화 (이미지, 번들 사이즈)
-- [ ] Lighthouse 90+ 목표
-- [ ] `CHANGELOG.md` 정리
-- [ ] 라이선스/저작권 고지 최종 점검
+- [ ] `CHANGELOG.md` v0.1.0 → v1.0.0 누적 정리 · 라이선스/저작권 고지 최종 점검
 
 ### Week 10 · v1.0.0 릴리스
 

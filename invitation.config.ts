@@ -154,7 +154,7 @@ export const config: InvitationConfig = {
   meta: {
     title: "김철수 ♥ 이영희의 결혼식에 초대합니다",
     description: "2026년 5월 17일, 저희 두 사람의 시작을 함께해 주세요.",
-    siteUrl: "https://example.vercel.app",
+    siteUrl: "https://invitation-kit.vercel.app",
   },
 
   theme: "modern",
@@ -237,7 +237,7 @@ export const config: InvitationConfig = {
   share: {
     title: "김철수 ♥ 이영희 결혼합니다",
     description: "2026년 5월 17일 토요일 낮 12시 · 더채플 광화문",
-    thumbnailUrl: "https://example.vercel.app/images/og.jpg",
+    thumbnailUrl: "https://invitation-kit.vercel.app/images/og.jpg",
     buttons: {
       site: { enabled: true },
       map: { enabled: true },

@@ -59,7 +59,7 @@ invitation.config.ts   # 유일한 설정 진입점
 docs/                  # 기획, 가이드, ADR, 회고
 ```
 
-**진행 상태 (4주차 진행 중):** `app/` (page·layout), `app/fonts/` (Pretendard Variable), `components/sections/` (Main · Greeting · Venue), `lib/` (`map.ts` — 카카오맵 딥링크) 존재. `public/images/`, `lib/kakao.ts` (Task 5 예정), `components/theme/`, `components/shared/` 미도입.
+**진행 상태 (4주차 종료 시점):** `app/` (page·layout), `app/fonts/` (Pretendard Variable), `components/sections/` (Main · Greeting · Venue · Share), `lib/` (`map.ts` 카카오맵 딥링크 · `kakao.ts` Kakao SDK wrapper), `.env.example` 존재. `public/images/`, `components/theme/`, `components/shared/` 미도입 (5주차 이후).
 
 ## Next.js 16 주의사항
 

@@ -1,5 +1,6 @@
 import { Greeting } from "@/components/sections/Greeting";
 import { Main } from "@/components/sections/Main";
+import { Share } from "@/components/sections/Share";
 import { Venue } from "@/components/sections/Venue";
 
 export default function Home() {
@@ -8,6 +9,7 @@ export default function Home() {
       <Main />
       <Greeting />
       <Venue />
+      <Share />
     </main>
   );
 }

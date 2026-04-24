@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond } from "next/font/google";
+import { Cormorant_Garamond, Playfair_Display } from "next/font/google";
 import localFont from "next/font/local";
 import Script from "next/script";
 import { config } from "@/invitation.config";
@@ -17,6 +17,13 @@ const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
   display: "swap",
   weight: ["400", "500", "600", "700"],
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  display: "swap",
+  weight: ["400", "600"],
 });
 
 export const metadata: Metadata = {
@@ -54,7 +61,8 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${pretendard.variable} ${cormorant.variable} h-full antialiased`}
+      data-theme={config.theme}
+      className={`${pretendard.variable} ${cormorant.variable} ${playfair.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <Script id="scroll-restoration-manual" strategy="beforeInteractive">

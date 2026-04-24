@@ -5,7 +5,11 @@
  * 사용하지 않는 섹션은 `null` 또는 `{ enabled: false }` 로 비활성화할 수 있어요.
  */
 
-export type ThemeName = "modern" | "classic" | "floral" | "minimal" | "vintage";
+/**
+ * 현재 구현된 테마 목록. 추가 테마는 Week 8 (Floral) 이후 순차 확장 예정.
+ * 설계 근거는 docs/adr/005-multi-theme-runtime-strategy.md.
+ */
+export type ThemeName = "classic" | "modern";
 
 export interface Person {
   /** 이름 (예: '김철수') */
@@ -157,7 +161,7 @@ export const config: InvitationConfig = {
     siteUrl: "https://invitation-kit.vercel.app",
   },
 
-  theme: "modern",
+  theme: "classic",
 
   groom: {
     name: "김철수",

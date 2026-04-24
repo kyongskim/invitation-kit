@@ -4,6 +4,7 @@ import Script from "next/script";
 import { useState } from "react";
 
 import { config } from "@/invitation.config";
+import { copyText } from "@/lib/clipboard";
 import { initKakao, shareInvitation } from "@/lib/kakao";
 
 export function Share() {
@@ -25,12 +26,8 @@ export function Share() {
         venue: { name: config.venue.name, coords: config.venue.coords },
       });
     } catch {
-      try {
-        await navigator.clipboard.writeText(config.meta.siteUrl);
-        showToast("링크가 복사되었습니다");
-      } catch {
-        showToast("공유에 실패했습니다");
-      }
+      const ok = await copyText(config.meta.siteUrl);
+      showToast(ok ? "링크가 복사되었습니다" : "공유에 실패했습니다");
     }
   };
 

@@ -1,3 +1,4 @@
+import { Accounts } from "@/components/sections/Accounts";
 import { Greeting } from "@/components/sections/Greeting";
 import { Main } from "@/components/sections/Main";
 import { Share } from "@/components/sections/Share";
@@ -9,6 +10,7 @@ export default function Home() {
       <Main />
       <Greeting />
       <Venue />
+      <Accounts />
       <Share />
     </main>
   );

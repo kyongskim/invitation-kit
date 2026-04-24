@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond } from "next/font/google";
 import localFont from "next/font/local";
+import Script from "next/script";
 import { config } from "@/invitation.config";
 import "./globals.css";
 
@@ -33,7 +34,12 @@ export default function RootLayout({
       lang="ko"
       className={`${pretendard.variable} ${cormorant.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        <Script id="scroll-restoration-manual" strategy="beforeInteractive">
+          {`history.scrollRestoration = "manual";`}
+        </Script>
+        {children}
+      </body>
     </html>
   );
 }

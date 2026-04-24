@@ -119,17 +119,17 @@
   - `c3463c2` `lib/map.ts` 에 `naverMapDeeplink` 추가 + Venue 섹션 두 번째 버튼 (네이버 지도)
   - `0864e02` `actions/checkout`·`actions/setup-node` v4 → v6 (Node 24 런타임 선제 대응)
   - `22e90ad` README 한·영 동시 현실화 — 1주차 aspirational draft 를 4-5 주차 실제 구현 기준으로 교체
+  - `726c12b` OG 이미지 `public/images/og.png` (800×396) + `app/layout.tsx` 의 `openGraph`·`twitter` metadata (회고 작성 직후 이미지 자원 준비돼 태스크 5 마감)
 - **배운 것:**
   - 카카오 콘솔이 UI 개편으로 도메인 2 필드 분리 (`JavaScript SDK 도메인` = init 허용 · `웹 도메인` = link.webUrl 검증). 한 필드만 등록하면 sendDefault 는 성공하지만 카드 안 링크가 strip 되어 PC "모바일에서 확인" / iPhone 탭 무반응 증상
   - `buttons[].link.webUrl` 도 `content.link` 와 동일 검증 대상 — "지도 보기" 가 청첩장 홈으로 이동하는 버그로 재현, `map.kakao.com` 을 웹 도메인에 추가해 해결. 카카오 자사 도메인도 "다른 앱 관점에선 외부 도메인"
   - Kakao 공유 증상 시 "폴백 경로 vs 정상 경로" 를 가르는 3 질문 (토스트·팝업·앱 열림) 은 Network 탭 없이 사용자 증언만으로 진단 가능
   - README 는 매 주차 종료 시 "모든 구체적 기능 언급이 실제 코드와 일치하는지" 리뷰 리듬이 필요. 4주 누적되면 fiction·dead link 로 OSS 첫 방문자 신뢰도 훼손
 - **6주차로 넘긴 것:**
-  - 태스크 1: OG 이미지 제작·추가 (디자인 자원 블로커로 이월)
-  - 태스크 2: 계좌번호 복사 섹션 (MVP Must 의 남은 핵심 기능)
-  - 태스크 3: 사진 갤러리 + lightbox (사진 자원 블로커)
-  - 태스크 4: D-day 카운트다운 (난이도 낮아 MVP 로 당길 수도)
-  - 태스크 5: 인앱 웹뷰 안내 UI (UA 분기로 "외부 브라우저에서 열어주세요" 토스트)
+  - 태스크 1: 계좌번호 복사 섹션 (MVP Must 의 남은 핵심 기능)
+  - 태스크 2: 사진 갤러리 + lightbox (사진 자원 블로커)
+  - 태스크 3: D-day 카운트다운 (난이도 낮아 MVP 로 당길 수도)
+  - 태스크 4: 인앱 웹뷰 안내 UI (UA 분기로 "외부 브라우저에서 열어주세요" 토스트)
 
 ---
 

@@ -59,7 +59,7 @@ invitation.config.ts   # 유일한 설정 진입점
 docs/                  # 기획, 가이드, ADR, 회고
 ```
 
-**진행 상태 (6주차 종료 시점):** `app/` (page·layout), `app/fonts/` (Pretendard Variable), `components/sections/` (Main · Greeting · Gallery · Venue · Accounts · Share), `components/` 최상위 (`DDayBadge` · `InAppBrowserNotice` — sections 외 Client 컴포넌트), `lib/` (`map.ts` 카카오맵·네이버 지도 딥링크 · `kakao.ts` Kakao SDK wrapper · `clipboard.ts` · `date.ts` · `userAgent.ts`), `public/images/og.png` · `public/images/gallery/sample-01~09.jpg`, `.env.example` 존재. `components/theme/`, `components/shared/` 미도입 (7주차 이후 테마 시스템 때).
+**진행 상태 (7주차 종료 시점):** `app/` (page·layout — `<html data-theme={config.theme}>` + Pretendard · Cormorant · Playfair Display 3 폰트), `app/globals.css` (`@theme` Classic 기본 + `:root[data-theme="modern"]` override + `--radius-sm` 토큰), `app/fonts/` (Pretendard Variable), `components/sections/` (Main · Greeting · Gallery · Venue · Accounts · Share — Venue 에 카카오맵·네이버지도·구글 캘린더 3 버튼), `components/` 최상위 (`DDayBadge` · `InAppBrowserNotice` — sections 외 Client 컴포넌트), `lib/` (`map.ts` 카카오맵·네이버 지도 · `calendar.ts` 구글 캘린더 · `kakao.ts` Kakao SDK wrapper · `clipboard.ts` · `date.ts` · `userAgent.ts`), `public/images/og.png` · `public/images/gallery/sample-01~09.jpg`, `.env.example` 존재, `CHANGELOG.md` · `package.json` 메타 완성. `v0.1.0` 태그 + GitHub Release 공개. `components/theme/`, `components/shared/` 여전히 미도입 — 테마 시스템이 `@theme` + CSS 변수 override 로 해결돼 별도 컴포넌트 레이어 불필요해졌음. `ThemeName = "classic" | "modern"` (Week 8 에 floral 확장 예정).
 
 ## Next.js 16 주의사항
 

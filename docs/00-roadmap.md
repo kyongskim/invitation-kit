@@ -3,7 +3,7 @@
 > **살아있는 문서 (Living document).** 매 주차 끝날 때 이 문서를 업데이트하세요.
 > 지난 주차는 "실제 한 것" 기준으로 기록하고, 남은 주차는 필요에 따라 재설계해도 됩니다.
 
-**마지막 업데이트:** 2026-04-25 (6주차 완료 시점)
+**마지막 업데이트:** 2026-04-25 (7주차 완료 시점)
 
 ---
 
@@ -17,16 +17,16 @@
 
 ## 📊 전체 진행 상황
 
-| 단계                      |    주차    |    상태    | 마일스톤                     |
-| ------------------------- | :--------: | :--------: | ---------------------------- |
-| 1단계: 기획 + 셋업        |  Week 1-2  |  ✅ 완료   | 자동 배포 환경 + 디자인 토큰 |
-| 2단계: Must 기능 개발     |  Week 3-6  |  ✅ 완료   | v0.1.0 MVP                   |
-| 3단계: Should 기능 + 테마 |  Week 7-8  | 🔄 진행 중 | 다중 테마 + 방명록           |
-| 4단계: 문서화 + QA        |   Week 9   |  ⏳ 예정   | 비개발자도 5분 배포          |
-| 5단계: 릴리스 + 홍보      | Week 10-11 |  ⏳ 예정   | v1.0.0 + 커뮤니티 공개       |
-| 6단계: 유지보수 기반      |  Week 12   |  ⏳ 예정   | 루틴 정착                    |
+| 단계                      |    주차    |    상태    | 마일스톤                                        |
+| ------------------------- | :--------: | :--------: | ----------------------------------------------- |
+| 1단계: 기획 + 셋업        |  Week 1-2  |  ✅ 완료   | 자동 배포 환경 + 디자인 토큰                    |
+| 2단계: Must 기능 개발     |  Week 3-6  |  ✅ 완료   | v0.1.0 MVP                                      |
+| 3단계: Should 기능 + 테마 |  Week 7-8  | 🔄 진행 중 | 다중 테마 + 방명록 (Week 7 완료, Week 8 방명록) |
+| 4단계: 문서화 + QA        |   Week 9   |  ⏳ 예정   | 비개발자도 5분 배포                             |
+| 5단계: 릴리스 + 홍보      | Week 10-11 |  ⏳ 예정   | v1.0.0 + 커뮤니티 공개                          |
+| 6단계: 유지보수 기반      |  Week 12   |  ⏳ 예정   | 루틴 정착                                       |
 
-**현재 진행도:** ⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜ 6/12 주 (50%)
+**현재 진행도:** ⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜ 7/12 주 (58%)
 
 ---
 
@@ -151,40 +151,50 @@
   - 태스크 4: 구글 캘린더 버튼 (`google.com/calendar/render` 딥링크, Venue 섹션)
   - **프로젝트 정체성 재확인 결과 v1.1 이후로 연기**: 웹 에디터 UI — 사용자 의도였으나 3 개월 로드맵 scope 밖. v0.1.0 릴리스 후 실사용 수요 보고 v1.1 방향 재검토
 
+### Week 7 · v0.1.0 공개 릴리스 + 다중 테마 인프라 + 구글 캘린더
+
+- **원래 계획:** v0.1.0 태그 + CHANGELOG + 릴리스 노트 · 다중 테마 리팩터 · 테마 2종 중 1종 착수 · (여유 시) 구글 캘린더 버튼
+- **실제 결과물:**
+  - `b629ba6` v0.1.0 릴리스 노트 · `CHANGELOG.md` (Keep a Changelog, 한국어 primary) · `package.json` 메타 6 필드 보강 (`author` · `repository` · `bugs` · `homepage` · `description` · `license`)
+  - Annotated tag `v0.1.0` + GitHub Release `v0.1.0 — MVP 최초 릴리스` (published · Latest · 영문 summary + 한국어 본문)
+  - `099f0b4` ADR 005 `다중 테마 전환 메커니즘 — data-theme 속성 + CSS 변수 override` (거부된 대안 A~E 포함, 147 줄)
+  - `9f01ff2` `feat(theme)` — `app/globals.css` 에 `:root[data-theme="modern"]` override 블록 + `--radius-sm` 토큰, `app/layout.tsx` 에 Playfair Display 상시 로드 + `<html data-theme={config.theme}>`, `invitation.config.ts` union 을 `"classic" | "modern"` 로 축소 · 기본값 `"classic"`. **컴포넌트 파일 수정 0 건.**
+  - `7a4ebac` `feat(calendar)` — `lib/calendar.ts` (googleCalendarUrl pure function, `YYYYMMDDTHHmmssZ` UTC 변환) + Venue 섹션 3 번째 버튼 "캘린더에 일정 추가". config 스키마 무변화.
+- **배운 것:**
+  - Tailwind v4 가 다중 커스텀 테마 공식 가이드 제공 안 함 — `:root[data-theme]` CSS 변수 cascade override 가 사실상 표준. `@theme` 가 토큰을 CSS 변수로 생성하는 성질 덕에 컴포넌트의 `bg-primary` · `rounded-sm` 등 토큰 유틸이 자동으로 테마 전환에 반응. **컴포넌트 수정 0 건** 이라는 이 접근의 핵심 이득은 ADR 005 의 거부된 대안 A~E 와 나란히 비교해 근거 고정
+  - `@theme inline` modifier 는 토큰 참조를 CSS 에 박아버려 런타임 override 무효화 — ADR 에 "사용 금지" 명시
+  - Tailwind v4 가 `--radius-sm` 같은 기본 토큰 네임스페이스를 사용자 정의로 덮어써도 `rounded-md/lg/full` 인접 유틸 생성은 자동 유지 — 프로덕션 CSS 빌드 artifact 직접 grep 으로 검증 (`.next/static/chunks/*.css`)
+  - v0.1.0 태그 지점은 **CHANGELOG 커밋 (`b629ba6`)**. 처음 Plan 엔 `485055f` 가정이었으나 "태그 지점에 릴리스 아티팩트가 존재해야 한다" 는 제약 때문에 조정. Plan 리뷰 체크리스트 개선 포인트
+  - CHANGELOG 이중언어는 매 릴리스마다 복리 동기화 비용 — 한국어 primary 단일 유지. README (이중언어) 정책과 분리
+- **8주차로 넘긴 것:**
+  - 태스크 1: Floral 테마 추가 (Week 7 인프라 위에 `:root[data-theme="floral"]` 블록 + union 확장 + Google Font serif 1 개로 가벼운 확장)
+  - 태스크 2: 방명록 Firebase — `.claude/rules/firebase.md` 신규 (스키마 · 보안 규칙 · 비밀번호 해싱 · 욕설 필터) + Firestore 설정 + CRUD UI
+  - 태스크 3: 구글 캘린더 실기기 검증 (Android 구글 앱 · iOS Safari 에서 KST 12:00 표시 확인) — 기회 생길 때
+  - 후보: Modern accent 색 재검토 (`#e2e8f0` 이 약해 보이면 포인트 색 도입) — 사용자 피드백 트리거
+
 ---
 
 ## 🔜 남은 주차 계획
 
 > 지난 5주 경험을 반영해 재조정합니다. 여기 적힌 건 계획일 뿐, 주차가 끝날 때 "실제 한 것"으로 위 섹션에 옮겨 적으세요.
 
-### Week 7 · v0.1.0 릴리스 + 다중 테마 시스템 설계 시작
+### Week 8 · Floral 테마 + 방명록 (Firebase) 진입
 
-**목표:** MVP 외부 공개 신호 + 핵심 차별화 기능 설계 진입.
+**목표:** Week 7 테마 인프라 위에 Floral 을 가볍게 얹고, 방명록으로 Firebase 데이터 레이어 첫 도입.
 
-- [ ] `v0.1.0` 태그 + `CHANGELOG.md` 신규 + GitHub Release 노트 (6 주차에 MVP Must 마감 상태)
-- [ ] 테마 구조 리팩터링 — `theme` config 값 하나로 전체 룩 전환. Tailwind v4 `@theme` 토큰의 런타임 전환 방식 실험 (CSS 변수 override vs 멀티 theme 클래스 토글)
-- [ ] 테마 2종 추가: Modern, Floral (또는 Minimal, Vintage) 중 1 종 먼저 착수
-- [ ] 구글 캘린더 일정 추가 버튼 (난이도 낮음, Venue 섹션 추가) — 스케줄에 여유 있으면 함께
-
-**주의점**
-
-- 테마 3종이 "명확히 다른 인상" 을 줘야 차별화. 컬러만 바꾼 수준이면 약함. 폰트/여백/섹션 구성까지 조금씩 달라야 함.
-- 릴리스 노트는 v0.1.0 시점 기능 목록 + 설치·배포 가이드 + 알려진 제약 (인앱 웹뷰 · 저해상 샘플 사진 등) 정직하게 포함
-
-### Week 8 · 다중 테마 완성 + 방명록 진입
-
-**목표:** 남은 테마 1 종 마감 + Firebase 연동 첫 인터랙티브 기능.
-
-- [ ] 남은 테마 1 종 완성 + 섹션 스타일 분기 마감
-- [ ] Firebase 프로젝트 생성 + Firestore 설정 (`.claude/rules/firebase.md` 신규)
-- [ ] 방명록 CRUD (작성/조회/삭제, 비밀번호 해싱)
-- [ ] 욕설 필터 (간단한 금칙어 리스트)
+- [ ] Floral 테마 추가 — `:root[data-theme="floral"]` 블록 + `ThemeName` union 확장 + serif 폰트 1 개. 색 방향 (핑크/로즈 계열) 은 시작 시 사용자와 합의
+- [ ] `.claude/rules/firebase.md` 신규 — 방명록 스키마 · Firestore 보안 규칙 · 비밀번호 해싱 · 욕설 필터 · `NEXT_PUBLIC_FIREBASE_*` 환경 변수 정책
+- [ ] Firebase 프로젝트 생성 + Firestore 초기화 (사용자 직접 Console 작업)
+- [ ] 방명록 CRUD (작성/조회/삭제, 비밀번호 해싱) + 욕설 필터 (금칙어 리스트)
+- [ ] 구글 캘린더 실기기 검증 (Android 구글 앱 · iOS Safari 에서 KST 12:00 표시) — 기회 생길 때
+- [ ] (후보) Modern accent 색 재검토 — 실사용자 피드백 시
 
 **주의점**
 
 - Firestore 보안 규칙 꼭 설정 — 방치하면 누구나 쓰기/삭제 가능
-- `NEXT_PUBLIC_` 프리픽스 이해 (클라이언트 노출)
+- `NEXT_PUBLIC_` 프리픽스 이해 (클라이언트 노출) — Admin 키는 절대 프론트엔드 금지
 - Firebase 관련 작업 시 `.claude/rules/firebase.md` 참조 (이 주차에 생성)
+- 방명록 form Client Component 는 `useSyncExternalStore` 기반 `useIsClient` 훅 3 번째 사용처 후보 → `lib/hooks.ts` 추출 고려
 
 ### Week 9 · 문서화 + 최종 QA + v1.0 준비
 

@@ -49,12 +49,23 @@ if (
 
 ## 도메인 등록 (Kakao 개발자 콘솔)
 
-`개발자 콘솔 > 애플리케이션 > 플랫폼 > Web > 사이트 도메인` 에 등록된 도메인에서만 SDK 가 동작.
+**카카오 콘솔은 도메인을 두 개의 다른 필드로 관리한다.** 둘 다 등록해야 공유 카드가 정상 동작한다 (2026-04-24 5주차 실기기 검증으로 확정).
 
-**필수 등록**:
+| 필드                  | 콘솔 경로                             | 검증 대상                                                       |
+| --------------------- | ------------------------------------- | --------------------------------------------------------------- |
+| JavaScript SDK 도메인 | [앱] > 플랫폼 키 > JavaScript 키      | `Kakao.init()` 호출 허용 (origin)                               |
+| **웹 도메인**         | **[앱] > 제품 링크 관리 > 웹 도메인** | **`content.link.webUrl` · `buttons[].link.webUrl` 호스트 검증** |
+
+한 필드만 등록했을 때의 증상:
+
+- **JavaScript SDK 도메인만 등록**: `Kakao.init()` 는 성공하고 `sendDefault` 도 에러 없이 카드를 보내지만, 카드 본문·버튼의 링크 호스트가 strip 돼서 PC 카톡에는 "모바일에서 확인해주세요", iPhone 에서는 카드 탭 무반응 + `공유하기` 버튼만 노출 (5주차 실기기 재현).
+- **웹 도메인만 등록**: SDK 스크립트가 origin 미등록으로 거부 → `initKakao` silent skip → `isKakaoShareReady()` false → 폴백 경로(URL 복사 토스트) 로 자연 처리.
+
+**필수 등록** (두 필드 모두에):
 
 - 프로덕션 URL (예: `https://our-wedding.vercel.app`)
-- 로컬 개발: `http://localhost:3000`
+- `share.buttons.map` 활성 시 `https://map.kakao.com` 도 웹 도메인 쪽에 추가 — 아래 `buttons[].link.webUrl` 하위 섹션 참조
+- 로컬 `http://localhost:3000` 은 아래 "dev 환경 검증 무효" 정책상 쓸모 없음 — 생략 권장
 
 **Vercel 프리뷰 URL 은 등록 대상이 아니다.** 프리뷰는 커밋마다 서브도메인이 달라져 사전 등록 불가. 프리뷰에서는:
 
@@ -70,6 +81,22 @@ if (
 - 4주차 dev 환경에서 직접 확인: `meta.siteUrl: "https://example.vercel.app"` (콘솔 미등록) + 콘솔 default `http://localhost:3000` 환경에서 보낸 카드 버튼이 `http://localhost:3000/...` 로 이동.
 
 → **`invitation.config.ts` 의 `meta.siteUrl` 은 카카오 콘솔 등록 도메인과 정확히 일치해야 한다.** dev 환경에서 카카오 공유 end-to-end 검증을 시도하지 말 것 — 콘솔에 localhost 를 default 로 등록 + meta.siteUrl 도 localhost 로 맞추는 임시 우회는 가능하지만 카카오 캐시·default 우선순위 등 추가 변수가 많아 시간 대비 가치 없음. 진짜 검증은 프로덕션 도메인 + 실기기 카카오톡으로만.
+
+### `buttons[].link.webUrl` 의 외부 서비스 도메인도 각각 등록 필요
+
+위 강제 치환 규칙은 `content.link` 뿐 아니라 **`buttons[].link` 에도 동일하게 적용된다.** 카드 본문 탭 URL 과 별개로 버튼별 링크 호스트가 웹 도메인에 없으면 그 버튼도 default 로 strip.
+
+**5주차 실기기에서 걸린 사례 (2026-04-24)**:
+
+- `share.buttons.site.link` → `meta.siteUrl = https://invitation-kit.vercel.app` (웹 도메인 등록 ✓) — 정상 동작
+- `share.buttons.map.link` → `kakaoMapDeeplink` 가 반환하는 `https://map.kakao.com/link/to/...` (웹 도메인 미등록) — host strip → "지도 보기" 탭 시 청첩장 홈으로 이동하는 버그
+- **`map.kakao.com` 을 우리 앱의 웹 도메인에 추가 등록하자 정상 동작.** 카카오 자사 도메인이라도 "다른 앱 관점에선 외부 도메인" 이라 별도 등록 필요.
+
+운영 규칙:
+
+- `share.buttons.map` 활성 시 웹 도메인에 `https://map.kakao.com` 추가 필수.
+- 향후 네이버 지도 버튼 도입 시 `https://map.naver.com` 도 동일. 새 외부 딥링크 서비스 버튼 추가할 때마다 웹 도메인 등록 체크리스트에 포함.
+- **v0.2+ 후보 (현 MVP 범위 밖)**: 우리 도메인 위에 `/map?to=...` redirect route (Next.js Route Handler 302) 를 두어 버튼 URL 호스트를 우리 도메인으로 고정 → 외부 서비스 도메인 등록 의존을 제거. 지금은 등록 한 줄로 해결되므로 MVP 스코프에선 채택 안 함.
 
 ## 공유 템플릿 원칙
 
@@ -121,6 +148,7 @@ if (
 ## 이 규칙 파일을 갱신해야 하는 순간
 
 - Kakao JavaScript SDK 의 **메이저 버전** 이 바뀔 때 (v2 → v3 등)
+- **카카오 콘솔 UI 개편** 으로 메뉴 경로·필드 이름이 바뀔 때 — "도메인 등록" 섹션 표가 필드·경로 이름을 참조 기준으로 쓰고 있음
 - 공유 템플릿 구조 변경 (buttons 최대 개수, 새로운 템플릿 타입)
 - **스코프 확장**: 카카오 로그인·페이먼츠·알림톡 등 도입 결정 시 — 별도 규칙 파일로 분리 권장
 - `invitation.config.ts` 의 `share` / `venue` 블록 스키마가 변할 때 (이 문서가 필드명 기준으로 쓰여있음)

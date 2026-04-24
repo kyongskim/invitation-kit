@@ -62,6 +62,15 @@ if (
 - 실제 `Kakao.Share.sendDefault` 는 "등록되지 않은 도메인" 에러로 실패할 수 있음 — 정상 동작.
 - 전체 공유 플로우 (템플릿 렌더, 썸네일, 버튼 링크) 의 end-to-end 검증은 **반드시 프로덕션 도메인에서 실기기 + 카카오톡 설치 환경으로 수행.**
 
+### `link.webUrl` 도 등록 도메인이어야 한다 — 미등록 시 default 로 강제 치환
+
+`Kakao.Share.sendDefault` 의 `buttons[].link.webUrl` / `mobileWebUrl` 호스트가 콘솔 등록 도메인과 다르면 **카카오는 카드를 거부하지 않고 콘솔의 default 도메인으로 host 를 강제 치환**해서 카드를 만든다. path/query 만 우리가 보낸 값이 살아남고 host 는 사라짐. 받은 사람이 카드 버튼을 누르면 엉뚱한 default 도메인으로 이동.
+
+- 카카오 디벨로퍼톡 공식 답변 (https://devtalk.kakao.com/t/localhost-3000/124973): "Links are only permitted for registered site domains; others redirect to the default domain."
+- 4주차 dev 환경에서 직접 확인: `meta.siteUrl: "https://example.vercel.app"` (콘솔 미등록) + 콘솔 default `http://localhost:3000` 환경에서 보낸 카드 버튼이 `http://localhost:3000/...` 로 이동.
+
+→ **`invitation.config.ts` 의 `meta.siteUrl` 은 카카오 콘솔 등록 도메인과 정확히 일치해야 한다.** dev 환경에서 카카오 공유 end-to-end 검증을 시도하지 말 것 — 콘솔에 localhost 를 default 로 등록 + meta.siteUrl 도 localhost 로 맞추는 임시 우회는 가능하지만 카카오 캐시·default 우선순위 등 추가 변수가 많아 시간 대비 가치 없음. 진짜 검증은 프로덕션 도메인 + 실기기 카카오톡으로만.
+
 ## 공유 템플릿 원칙
 
 - **default 템플릿 + `feed` 타입만 사용.** 커스텀 템플릿 ID 는 Kakao 콘솔에 별도 등록/심사가 필요해 OSS 배포 맥락에서 사용자별 설정이 복잡해진다.

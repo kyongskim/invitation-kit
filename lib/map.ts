@@ -9,8 +9,6 @@
  * 앱 미설치 시 iOS Safari 가 차단하거나 "페이지를 열 수 없음" 에러로
  * 떨어져 UX 가 최악. HTTPS URL 은 앱 설치 시 자동으로 앱이 열리고
  * 미설치 시 웹 지도로 폴백되는 단일 코드패스.
- *
- * 네이버 지도 형제 함수 (`naverMapDeeplink`) 는 후속 커밋에서 추가.
  */
 
 export function kakaoMapDeeplink({
@@ -21,4 +19,17 @@ export function kakaoMapDeeplink({
   coords: { lat: number; lng: number };
 }): string {
   return `https://map.kakao.com/link/to/${encodeURIComponent(name)},${coords.lat},${coords.lng}`;
+}
+
+export function naverMapDeeplink({
+  name,
+  coords,
+}: {
+  name: string;
+  coords: { lat: number; lng: number };
+}): string {
+  const query = encodeURIComponent(name);
+  // `c=lng,lat,zoom,angle,pitch,bearing,mapType` — 좌표 중심 + 2D(`dh`) 뷰로
+  // 동명이인 장소가 다수 있을 때도 정확한 위치를 우선 표시.
+  return `https://map.naver.com/v5/search/${query}?c=${coords.lng},${coords.lat},16,0,0,0,dh`;
 }

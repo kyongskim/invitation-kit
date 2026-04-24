@@ -22,6 +22,28 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   title: config.meta.title,
   description: config.meta.description,
+  openGraph: {
+    title: config.meta.title,
+    description: config.meta.description,
+    url: config.meta.siteUrl,
+    siteName: config.meta.title,
+    images: [
+      {
+        url: config.share.thumbnailUrl,
+        width: 800,
+        height: 400,
+        alt: config.meta.title,
+      },
+    ],
+    locale: "ko_KR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: config.meta.title,
+    description: config.meta.description,
+    images: [config.share.thumbnailUrl],
+  },
 };
 
 export default function RootLayout({

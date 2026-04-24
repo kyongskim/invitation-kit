@@ -195,18 +195,59 @@ export const config: InvitationConfig = {
 
   gallery: [
     {
-      src: "/images/gallery/01.jpg",
+      src: "/images/gallery/sample-01.jpg",
       alt: "웨딩촬영 01",
       width: 1200,
-      height: 1800,
+      height: 1500,
     },
     {
-      src: "/images/gallery/02.jpg",
+      src: "/images/gallery/sample-02.jpg",
       alt: "웨딩촬영 02",
-      width: 1800,
-      height: 1200,
+      width: 650,
+      height: 836,
     },
-    // ...
+    {
+      src: "/images/gallery/sample-03.jpg",
+      alt: "웨딩촬영 03",
+      width: 536,
+      height: 352,
+    },
+    {
+      src: "/images/gallery/sample-04.jpg",
+      alt: "웨딩촬영 04",
+      width: 516,
+      height: 338,
+    },
+    {
+      src: "/images/gallery/sample-05.jpg",
+      alt: "웨딩촬영 05",
+      width: 397,
+      height: 527,
+    },
+    {
+      src: "/images/gallery/sample-06.jpg",
+      alt: "웨딩촬영 06",
+      width: 549,
+      height: 626,
+    },
+    {
+      src: "/images/gallery/sample-07.jpg",
+      alt: "웨딩촬영 07",
+      width: 330,
+      height: 469,
+    },
+    {
+      src: "/images/gallery/sample-08.jpg",
+      alt: "웨딩촬영 08",
+      width: 330,
+      height: 469,
+    },
+    {
+      src: "/images/gallery/sample-09.jpg",
+      alt: "웨딩촬영 09",
+      width: 650,
+      height: 433,
+    },
   ],
 
   accounts: {

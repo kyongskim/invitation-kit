@@ -1,4 +1,5 @@
 import { Accounts } from "@/components/sections/Accounts";
+import { Gallery } from "@/components/sections/Gallery";
 import { Greeting } from "@/components/sections/Greeting";
 import { Main } from "@/components/sections/Main";
 import { Share } from "@/components/sections/Share";
@@ -9,6 +10,7 @@ export default function Home() {
     <main className="flex flex-col">
       <Main />
       <Greeting />
+      <Gallery />
       <Venue />
       <Accounts />
       <Share />

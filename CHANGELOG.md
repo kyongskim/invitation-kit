@@ -4,6 +4,86 @@
 
 포맷은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/) 을 따르며, 버전 표기는 [Semantic Versioning](https://semver.org/lang/ko/) 을 따릅니다.
 
+## [1.0.0] - 2026-04-25
+
+10주차 누적 — 비개발자 5분 배포 가이드 안정화 + 데모 사이트 가시화 + 첫 Performance/Accessibility 측정 사이클 + 외부 기여자 환영 준비. v0.2 → v1.0 누적 6 커밋 + 본 릴리스 커밋.
+
+### Added
+
+- **데모 사이트 섹션 신규** (`222234c`) — 한·영 README 의 새 H2 `## 🎬 데모/Demo`. 라이브 데모 박스 + 데스크톱 풀페이지 1 장 + 모바일 4 컷 markdown 표 (홈 · 갤러리 라이트박스 · Venue 3 버튼 · 방명록) + 다중 테마 collage 1 장. `public/images/screenshots/` 디렉토리 신규, 6 PNG (~7MB). `invitation-kit.vercel.app` 자체가 가상 커플 (`김철수 ♥ 이영희`) 의 OSS 공식 데모로 작동.
+- **`CONTRIBUTING.md`** (`2010211`, 한국어 only — 가이드 3 종 정책 일관) — 환영하는 기여 4 종 + 환영 안 하는 기여 5 종 (스코프 밖) + 개발 환경 setup + 자주 쓰는 명령어 표 + 표준 quality gate 시퀀스 + 새 테마 PR 흐름 5 단계 + 커밋 컨벤션 + 모바일 Safari 검증 의무 + 개인정보 안전 + 라이선스 + 도움 받기.
+- **한·영 README v0.2 동기화** (`8fc950e`) — 5주차 `22e90ad` "한·영 동시 현실화" 이후 양쪽 README 모두 변경 0 였던 갭 해소. 6·7·8·9주차 누적 (다중 테마 · 캘린더 · 방명록 · 가이드 3 종 · v0.2 릴리스) 을 한·영 동시 1 커밋으로 반영. H2 9 개 양쪽 대칭, 라인 수 243/243. `Quick Start` 5 번 "Firebase 설정" 단계 신규, `Guides` 섹션 신규, `Environment variables` 1 키 → 7 키, 영문에 `Project Structure` · `Inspiration` 신규, 영문 전용 한국 결혼식 컨텍스트 보강.
+
+### Changed
+
+- **Pretendard variable 2MB → 3 weight Korean subset (~784KB)** (`82f30c7`) — `app/fonts/PretendardVariable.woff2` (2,059KB, 페이지 weight 의 80%) 를 `Pretendard-{Light,Regular,Medium}.subset.woff2` 3 파일 (각 ~261KB) 로 분할. 실 사용 weight 만 cover (font-light 6 + font-medium 2 + default normal). next/font/local 의 다중 src array 등록. 분량 ~62% 절감. `pretendard@1.x` npm package 의 dist 사용 후 uninstall (런타임 의존성 0).
+- **Gallery `priority={idx < 3}` 제거** (`d378bb2`) — Gallery 는 above-the-fold 가 아닌데 priority=true 가 SSR 에 `<link rel="preload">` 박아 의미 없는 우선순위. `next/image` default lazy loading 으로 전환. 라이트박스 Image 는 open 시점 mount 라 유지.
+- **Classic·Floral `--color-secondary` contrast 조정** (`b1c30fd`) — Classic `#8b7355 → #6b5942`, Floral `#8b6b6b → #6b4f4f`. WCAG AA 4.5:1 충족 (~5.5:1 추정). HSL 채도·색상 유지, 명도만 낮춤. Modern (`#475569`) 은 이미 7.5:1 라 변경 없음.
+
+### Performance (Lighthouse 모바일 simulate Slow 4G)
+
+| 지표            | v0.2 baseline |   v1.0 |       Δ |
+| --------------- | ------------: | -----: | ------: |
+| **Performance** |        **71** | **78** |  **+7** |
+| LCP             |        15.1 s |  5.1 s | −10.0 s |
+| TTI             |        15.1 s |  6.2 s |  −8.9 s |
+| FCP             |         2.5 s |  2.2 s |  −0.3 s |
+| TBT             |         30 ms |  10 ms |  −20 ms |
+| CLS             |             0 |      0 |       — |
+| Accessibility   |            96 |     96 |       — |
+| Best Practices  |           100 |    100 |       — |
+| SEO             |           100 |    100 |       — |
+
+90+ 목표 미달 (-12). simulate 환경 기준 — 실 사용자 환경 (LTE/Wi-Fi) 측정 별도 + firebase·bcryptjs lazy import 같은 추가 작업은 v1.1+ 후보. Pretendard subset 가 LCP −10s 의 거의 전부.
+
+### Decisions
+
+- **D-3 보류**: text-primary `#c9a87c` (Classic Hero `<h1>` + 모든 `<h2>` 색) 의 contrast 2.07:1 (WCAG large text 3:1 미달). Classic warm beige 디자인 셀링 색이라 v1.0 에 한해 디자인 우선. 9주차 "Floral 디자인 재설정 보류" 패턴 — 사용자 트리거 시 별도 호흡.
+- **C-2 vs C-α 비교**: Pretendard Korean subset 의 두 안 (3 weight static · dynamic-subset CSS) 중 static 채택. dynamic-subset 이 fetch byte 더 작지만 git 에 70+ 파일 추가 (~2MB) + next/font 우회 trade-off — 별도 호흡 후보.
+
+### Known Limitations
+
+- **모바일 Performance simulate 78 점** — 목표 90+ 미달. 실 사용자 환경 측정 필요.
+- **데스크톱 Lighthouse simulate 측정 불안정** — Lighthouse CLI desktop preset 이 LCP/TBT/TTI 를 지속 score=null 반환. [PageSpeed Insights](https://pagespeed.web.dev) 웹사이트 측정이 정확.
+- **text-primary contrast** — D-3 보류, 별도 결정 호흡 필요.
+- **갤러리 sample 이미지 + screenshots PNG 사이즈** — `sample-*.jpg` 9 장 (각 200~330KB) · `desktop-home.png` (3MB) · `mobile-gallery-lightbox.png` (2.4MB). v1.1+ 이미지 자동 최적화 CLI 후보로 미룸.
+- **GIF 데모 미포함** — 회고 3번 본문엔 명시됐으나 본 호흡 제외 (정적 SS 6 장으로 closure). v1.1+ 셀링 보강 후보.
+
+### Not yet (v1.1+ 후보)
+
+- 웹 에디터 UI (비개발자 대상 SaaS 방향, 실사용 수요 보고 재검토)
+- RSVP · 참석 여부 응답
+- 다국어 UI (i18n)
+- BGM · 배경 음악
+- Apple Calendar 일정 추가
+- 방명록 본인 삭제 (Cloud Function 프록시)
+- App Check (방명록 스팸·스크래핑 방지)
+- 이미지 자동 최적화 CLI
+- `firebase` · `bcryptjs` lazy import (Performance 90+ 도달 시도, SSR boundary 검증 필요)
+- Pretendard dynamic-subset (unicode-range 기반 분할 fetch, ~200-400KB 만 실 fetch)
+- Floral 디자인 재설정 (8주차 1차 구현 인상 부족)
+- Modern accent 색 재검토 (`#e2e8f0` 약함)
+- text-primary contrast 결정 (Classic 셀링 색 vs WCAG AA)
+- GIF 데모 (갤러리 swipe 인터랙션, 정적 SS 로 못 잡음)
+
+### 라이선스 점검
+
+- **LICENSE**: MIT (Copyright 2026 invitation-kit contributors) — v0.1.0 이후 변동 없음
+- **`app/fonts/OFL.txt`**: SIL Open Font License 1.1 (Pretendard) — 폰트 distribute 의무 준수, subset 파일도 OFL 적용
+- **신규 의존성 0** (v0.2 → v1.0): `pretendard@1.x` 는 install 후 uninstall, `dist/web/static/woff2-subset/` 의 3 파일만 `app/fonts/` 로 cp. 런타임 dependency 0 추가
+- 기존 의존성 라이선스 호환: `next` (MIT) · `react`/`react-dom` (MIT) · `tailwindcss` v4 (MIT) · `firebase` (Apache-2.0) · `bcryptjs` (MIT) · `framer-motion` (MIT) — 모두 MIT 호환
+
+### 설치·배포
+
+1. [GitHub 리포](https://github.com/kyongskim/invitation-kit) 를 Fork.
+2. `invitation.config.ts` 를 본인 결혼식 정보로 수정 (`theme: "classic" | "modern" | "floral"`).
+3. `public/images/gallery/` 에 본인 사진을 `sample-0N.jpg` 파일명으로 교체.
+4. Vercel 에 연결 — 환경변수 등록 (카카오 1 + Firebase 6, [API 키 가이드](docs/api-keys.md) 참조).
+5. 카카오 개발자 콘솔에 도메인 등록 (JavaScript SDK 도메인 + 웹 도메인 + `map.kakao.com`).
+6. Firebase Console 에서 Firestore (Standard · `asia-northeast3` · 프로덕션 모드) → 보안 규칙에 `firestore.rules` 본문 붙여넣기.
+
+비개발자 시점 풀 가이드: [`README.md`](README.md) · [`docs/api-keys.md`](docs/api-keys.md) · [`docs/config-guide.md`](docs/config-guide.md) · [`docs/theme-guide.md`](docs/theme-guide.md) · [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
 ## [0.2.0] - 2026-04-25
 
 8주차 누적 — 다중 테마 인프라 (Modern · Floral) · 구글 캘린더 일정 추가 · Firebase Firestore 방명록 · 운영 결정 명문화 (ADR 005·006).
@@ -117,5 +197,6 @@
 
 세부 가이드는 [README.md](README.md) 참조.
 
+[1.0.0]: https://github.com/kyongskim/invitation-kit/releases/tag/v1.0.0
 [0.2.0]: https://github.com/kyongskim/invitation-kit/releases/tag/v0.2.0
 [0.1.0]: https://github.com/kyongskim/invitation-kit/releases/tag/v0.1.0

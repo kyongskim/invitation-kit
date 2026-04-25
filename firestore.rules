@@ -1,19 +1,17 @@
 rules_version = '2';
 
-// invitation-kit 방명록 보안 규칙.
-// 자세한 설계 근거는 docs/adr/007-guestbook-self-delete-strategy.md
-// (12주차 C → C' 전환) 및 .claude/rules/firebase.md 의
-// "삭제 전략 — C' 경로" 섹션 참조.
+// invitation-kit 보안 규칙.
 //
-// 핵심:
-// - 방명록은 공개 read (실명·일상 메시지 전제)
-// - 작성은 스키마 4 필드 정확히 + 길이·타입·서버 타임스탬프 검증
-// - update 금지 (글 수정 기능은 v1.1+ 후보)
-// - delete 는 누구든 허용 — 클라이언트가 verifyPassword 후
-//   일치 시에만 deleteDoc 호출하는 책임을 진다. 우회 가능
-//   (도메인 적정 트레이드오프: 청첩장 위협 모델 약함, 운영자
-//   Console export 백업 복구 가능). 다른 도메인 fork 시 부적합 —
-//   서버 매개 (Vercel Route Handler + Admin SDK) 로 갈아끼울 것.
+// guestbook (방명록) — ADR 007 / firebase.md "삭제 전략 — C' 경로"
+//   - 공개 read · 4 필드 정확 검증 · update 금지 · delete 누구든 허용
+//   - 클라이언트가 verifyPassword 후 일치 시 deleteDoc. 우회 가능
+//     (청첩장 도메인 적정 트레이드오프). 다른 도메인 fork 시 부적합.
+//
+// rsvp (참석 여부) — ADR 008
+//   - read 차단 (host 만 Firebase Console 조회) · 6 필드 정확 검증
+//   - update/delete 모두 금지 — 편집/취소 미지원, 다시 제출 + host 책임 dedup
+//   - read 차단 근거: RSVP 는 사적 정보 (참석/불참 + 동반 인원).
+//     누가 안 오는지 노출되면 사회적 부담이 큼.
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -34,6 +32,26 @@ service cloud.firestore {
 
       allow update: if false;
       allow delete: if true;
+    }
+
+    match /rsvp/{id} {
+      allow read: if false;
+
+      allow create: if
+        request.resource.data.keys().hasOnly(['name', 'attendance', 'side', 'companions', 'message', 'createdAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 1
+        && request.resource.data.name.size() <= 20
+        && request.resource.data.attendance in ['yes', 'no']
+        && request.resource.data.side in ['groom', 'bride']
+        && request.resource.data.companions is int
+        && request.resource.data.companions >= 0
+        && request.resource.data.companions <= 5
+        && request.resource.data.message is string
+        && request.resource.data.message.size() <= 200
+        && request.resource.data.createdAt == request.time;
+
+      allow update, delete: if false;
     }
   }
 }

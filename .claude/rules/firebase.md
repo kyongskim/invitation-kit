@@ -1,13 +1,13 @@
 # Firebase 규칙
 
-> 이 프로젝트에서 Firebase (방명록 · 향후 RSVP) 를 구현할 때 따르는 원칙. CLAUDE.md 의 Progressive Disclosure 로 "Firebase/방명록 관련 작업 시" 자동 참조.
+> 이 프로젝트에서 Firebase (방명록 · RSVP) 를 구현할 때 따르는 원칙. CLAUDE.md 의 Progressive Disclosure 로 "Firebase/방명록/RSVP 관련 작업 시" 자동 참조.
 
 ## Scope
 
 **이 규칙의 적용 범위**:
 
-- 방명록 (Firestore `guestbook` 컬렉션)
-- 향후 RSVP — 같은 Firebase 앱 · 같은 `NEXT_PUBLIC_FIREBASE_*` 환경 변수 재사용. 실제 RSVP 스키마 등장 시 "Firestore 스키마" 섹션에 이웃 표 추가로 확장
+- 방명록 (Firestore `guestbook` 컬렉션) — ADR 007
+- RSVP (Firestore `rsvp` 컬렉션) — ADR 008. 같은 Firebase 앱 · 같은 `NEXT_PUBLIC_FIREBASE_*` 환경 변수 재사용
 
 **적용 범위 밖 (별도 규칙 파일 없이 당장 도입 금지)**:
 
@@ -105,6 +105,23 @@ export const db: Firestore = getFirestore(app);
 
 `invitation.config.ts` 의 `GuestbookConfig` (`enabled`, `minPasswordLength`, `profanityFilter`) 는 **UI 동작 제어용** 이고 Firestore 스키마와 1:1 대응 아님.
 
+### `rsvp/{autoId}` (auto-generated document ID)
+
+| 필드         | 타입                 | 설명                                   |
+| ------------ | -------------------- | -------------------------------------- |
+| `name`       | `string`             | 응답자 이름. 1~20자.                   |
+| `attendance` | `'yes' \| 'no'`      | 참석 여부. 정확히 두 값 중 하나.       |
+| `side`       | `'groom' \| 'bride'` | 신랑/신부 측. 정확히 두 값 중 하나.    |
+| `companions` | `number`             | 동반 인원 (본인 제외). 0~5 정수.       |
+| `message`    | `string`             | 전하실 말씀. 0~200자 (빈 문자열 허용). |
+| `createdAt`  | `Timestamp`          | `serverTimestamp()` 로 생성.           |
+
+- **`companions` · `message` 가 UI 레벨 선택 표시 필드라도 Firestore 페이로드에는 항상 포함**. 보안 규칙 `hasOnly([...])` 가 정확 일치만 통과시키므로 optional 처리하면 검증이 약해짐. UI 가 입력란을 숨기면 페이로드는 기본값 (`0` · `""`) 으로 채운다.
+- **read 차단 (`allow read: if false`)** — RSVP 는 사적 정보 (참석/불참 + 동반 인원 + 메시지). host 는 Firebase Console 의 Firestore 데이터 탭에서 직접 조회. 방명록 (`read: if true`) 과 의도적으로 다른 정책. 자세한 근거는 ADR 008.
+- **`update`/`delete` 모두 금지** — 편집·취소 미지원. 응답 변경은 다시 제출 + host 책임 dedup. 이유: ADR 007 (방명록 본인 삭제 C') 의 "비밀번호 검증 + 클라이언트 우회 가능" 트레이드오프를 RSVP 까지 끌어오는 게 form 길이·비개발자 사용성 부담만 키움. RSVP 도메인은 "결정 변경" 이 드물고, 한국 결혼식 관행상 갑작스런 변경은 host 직접 연락.
+
+`invitation.config.ts` 의 `RSVPConfig` (`enabled`, `deadline`, `message`, `fields`) 는 **UI 동작 제어용** 이고 Firestore 스키마와 1:1 대응 아님. `deadline` 은 클라이언트 단 form disable 처리 (서버 단 강제 아님 — 도메인 적정 트레이드오프).
+
 ## Firestore 보안 규칙
 
 `firestore.rules` (Firebase Console > Firestore > "규칙" 탭에 붙여넣기):
@@ -130,6 +147,26 @@ service cloud.firestore {
 
       allow update: if false;
       allow delete: if true;
+    }
+
+    match /rsvp/{id} {
+      allow read: if false;
+
+      allow create: if
+        request.resource.data.keys().hasOnly(['name', 'attendance', 'side', 'companions', 'message', 'createdAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 1
+        && request.resource.data.name.size() <= 20
+        && request.resource.data.attendance in ['yes', 'no']
+        && request.resource.data.side in ['groom', 'bride']
+        && request.resource.data.companions is int
+        && request.resource.data.companions >= 0
+        && request.resource.data.companions <= 5
+        && request.resource.data.message is string
+        && request.resource.data.message.size() <= 200
+        && request.resource.data.createdAt == request.time;
+
+      allow update, delete: if false;
     }
   }
 }

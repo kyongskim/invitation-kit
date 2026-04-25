@@ -147,7 +147,8 @@ Copy the 6 fields from `firebaseConfig` into Vercel Environment Variables as `NE
 - 📸 **Photo gallery + lightbox** — CSS columns masonry, prev/next buttons, ArrowLeft/Right keys, touch swipe (100px threshold), backdrop tap, Escape, wrap-around. Optimized via `next/image`
 - 📍 **Venue** — address + Kakao/Naver Map deeplink buttons + **Add-to-Google-Calendar** button + transit info (subway / bus / car / parking)
 - 💰 **Bank-account copy** — segmented toggle for groom/bride sides + accordion + hyphen-stripped copy (some Korean banking apps reject hyphens) + optional KakaoPay/Toss deeplinks
-- ✍️ **Guestbook** — Firebase Firestore + bcryptjs password hashing (salt 10) + profanity filter (574 entries from `badwords-ko` + 10 self-curated consonant-variant entries). Loading / ready / error / empty states + optimistic prepend. Anonymous posts only — no Firebase Auth; the bcrypt password slot is forward-compat for v1.1+ self-deletion. Today, only the host can delete via Firebase Console
+- ✍️ **Guestbook** — Firebase Firestore + bcryptjs password hashing (salt 10) + profanity filter (574 entries from `badwords-ko` + 10 self-curated consonant-variant entries). Loading / ready / error / empty states + optimistic prepend. Self-delete via password match (ADR 007 C')
+- 📝 **RSVP** — attendance form: name, yes/no, groom/bride side, companions, optional message. Auto-disables after `config.rsvp.deadline`. Responses go to a Firestore `rsvp` collection with `read: false` (only the host views via Firebase Console). Design rationale in ADR 008
 - 💬 **KakaoTalk share** — Kakao SDK v2.8.1 `Kakao.Share.sendDefault` with the feed template. Falls back to URL clipboard copy when the SDK isn't ready (in-app webviews, desktop, etc.)
 - 🚨 **In-app webview banner** — detects KakaoTalk / Instagram / Facebook / Naver / Line webviews and prompts users to open in an external browser. `sessionStorage`-based dismiss
 - 🎨 **Multi-theme (Classic · Modern · Floral)** — `:root[data-theme]` + Tailwind v4 `@theme` CSS variable overrides. Theme switching requires zero component changes
@@ -161,14 +162,7 @@ Copy the 6 fields from `firebaseConfig` into Vercel Environment Variables as `NE
 
 ### v1.1+ roadmap
 
-- RSVP form
-- Self-delete for guestbook entries (Cloud Function proxy)
-- i18n (multilingual UI)
-- Background music (respects silent mode)
-- Add to Apple Calendar
-- Web-based config editor
-- App Check (guestbook spam protection)
-- Image optimization CLI
+See [`docs/00-roadmap.md`](./docs/00-roadmap.md#-v11-마일스톤) for the full prioritized list. Shipped: OG optimization ✅ · text-primary contrast ✅ · guestbook self-delete (C' path) ✅ · RSVP ✅. Open: i18n · App Check · Pretendard dynamic-subset · server-mediated self-delete (B path) · BGM · Apple Calendar.
 
 > Full change history: [CHANGELOG.md](./CHANGELOG.md).
 

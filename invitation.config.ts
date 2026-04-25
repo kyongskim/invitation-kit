@@ -93,6 +93,27 @@ export interface GuestbookConfig {
   profanityFilter?: boolean;
 }
 
+export interface RSVPConfig {
+  enabled: boolean;
+  /**
+   * RSVP 마감 시각 (ISO 8601, 타임존 포함 권장).
+   * 미설정 시 항상 활성. 마감 후 form 은 disable + 안내 문구 노출.
+   */
+  deadline?: string;
+  /** 폼 상단 안내 문구. 미설정 시 기본값 사용 */
+  message?: string;
+  /**
+   * 선택 입력 필드 표시 토글. 미설정 시 모두 표시.
+   * 필수 필드 (이름·참석여부·신랑·신부측) 는 항상 노출.
+   */
+  fields?: {
+    /** 동반 인원 (본인 제외, 0~5) */
+    companions?: boolean;
+    /** 메시지 (0~200자, 빈 문자열 허용) */
+    message?: boolean;
+  };
+}
+
 export interface InvitationConfig {
   /** 사이트 메타 — <title>과 OG 태그에 사용 */
   meta: {
@@ -135,6 +156,9 @@ export interface InvitationConfig {
 
   /** 방명록 (Firebase 연결 시 활성화) */
   guestbook: GuestbookConfig;
+
+  /** RSVP — 참석 여부 응답 (Firebase 연결 시 활성화) */
+  rsvp: RSVPConfig;
 
   /** 배경 음악 (선택, 기본 꺼짐) */
   music?: {
@@ -293,6 +317,16 @@ export const config: InvitationConfig = {
     enabled: true,
     minPasswordLength: 4,
     profanityFilter: true,
+  },
+
+  rsvp: {
+    enabled: true,
+    deadline: "2026-05-14T23:59:59+09:00",
+    message: "참석 여부를 알려주시면\n결혼식 준비에 큰 도움이 됩니다.",
+    fields: {
+      companions: true,
+      message: true,
+    },
   },
 
   closing: {

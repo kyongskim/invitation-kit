@@ -310,6 +310,38 @@ interface GuestbookConfig {
 
 ---
 
+## rsvp — 참석 의사 응답
+
+```ts
+interface RSVPConfig {
+  enabled: boolean;
+  deadline?: string;
+  message?: string;
+  fields?: {
+    companions?: boolean;
+    message?: boolean;
+  };
+}
+```
+
+| 필드                | 타입     | 기본값                                                      | 효과                                                                            |
+| ------------------- | -------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `enabled`           | boolean  | -                                                           | `false` 시 RSVP 섹션 자체가 렌더링되지 않음                                     |
+| `deadline`          | string?  | 미설정 시 항상 활성                                         | ISO 8601 + 타임존 (예: `"2026-05-14T23:59:59+09:00"`). 마감 후 form 자동 비활성 |
+| `message`           | string?  | `"참석 여부를 알려주시면\n결혼식 준비에 큰 도움이 됩니다."` | 폼 상단 안내 문구. `\n` 으로 줄바꿈                                             |
+| `fields.companions` | boolean? | `true`                                                      | `false` 면 동반 인원 입력란 숨김 (페이로드는 `0` 으로 고정)                     |
+| `fields.message`    | boolean? | `true`                                                      | `false` 면 메시지 입력란 숨김 (페이로드는 `""` 으로 고정)                       |
+
+**수집 필드 (Firestore `rsvp` 컬렉션)**: `name` (1~20자) · `attendance` (`yes`/`no`) · `side` (`groom`/`bride`) · `companions` (0~5 정수, 본인 제외) · `message` (0~200자) · `createdAt`.
+
+**read 차단**: RSVP 응답은 사적 정보 (참석/불참 + 동반 인원) 라 다른 하객에게 노출되지 않습니다. `firestore.rules` 의 `rsvp` 컬렉션은 `allow read: if false`. **운영자는 [Firebase Console](https://console.firebase.google.com) > Firestore Database > Data 탭** 에서 `rsvp` 컬렉션을 직접 조회·정렬·CSV 내보내기. 자세한 결정 근거는 [`docs/adr/008-rsvp-data-model-and-rules.md`](./adr/008-rsvp-data-model-and-rules.md).
+
+**UX 동작**: 첫 방문 시 자동 모달 popup 으로 응답 폼 노출 (sessionStorage 로 세션당 1회). 닫기는 X 버튼 · backdrop 클릭 · ESC 키 모두 동작. inline 섹션 "참석 의사 보내기" 버튼이 모달을 다시 띄움. **응답 후엔** 성공 카드 + "응답을 수정하거나 다시 보낼게요" 링크 — 클릭 시 빈 폼 모달 재오픈, 다시 submit 하면 **새 doc 으로 저장** (Firestore 단 update 차단 — ADR 008). 운영자가 Firebase Console 에서 같은 이름의 중복을 createdAt 기준으로 마지막 응답만 인정.
+
+**마감일은 클라이언트 단 비활성**: form disable 은 시각적 안내. DevTools 우회로 마감 후에도 submit 가능 — 청첩장 도메인 위협 모델 약함을 전제로 한 트레이드오프. vandalism 사례 발생 시 ADR 008 의 "미래 트리거" 절 참조.
+
+---
+
 ## music — 배경 음악 (선택)
 
 ```ts

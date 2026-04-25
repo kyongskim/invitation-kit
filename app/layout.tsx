@@ -10,10 +10,25 @@ import { config } from "@/invitation.config";
 import "./globals.css";
 
 const pretendard = localFont({
-  src: "./fonts/PretendardVariable.woff2",
+  src: [
+    {
+      path: "./fonts/Pretendard-Light.subset.woff2",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "./fonts/Pretendard-Regular.subset.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/Pretendard-Medium.subset.woff2",
+      weight: "500",
+      style: "normal",
+    },
+  ],
   variable: "--font-pretendard",
   display: "swap",
-  weight: "45 920",
 });
 
 const cormorant = Cormorant_Garamond({

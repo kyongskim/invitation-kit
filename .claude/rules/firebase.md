@@ -70,13 +70,18 @@ export const db: Firestore = getFirestore(app);
 
 **외부 콘솔 작업은 사용자가 직접 수행한다.** Claude 는 원격 콘솔 조작 불가. 이 섹션은 안내 시 참조 소스.
 
-1. [Firebase Console](https://console.firebase.google.com) 접속 → 프로젝트 생성. 프로젝트 이름 임의.
-2. 좌측 빌드 메뉴 > **Firestore Database** > "데이터베이스 만들기" → **프로덕션 모드로 시작** 선택. **테스트 모드 금지** (30일 후 만료 + 그 전엔 누구나 쓰기 가능).
-3. 리전: **asia-northeast3** (서울) 권장. 한 번 선택하면 변경 불가.
-4. 좌측 톱니바퀴 > 프로젝트 설정 > "내 앱" 섹션에서 **웹 앱 (`</>`)** 추가. 앱 이름은 임의. **"Firebase Hosting 설정" 체크 해제** (Vercel 사용).
-5. 등록 완료 후 화면의 `firebaseConfig` 객체 6 필드를 `.env.local` · Vercel Environment Variables 양쪽에 복사.
-6. Authentication · Storage · Functions 는 **활성화하지 않는다** (범위 밖).
-7. **Authorized Domains** (Authentication > Settings) 는 Auth 미사용인 현 단계에서는 기본값 유지. Auth 도입 시에만 프로덕션 도메인 추가.
+⚠️ **Firebase Console UI 는 자주 바뀐다** — 이 단계 번호와 메뉴 이름은 2026-04-25 기준 스냅샷. 화면이 다르게 보이면 아래 **핵심 4 가지** (① Standard edition ② asia-northeast3 ③ 프로덕션 모드 ④ Hosting 체크 해제) 만 잘 만족시키면 OK. UI 변경 발견 시 이 섹션을 그때그때 갱신.
+
+1. [Firebase Console](https://console.firebase.google.com) 접속 → 프로젝트 생성. 프로젝트 이름 임의. **Google Analytics 비활성화 권장** — 활성화 시 config 가 7 필드 (`measurementId` 추가) 로 늘어나 이 규칙이 가정한 6 필드 환경과 어긋남.
+2. 좌측 사이드바 > **데이터베이스 및 스토리지** (Database & Storage) 그룹 > **Firestore Database** > "데이터베이스 만들기" 클릭.
+3. **버전 선택**: ⚠️ **Standard edition** 선택. **Enterprise edition 금지** — 청첩장 스코프엔 과하고 비용 발생 + 기능 분리. Spark (무료) 플랜은 Standard 에서만 적용.
+4. **위치 선택**: **`asia-northeast3` (서울)** 권장. 한 번 선택하면 영구 변경 불가. 안 보이면 `asia-northeast1` (도쿄) 차선.
+5. **모드 선택** (위치 선택 _후_ 에 나오는 화면): **프로덕션 모드로 시작** 선택. **테스트 모드 금지** (30일 후 만료 + 그 전엔 누구나 쓰기 가능). 단, 일부 신규 UI 에선 모드 선택 자체가 사라지고 Standard 기본값이 deny-all 프로덕션 모드인 경우도 있음 — 그때는 그냥 다음 단계로.
+6. **사용 설정** 클릭 → 1~2분 프로비저닝 대기 → 빈 Firestore 데이터 탭 화면.
+7. 좌측 상단 프로젝트 이름 옆 **톱니바퀴 (⚙️)** > **프로젝트 설정** > "일반" 탭 > "내 앱" 섹션 > **웹 앱 (`</>`)** 추가. 앱 닉네임 임의. ⚠️ **"이 앱에 Firebase Hosting 도 설정하기" 체크 해제** (Vercel 사용 — Hosting 충돌 회피).
+8. **앱 등록** 클릭 → 화면에 노출되는 `firebaseConfig` 객체 6 필드를 `.env.local` · Vercel Environment Variables 양쪽에 복사. (창 닫은 뒤엔 같은 페이지의 "SDK 설정 및 구성" > "구성" 라디오로 다시 노출 가능.)
+9. Authentication · Storage · Functions 는 **활성화하지 않는다** (범위 밖).
+10. **Authorized Domains** (Authentication > Settings) 는 Auth 미사용인 현 단계에서는 기본값 유지. Auth 도입 시에만 프로덕션 도메인 추가.
 
 ## Firestore 스키마
 

@@ -78,7 +78,6 @@ export function Gallery() {
                   width={image.width ?? 800}
                   height={image.height ?? 600}
                   sizes="(min-width: 640px) 33vw, 50vw"
-                  priority={idx < 3}
                   className="h-auto w-full"
                 />
               </button>

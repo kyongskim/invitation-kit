@@ -22,6 +22,8 @@
 ### Decisions
 
 - **ADR 007 신규** — 방명록 본인 삭제 전략 C → C' 전환 + 거부 대안 5종 (B Vercel Route Handler · C Cloud Function · D Soft delete · E 입력 빼기) 명시 + v1.1+ 재검토 트리거. 8주차 firebase.md 한정이던 결정을 ADR 격상.
+- **v1.1+ 마일스톤 정의** (`docs/00-roadmap.md`) — text-primary contrast · OG png 최적화 · App Check · i18n · RSVP · 본인 삭제 서버 매개 · Pretendard dynamic-subset 등 1순위 후보 7종 + v1.2+ 여유 후보 4종 + 사용자 트리거 보류 2종 + **v2.0 (별도 호흡 의도서)** 명시. v2.0 SaaS 는 본 v1.x OSS 템플릿과 정체성 분리, 본인 결혼식 후 + 운영 인프라·결제·법적 주체 결정 시 트리거.
+- **전체 회고 신규** (`docs/retrospective/project-v1.md`) — 12주 호흡 메타 회고. 호흡 7단계 / ADR 7건 패턴 / 4회 이상 재발 함정 / 도구 사후 평가 / Claude Code 협업 패턴 (Plan ROI · Auto mode · 회고 격상 · Progressive Disclosure · 메모리) / 정체성 결정 (12주차 SaaS 분기) / 자산 인벤토리. velog 외부 글의 내부 자매 자산.
 
 ## [1.0.0] - 2026-04-25
 

@@ -3,7 +3,7 @@
 > **살아있는 문서 (Living document).** 매 주차 끝날 때 이 문서를 업데이트하세요.
 > 지난 주차는 "실제 한 것" 기준으로 기록하고, 남은 주차는 필요에 따라 재설계해도 됩니다.
 
-**마지막 업데이트:** 2026-04-25 (10주차 Day 1 완료 · `v1.0.0` 릴리스)
+**마지막 업데이트:** 2026-04-25 (12주차 마지막 호흡 — v1.0.0 closure)
 
 ---
 
@@ -17,16 +17,17 @@
 
 ## 📊 전체 진행 상황
 
-| 단계                      |    주차    |    상태    | 마일스톤                                    |
-| ------------------------- | :--------: | :--------: | ------------------------------------------- |
-| 1단계: 기획 + 셋업        |  Week 1-2  |  ✅ 완료   | 자동 배포 환경 + 디자인 토큰                |
-| 2단계: Must 기능 개발     |  Week 3-6  |  ✅ 완료   | v0.1.0 MVP                                  |
-| 3단계: Should 기능 + 테마 |  Week 7-8  |  ✅ 완료   | 다중 테마 (Classic·Modern·Floral) + 방명록  |
-| 4단계: 문서화 + QA        |   Week 9   |  ✅ 완료   | 비개발자도 5분 배포 + v0.2 릴리스           |
-| 5단계: 릴리스 + 홍보      | Week 10-11 | 🔄 진행 중 | v1.0.0 ✅ (10주차) → 커뮤니티 공개 (11주차) |
-| 6단계: 유지보수 기반      |  Week 12   |  ⏳ 예정   | 루틴 정착                                   |
+| 단계                       |   주차   |  상태   | 마일스톤                                                               |
+| -------------------------- | :------: | :-----: | ---------------------------------------------------------------------- |
+| 1단계: 기획 + 셋업         | Week 1-2 | ✅ 완료 | 자동 배포 환경 + 디자인 토큰                                           |
+| 2단계: Must 기능 개발      | Week 3-6 | ✅ 완료 | v0.1.0 MVP                                                             |
+| 3단계: Should 기능 + 테마  | Week 7-8 | ✅ 완료 | 다중 테마 (Classic·Modern·Floral) + 방명록                             |
+| 4단계: 문서화 + QA         |  Week 9  | ✅ 완료 | 비개발자도 5분 배포 + v0.2 릴리스                                      |
+| 5단계: v1.0 릴리스         | Week 10  | ✅ 완료 | v1.0.0 (데모 가시화 + Performance 측정 사이클 + CONTRIBUTING)          |
+| 6단계: 홍보 (제외 결정)    | Week 11  | 🚫 스킵 | 본 12주 호흡 스코프에서 제외 (사용자 결정). velog 초안만 자산으로 보존 |
+| 7단계: v1.0 보완 + closure | Week 12  | ✅ 완료 | 본인 삭제 (ADR 007 C') · PNG 최적화 · Performance lazy · v1.1 마일스톤 |
 
-**현재 진행도:** ⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜ 10/12 주 (83%)
+**현재 진행도:** ⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛ 12/12 주 (100%) · v1.0.0 closure
 
 ---
 
@@ -259,42 +260,71 @@
 
 ---
 
-## 🔜 남은 주차 계획
+### Week 11 · 홍보 호흡 → 사용자 결정으로 본 12주 호흡 스코프 제외
 
-> 지난 5주 경험을 반영해 재조정합니다. 여기 적힌 건 계획일 뿐, 주차가 끝날 때 "실제 한 것"으로 위 섹션에 옮겨 적으세요.
+- **원래 계획:** velog/브런치 개발 회고 · X 쓰레드 · OKKY · HN Show · Awesome Korean PR · 첫 외부 Contributor 환영
+- **실제 결과물 + 결정:**
+  - `5f7d2b3` velog/tistory 게시용 12주 호흡 회고 포스트 초안 (`docs/blog-posts/2026-04-25-12week-retrospective.md`, 한국어 ~4,000자, 코드 스니펫 5 + 이미지 2). 한국 개발자 커뮤니티 톤
+  - GitHub 토픽 9개 적용 (`wedding-invitation` · `wedding` · `korean` · `nextjs` · `template` · `firebase` · `tailwindcss` · `kakao` · `oss-template`) — 검색 노출 자산
+  - **사용자 결정 (호흡 중간)**: "홍보는 이번 프로젝트에서 제외하고 바로 유지보수나 보완 개선" → 11주차 본 항목 (게시·X·OKKY·HN·Awesome Korean) 모두 본 12주 호흡 스코프에서 제외
+  - velog 글 보존 (게시는 사용자 페이스, 향후 개인 트리거 시) — 12주차 4번 전체 회고의 외부 톤 자매 자산
+- **배운 것:**
+  - **홍보 호흡과 보완 개발 호흡의 다른 성격** — 홍보는 외부 플랫폼 글 작성이 산출물, 보완은 코드/문서 변경이 산출물. 단일 기여자 사이드 프로젝트에서 두 호흡을 묶는 비용 (본업 외 시간) 이 클 수 있음
+  - **closure 가 다음 범위를 좁힌다** (사용자 인용) — v1.0 이 박혀 있으니 v1.1 의 단위가 자연스럽게 작아짐. "딱 정해져있으니까 더 개발 범위가 좁혀지는 느낌" 사용자 표현이 정확. 이게 closure 의 ROI
+  - **회고의 "다음 주차로 넘기는 것" 명세는 시작 시점 가정** — 11주차 시작 시점엔 홍보 호흡 진입을 가정했으나 호흡 중간에 사용자가 진짜 의도 (보완 개선 우선) 를 명시화. 회고가 가정이고 사용자 의지가 진짜 기준
+- **12주차로 넘긴 것:**
+  - velog 게시 (사용자 영역, 게시 보류)
+  - 11주차의 다른 5 항목 (X · OKKY · HN · Awesome Korean · 외부 Contributor) 은 본 12주 호흡 스코프에서 영구 제외, v1.1+ 또는 별도 호흡 트리거 시
 
-### Week 11 · 공개 및 홍보
+### Week 12 · v1.0 보완 + closure 호흡 (Day 1)
 
-- [ ] velog/브런치에 개발 회고 포스트 (12 주 호흡 전체 정리)
-- [ ] X/Twitter 쓰레드 (개발 과정 스토리텔링, 데모 SS·다중 테마 collage 활용)
-- [ ] OKKY · 개발자 Discord · 페이스북 그룹 공유
-- [ ] Hacker News "Show HN" 제출 (영문, README.en + Live demo + Performance 자료)
-- [ ] Awesome Korean 개발자 리스트에 PR
-- [ ] 첫 외부 Contributor 환영 — CONTRIBUTING.md (10주차 ship) 활용, 이슈/PR 24h 이내 응답 루틴 정착
-- [ ] (병렬, 사용자 영역) 데스크톱 PSI 측정 + 실기기 매트릭스 (iPhone Safari · Galaxy Chrome · 카톡/Instagram 인앱) — Lighthouse 데이터 보강
+- **원래 계획:** 들어온 이슈/PR 분류 · v1.1 마일스톤 정의 · 기여자 감사 표현 · 전체 회고 · 응답 루틴 정착
+- **실제 결과물 (4 호흡 누적):**
+  1. **방명록 본인 삭제 (`d8aac0b` ADR 007 + `6b98acc` feat)** — 8주차 firebase.md 한정 결정 (C 경로) 을 ADR 007 으로 격상 + C → C' 전환 (클라이언트 검증 + delete 허용). 도메인 적정 트레이드오프 명시 + OSS 템플릿 정체성 보호 ("다른 도메인 fork 시 부적합") + v1.1+ B 경로 (Vercel Route Handler) 트리거 조건. 사용자 실 검증 통과 (Firebase Console 규칙 게시 후)
+  2. **PNG 사이즈 최적화 (`807c40a`)** — `screenshots/` 디렉토리 7.1 MB → 2.7 MB (62% 절감). 5 PNG → JPG (q=85, sips), `theme-comparison.png` 은 collage 단색 영역 많아 PNG 유지. README · velog 글 src 일괄 갱신. 사이트 자체엔 미사용 (Lighthouse 영향 0) — GitHub README 페이지 로드 + 레포 위생 개선용
+  3. **Performance lazy import (`53e75f4`)** — `app/page.tsx` 의 Guestbook 만 `next/dynamic` 분리. firebase + bcryptjs + framer-motion 모달이 별도 chunk. **가장 큰 chunk 463 KB → 309 KB (-33%)**. 90+ 도달 여부는 PSI 측정 결과로 검증 (사용자 영역, CHANGELOG Performance 항목 갱신 예정)
+  4. **본 호흡 — v1.1 마일스톤 정의 + 전체 회고** — Week 11/12 결과 채우기 + v1.1+ 후보 압축 + `docs/retrospective/project-v1.md` 신규 + CHANGELOG `[1.0.1]` 또는 `[Unreleased]` 마무리
+- **배운 것 (호흡 중 발견):**
+  - **`react-hooks/set-state-in-effect` 룰 4번째 재발** (5주차→6주차→8주차→**12주차**). DeleteConfirmModal 의 useEffect 안 setState 가 1차 lint 에서 잡힘. firebase.md 의 "절대 금지" 톤 격상 (9주차 `05f13fc`) 이 정확히 작동. **AnimatePresence 부모 마운트 패턴**으로 우회 — 모달 컴포넌트 자체가 mount/unmount 되니 useState 초기값으로 자동 reset, useEffect 안 setState 자체 제거. 회고 격상 + quality gate 시퀀스 lock-in 의 ROI 실증
+  - **사용자 의도와 호흡 중간의 진짜 결정 트리거** — "방명록 삭제 기능은 구현 안하는거야?" → "비밀번호 일치되면 삭제 가능" 흐름이 8주차 ADR 없이 firebase.md 만 박혔던 결정의 12주차 재검토 트리거가 됨. 회고에 묻혀있던 결정도 사용자 호흡 중 트리거로 다시 살아남
+  - **사용자 제안 시나리오 (웹 에디터 UI / SaaS) 의 정체성 전환 함의** — v1.x (개발자 fork) → v2.0 (SaaS) 가 단순 기능 추가가 아니라 운영 책임·법적 주체·인프라 모두 다른 별도 프로젝트라는 명료화. 본 12주는 v1.0 OSS 템플릿으로 closure, v2.0 은 별도 호흡 의지 시점에 새 출발
+- **closure 시점 산출물 (예정):** v1.0.x 또는 [Unreleased] 단계의 CHANGELOG · `docs/retrospective/project-v1.md` · v1.1+ 마일스톤 명세 (본 로드맵의 다음 섹션)
 
-**v1.0 후속 후보 (작은 → 큰, 11주차 또는 12주차로 분배):**
+---
 
-- PNG 사이즈 최적화 (desktop-home 3MB · mobile-gallery-lightbox 2.4MB) — pngquant 30~50% 절감
-- GIF 데모 추가 (갤러리 swipe 인터랙션, 정적 SS 못 잡음)
-- `firebase` · `bcryptjs` lazy import (Performance 90+ 도달 시도, SSR boundary 검증)
-- Pretendard dynamic-subset (~200~400KB 만 실 fetch, git 사이즈 + next/font 우회 trade-off)
-- text-primary contrast 결정 (D-3 보류 → 디자인·a11y 합의)
+## 🚀 v1.1+ 마일스톤
 
-**보류 (사용자 트리거 시):**
+> 본 12주 호흡 closure 후 후속 호흡 후보. v1.0 까지의 학습 + 회고 + ADR 의 누적이 다음 호흡의 좁아진 범위를 자연 결정. 외부 사용자 트래픽 0 인 상태에선 추측 기반이라 가벼운 명세로 유지, 실수요 보고 시 우선순위 재조정.
 
-- Floral 디자인 재설정 — 8주차 1차 구현 인상 부족
-- Modern accent 색 (`#e2e8f0` 약함) — 실사용자 피드백 시
+### v1.1 (1순위 후보 — 작은 보완 + 신기능 1~2)
 
-**목표:** ⭐ 50개, 실사용 커플 1쌍 확보
+- **text-primary contrast 결정** (D-3 보류) — Classic warm beige `#c9a87c` 의 2.07:1 vs WCAG AA 4.5:1 트레이드오프. 디자인 셀링 vs a11y 합의 1 호흡
+- **OG png 최적화** — 카카오 콘솔 캐시 무효화 (`?v=` 쿼리스트링) 동반. 작은 호흡
+- **App Check** — 방명록 스팸·스크래핑 차단. firebase.md 의 v1.1 후보 명시 사항
+- **i18n** — 한국어/영문 분기. 한·영 README 자산 위에 코드 i18n. 1~2 호흡
+- **RSVP** — Firestore + 응답 카운트. 큰 신기능 1 개. 1~2 호흡
+- **본인 삭제 서버 매개 (ADR 007 B 경로)** — Vercel Route Handler + Admin SDK. 트리거 충족 시 (vandalism 사례 또는 작성자 풀 100명+)
+- **Pretendard dynamic-subset** — Performance 90+ 시도. 12주차 lazy import 후 PSI 결과에 따라 우선순위. 큰 호흡 (next/font 우회 결정)
 
-### Week 12 · 유지보수 기반 다지기
+### v1.2+ (여유 시 후보)
 
-- [ ] 들어온 이슈/PR 분류
-- [ ] `v1.1` 마일스톤 정의 (RSVP, 웹 에디터 UI 등)
-- [ ] 기여자에게 감사 표현 (릴리스 노트, README)
-- [ ] 전체 회고 작성 (`docs/retrospective/project-v1.md`)
-- [ ] 주 1~2회 이슈/PR 응답 루틴 정착
+- **BGM** — 자동재생 정책 (모바일 Safari 무음 모드 차단 + 사용자 제스처 트리거)
+- **Apple Calendar** 추가 — 구글 캘린더 외 두 번째 옵션
+- **GIF 데모** — 갤러리 swipe 인터랙션 (정적 SS 못 잡는 부분)
+- **욕설 필터 외부 패키지** (ADR 006 트리거) — `ADDITIONAL_PROFANITY` 50 항목 초과 또는 변형 우회 30건 보고 시 재검토
+
+### 보류 (사용자 트리거 시)
+
+- **Floral 디자인 재설정** — 8주차 1차 구현 인상 부족. `project_floral_theme_redesign_pending.md` 메모리 항목
+- **Modern accent 색 재검토** (`#e2e8f0` 약함) — 실 사용자 피드백 시
+
+### v2.0 (별도 호흡 의도서 — 본 v1.x 폐기 X)
+
+> 12주차 마무리 호흡 중 사용자 제안: **비개발자 사용자가 UI 부터 단계별 입력해서 결과물이 딱 나오는 시나리오** (웹 에디터 / SaaS). 본 OSS 템플릿 정체성 (개발자 fork 모델) 과 정체성 자체가 다른 별도 프로젝트로 분리. 본 v1.x 는 그대로 유지.
+
+- **트리거 조건**: 본인 결혼식 후 + 운영 인프라·결제·법적 주체 (개인정보보호법 준수) 결정
+- **분리 형태**: 별도 레포 또는 본 레포 안 `v2/` 디렉토리 (TBD). 큰 결정이라 그 시점에 결정
+- **현 상태**: 본 12주 호흡 스코프 밖. 의지 박아두기만
 
 ---
 

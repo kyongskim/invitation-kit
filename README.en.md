@@ -6,7 +6,7 @@
 
 Edit one config file, deploy in 5 minutes.
 
-[Demo](https://invitation-kit.vercel.app) · [Quick Start](#-quick-start-in-5-minutes) · [Guides](#-guides) · [Features](#-features)
+[Demo](#-demo) · [Quick Start](#-quick-start-in-5-minutes) · [Guides](#-guides) · [Features](#-features)
 
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Deploy with Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel)](https://vercel.com/new)
@@ -25,6 +25,28 @@ Edit one config file, deploy in 5 minutes.
 - 💰 **Free forever** — ₩0/month on Vercel Hobby + Firebase Spark free tiers
 - 🚫 **No ads, no watermarks** — It's your invitation
 - 📱 **Mobile Safari first** — iOS 26 regressions found during builds are codified as permanent rules (see the "Animation rules" / "애니메이션 사용 규칙" section in `CLAUDE.md`)
+
+---
+
+## 🎬 Demo
+
+[**Live demo — invitation-kit.vercel.app**](https://invitation-kit.vercel.app) — A fictional couple, "김철수 ♥ 이영희". Gallery, guestbook, KakaoTalk share, and Google Calendar are all functional.
+
+### Desktop
+
+<img src="./public/images/screenshots/desktop-home.png" alt="Desktop home, full-length capture from main hero through closing" width="800" />
+
+### Mobile
+
+|                                                          Home                                                          |                                               Gallery lightbox                                                |                                                              Venue (maps · calendar)                                                              |                                                    Guestbook                                                     |
+| :--------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------: |
+| <img src="./public/images/screenshots/mobile-home.png" alt="Mobile home — couple names and D-day badge" width="200" /> | <img src="./public/images/screenshots/mobile-gallery-lightbox.png" alt="Gallery lightbox open" width="200" /> | <img src="./public/images/screenshots/mobile-venue.png" alt="Venue section with Kakao Map, Naver Map, and Google Calendar buttons" width="200" /> | <img src="./public/images/screenshots/mobile-guestbook.png" alt="Guestbook with form and entries" width="200" /> |
+
+### Multi-theme
+
+Flip one value: `theme: "classic" | "modern" | "floral"` (zero component changes — see the [Theme Guide](./docs/theme-guide.md)):
+
+<img src="./public/images/screenshots/theme-comparison.png" alt="Classic, Modern, and Floral themes side-by-side — same invitation, three moods" width="900" />
 
 ---
 

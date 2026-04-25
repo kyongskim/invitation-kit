@@ -6,7 +6,7 @@
 
 설정 파일 하나만 수정하면 5분 안에 배포되는 `config-driven` 구조
 
-[데모 보기](https://invitation-kit.vercel.app) · [5분 시작하기](#-5분-시작하기) · [가이드](#-가이드) · [기능](#-주요-기능)
+[데모](#-데모) · [5분 시작하기](#-5분-시작하기) · [가이드](#-가이드) · [기능](#-주요-기능)
 
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Deploy with Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel)](https://vercel.com/new)
@@ -25,6 +25,28 @@
 - 💰 **완전 무료 · 영구 유지** — Vercel Hobby 티어 + Firebase Spark 무료 티어로 월 ₩0 운영
 - 🚫 **광고/워터마크 없음** — 내 청첩장은 내 것
 - 📱 **모바일 Safari 1순위 검증** — iOS 26 에서 발견한 회귀들을 규칙으로 문서화 (`CLAUDE.md` 의 "애니메이션 사용 규칙" 섹션)
+
+---
+
+## 🎬 데모
+
+[**라이브 데모 — invitation-kit.vercel.app**](https://invitation-kit.vercel.app) — 가상 커플 `김철수 ♥ 이영희` 의 청첩장. 갤러리·방명록·카카오 공유·구글 캘린더 모두 정상 동작.
+
+### 데스크톱
+
+<img src="./public/images/screenshots/desktop-home.png" alt="데스크톱 홈 풀페이지 — 메인 hero 부터 닫는 인사까지" width="800" />
+
+### 모바일
+
+|                                                         메인                                                          |                                                  갤러리 라이트박스                                                  |                                                        Venue (지도·캘린더)                                                        |                                                  방명록                                                  |
+| :-------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------: |
+| <img src="./public/images/screenshots/mobile-home.png" alt="모바일 메인 — 신랑·신부 이름 + D-day 배지" width="200" /> | <img src="./public/images/screenshots/mobile-gallery-lightbox.png" alt="갤러리 라이트박스 열린 상태" width="200" /> | <img src="./public/images/screenshots/mobile-venue.png" alt="Venue 섹션 — 카카오맵·네이버 지도·구글 캘린더 3 버튼" width="200" /> | <img src="./public/images/screenshots/mobile-guestbook.png" alt="방명록 — 작성 폼 + 댓글" width="200" /> |
+
+### 다중 테마
+
+`theme: "classic" | "modern" | "floral"` 한 값으로 전환 — 컴포넌트 코드 수정 0 건 ([테마 가이드](./docs/theme-guide.md)):
+
+<img src="./public/images/screenshots/theme-comparison.png" alt="Classic · Modern · Floral 테마 비교 — 같은 청첩장, 3 가지 분위기" width="900" />
 
 ---
 

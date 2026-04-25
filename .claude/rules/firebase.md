@@ -8,6 +8,7 @@
 
 - 방명록 (Firestore `guestbook` 컬렉션) — ADR 007
 - RSVP (Firestore `rsvp` 컬렉션) — ADR 008. 같은 Firebase 앱 · 같은 `NEXT_PUBLIC_FIREBASE_*` 환경 변수 재사용
+- **App Check (ReCaptchaV3Provider) — ADR 009.** 방명록·RSVP 봇 스팸 방어. `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` 별도. enforcement 는 Firebase Console 토글로 코드 외부에서 monitoring → enforce 단계 전환
 
 **적용 범위 밖 (별도 규칙 파일 없이 당장 도입 금지)**:
 
@@ -15,7 +16,7 @@
 - Cloud Functions
 - Cloud Storage
 - Realtime Database (Firestore 와 별개 제품)
-- Remote Config, Analytics, App Check
+- Remote Config, Analytics
 - **Admin SDK / Service Account — 영구 범위 밖.** 이 프로젝트는 클라이언트 전용 아키텍처. 서버 비밀키가 필요한 순간이 오면 Next.js Route Handler (서버) 로 분리 + Vercel 환경변수로 별도 관리
 
 범위 확장이 필요해지는 순간 이 파일을 먼저 갱신하거나 별도 규칙 파일을 분리한다.
@@ -24,7 +25,7 @@
 
 - **`firebase` npm 패키지 · modular SDK (v9+ tree-shakeable API)** 를 사용. `firebase/compat/*` 경로 **금지** — 번들 사이즈 영향 + 공식 deprecation 경로.
 - **버전 번호는 이 파일에 하드코딩하지 않는다.** 도입 시점 `npm install firebase` 로 최신 메이저를 받고, 메이저 바뀔 때 이 규칙 갱신.
-- **쓸 모듈만 import**: `firebase/app`, `firebase/firestore`. Auth · Storage 등 미도입 모듈은 import 하지 않는다 — tree-shake 효과 유지.
+- **쓸 모듈만 import**: `firebase/app`, `firebase/firestore`, `firebase/app-check`. Auth · Storage 등 미도입 모듈은 import 하지 않는다 — tree-shake 효과 유지.
 
 ## 초기화
 
@@ -52,6 +53,34 @@ export const db: Firestore = getFirestore(app);
 - **`lib/firebase.ts` 싱글톤.** 앱/페이지 단위 재init 금지. `db` 인스턴스를 import 해서 재사용.
 - **SSR 호출 허용** — Firebase JS SDK modular 는 Node 환경에서도 init 안전. 다만 **Firestore 읽기/쓰기는 Client Component 에서만** 수행 (아래 `Next.js 통합 패턴` 참조).
 
+### App Check init (ADR 009)
+
+```ts
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
+
+const recaptchaKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+if (typeof window !== "undefined" && recaptchaKey) {
+  if (process.env.NODE_ENV === "development") {
+    (
+      self as unknown as { FIREBASE_APPCHECK_DEBUG_TOKEN: boolean }
+    ).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+  }
+  try {
+    initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider(recaptchaKey),
+      isTokenAutoRefreshEnabled: true,
+    });
+  } catch (err) {
+    console.warn("[firebase] App Check init failed", err);
+  }
+}
+```
+
+- **`typeof window !== "undefined"` + `recaptchaKey` 이중 가드.** SSR 안전 + env 누락 사용자 graceful skip.
+- **`try/catch` 필수.** HMR 재평가로 중복 init 호출되거나 잘못된 site key 등에서 init 실패해도 Firestore 정상 동작 유지. 차단은 Console enforcement 가 담당.
+- **`isTokenAutoRefreshEnabled: true`.** App Check 토큰은 1시간 TTL. auto refresh 안 켜면 장시간 페이지 머무는 사용자가 token 만료로 차단됨.
+- **debug token 활성은 dev 환경만.** production 빌드에선 `NODE_ENV === "production"` 이라 분기 진입 안 됨. dev 에서 token 등록한 환경의 사용자만 reCAPTCHA 우회.
+
 ## 환경 변수
 
 - **6 개 변수 전부 `NEXT_PUBLIC_` 프리픽스.** Firebase 웹 SDK config 는 설계상 공개 식별자 — 코드에 포함돼도 **보안 위험 아님**. 실제 보호는 **Firestore 보안 규칙 + 콘솔의 Authorized Domains** 가 담당 (Google 공식 입장: "The apiKey in this configuration snippet just identifies your Firebase project on the Google servers. It is not a security risk").
@@ -66,6 +95,13 @@ export const db: Firestore = getFirestore(app);
 - 개발 로컬은 `.env.local` (gitignored), 프로덕션은 Vercel Environment Variables. 두 곳 외의 위치 (코드, `.env`, README 예시) 에 실제 키를 기록하지 않는다.
 - **`.env.local` 작성만으로는 프로덕션 동작 안 함.** `NEXT_PUBLIC_*` 변수는 Next.js 빌드 시점에 클라이언트 번들에 **인라인** 되는 값이라, Vercel 빌드 환경에 등록돼 있지 않으면 `process.env.NEXT_PUBLIC_FIREBASE_*` 가 전부 `undefined` 로 박혀 `initializeApp({apiKey: undefined, ...})` 가 만들어지고, 런타임에 `auth/invalid-api-key` 또는 `apiKey must be a non-empty string` 류 에러로 SDK 가 죽는다. 9주차 v0.2 직후 발견 사례 — dev 만 동작, prod 작성 실패. 등록·재배포 절차는 아래 "Firebase Console 설정" 8 단계 참조.
 - **`.env.example` 은 실제 Firebase SDK 도입 커밋에서** 6 줄 빈 값 샘플 추가 (본 규칙 커밋엔 포함하지 않음). 카카오 키와 동일 정책.
+
+### App Check 환경 변수 (ADR 009)
+
+- **`NEXT_PUBLIC_RECAPTCHA_SITE_KEY`** — reCAPTCHA v3 site key (공개 식별자, 클라이언트 번들 노출 OK). Firebase Console > App Check > Apps 에서 웹 앱 등록 + reCAPTCHA v3 선택 시 자동 발급.
+- **누락 시 graceful skip** — `lib/firebase.ts` 가 `if (typeof window !== "undefined" && recaptchaKey)` 가드로 init. App Check 미사용 사용자도 Firestore 정상 동작 (단, 봇 방어 비활성).
+- **Vercel Environment Variables 등록 + Production·Preview 체크 필수** — Firebase config 6 키와 동일 정책. 재배포 트리거 동일.
+- **Admin SDK secret key 가 아님** — reCAPTCHA secret key (서버 검증용) 는 Google 이 자동 관리, 사용자 별도 등록 안 함.
 
 ## Firebase Console 설정 (사용자 직접)
 
@@ -87,6 +123,15 @@ export const db: Firestore = getFirestore(app);
    - 창 닫은 뒤엔 같은 페이지의 "SDK 설정 및 구성" > "구성" 라디오로 6 필드 재노출 가능.
 9. Authentication · Storage · Functions 는 **활성화하지 않는다** (범위 밖).
 10. **Authorized Domains** (Authentication > Settings) 는 Auth 미사용인 현 단계에서는 기본값 유지. Auth 도입 시에만 프로덕션 도메인 추가.
+
+### App Check 활성 (선택, ADR 009 도입 시)
+
+11. 좌측 사이드바 > **빌드** > **App Check** > **시작하기**.
+12. "내 앱" 섹션의 웹 앱 옆 **"App Check 등록"** 클릭 > 공급자로 **reCAPTCHA v3** 선택 > 안내에 따라 reCAPTCHA Admin Console 에서 site key 발급 (도메인 등록: `*.vercel.app` 와 본인 커스텀 도메인 모두 추가).
+13. 발급된 **site key** 를 `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` 로 `.env.local` + Vercel Environment Variables 에 등록 + 재배포.
+14. **enforcement 모드 — "Monitor" 부터**: App Check > Apis > Cloud Firestore > 우측 점 3개 > "Configure" > **"Unenforced"** 또는 **"Monitor"** 선택. 트래픽 누적 후 통과율 95%+ 확인.
+15. **Enforce 전환**: 같은 화면에서 **"Enforce"** 토글. 토큰 없는 요청은 `permission-denied` 로 차단 시작. **monitoring 단계 생략 시 정상 사용자 false positive 검증 기회 상실** (ADR 009 거부 대안 C 참조).
+16. **debug token (dev 환경)** — App Check > Apps > 점 3개 > **"디버그 토큰 관리"** > 새 토큰 발급. 본인 dev 환경의 브라우저 콘솔에 출력되는 token 을 Firebase Console 에 등록하면 localhost 트래픽이 reCAPTCHA 없이 통과. `lib/firebase.ts` 가 `NODE_ENV === "development"` 일 때 `self.FIREBASE_APPCHECK_DEBUG_TOKEN = true` 자동 활성.
 
 ## Firestore 스키마
 

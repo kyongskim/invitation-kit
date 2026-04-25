@@ -300,7 +300,7 @@
 
 - ✅ **text-primary contrast 결정** (D-3 보류) — Classic `#c9a87c` 2.08:1 → `#896536` 4.90:1, Floral `#d4a5a5` 2.05:1 → `#9a6464` 4.55:1 (Floral 도 같은 결손이라 동시 fix). 옵션 A (어둡게 조정) 채택, 옵션 B (보류 + ADR 격상) 거부. v1.1+ 2번째 커밋
 - ✅ **OG png 최적화** — `631 KB → 143 KB` (q=85, sips, −77%) + 카카오 캐시 무효화 `?v=2`. v1.1+ 1번째 커밋 (`59c0092`)
-- **App Check** — 방명록·RSVP 스팸·스크래핑 차단. firebase.md 의 v1.1 후보 명시 사항
+- ✅ **App Check** — `ReCaptchaV3Provider` + Console enforcement 토글 + graceful degradation. ADR 009 (거부 대안 5종) + lib/firebase.ts initializeAppCheck. v1.1+ 5번째 호흡
 - **i18n** — 한국어/영문 분기. 한·영 README 자산 위에 코드 i18n. 1~2 호흡
 - ✅ **RSVP** — Firestore `rsvp` 컬렉션 + 5 필드 + read 차단 + 마감일 클라이언트 비활성. ADR 008 (거부 대안 6종) + components/sections/RSVP.tsx + RSVPForm. v1.1+ 3번째 호흡
 - **본인 삭제 서버 매개 (ADR 007 B 경로)** — Vercel Route Handler + Admin SDK. 트리거 충족 시 (vandalism 사례 또는 작성자 풀 100명+)

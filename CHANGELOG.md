@@ -4,6 +4,14 @@
 
 포맷은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/) 을 따르며, 버전 표기는 [Semantic Versioning](https://semver.org/lang/ko/) 을 따릅니다.
 
+## [Unreleased]
+
+v1.1.0 release 직후 추가 호흡.
+
+### Security
+
+- **Firebase App Check 도입** (ADR 009) — 방명록·RSVP 봇 스팸·스크래핑 방어. `firebase/app-check` 의 `ReCaptchaV3Provider` (무료 티어) + `lib/firebase.ts` 에 `initializeAppCheck` 블록. **graceful degradation**: `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` env var 누락 시 init 자동 skip — App Check 미사용 사용자도 코드 그대로 동작. **enforcement 는 Firebase Console 토글** 로 코드 외부에서 monitoring → enforce 단계 전환 가능 (rules 단 강제 거부 — 코드 변경 없이 운영 모드 전환 가능한 path 보존). debug token 은 dev 환경에서 자동 활성 (`self.FIREBASE_APPCHECK_DEBUG_TOKEN = true`). **거부 대안 5종** (A `ReCaptchaEnterpriseProvider` · B rules 단 강제 · C 즉시 enforce · D Play Integrity 동반 · E 도입 안 함) 모두 ADR 009 명시. v1.1+ 호흡 5번째.
+
 ## [1.1.0] - 2026-04-26
 
 12주차 closure 후 첫 v1.1+ 호흡 누적 4 호흡. 가벼운 보완 2 + 큰 신기능 2. v1.0.1 → v1.1.0 누적 4 코드 커밋 + 본 release 커밋. 본인 결혼식 D-21 일 시점 운영 준비 마무리.

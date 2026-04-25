@@ -157,7 +157,6 @@ Copy the 6 fields from `firebaseConfig` into Vercel Environment Variables as `NE
 
 - Lighthouse 90+ across mobile Safari · Android Chrome · in-app webviews (4-environment matrix)
 - Demo site (fictional couple) + README demo link + screenshots / GIFs
-- `CONTRIBUTING.md` (Week 11 outside-contributor onboarding)
 - `v1.0.0` tag + GitHub Release
 
 ### v1.1+ roadmap
@@ -249,14 +248,12 @@ invitation-kit/
 
 ## 🤝 Contributing
 
-Issues, PRs, and theme submissions are all welcome.
+Issues, PRs, and theme submissions are all welcome. Full flow, in-scope vs out-of-scope areas, and the standard quality-gate sequence: [`CONTRIBUTING.md`](./CONTRIBUTING.md) (in Korean — commands and checklists are language-neutral).
 
 - Report bugs: [Issues](../../issues)
 - Suggest features / discussions: [Discussions](../../discussions)
 - New theme PRs: follow the 5-step flow in the [Theme Guide](./docs/theme-guide.md)
 - For PRs, see the [PR template](./.github/PULL_REQUEST_TEMPLATE.md) checklist (mobile Safari verification, personal-data check)
-
-A full `CONTRIBUTING.md` will land alongside the v1.0 release.
 
 ---
 

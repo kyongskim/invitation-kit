@@ -45,7 +45,7 @@ const ALL_PROFANITY = [...PROFANITY_LIST, ...ADDITIONAL_PROFANITY];
 
 - **장점**: 자음 분리·confusable 정규화·로마자 매핑 등 변형 검출이 한국어 욕설에 특화돼 자동 처리. 유지보수 외부화.
 - **거부 근거**:
-  1. **의존성 비용**: 현재 lib/* 전부 자체 구현 (`lib/profanity.ts` 도 `badwords-ko` 데이터만 내재화하고 코드는 자체). 외부 패키지 도입 시 첫 사례.
+  1. **의존성 비용**: 현재 lib/\* 전부 자체 구현 (`lib/profanity.ts` 도 `badwords-ko` 데이터만 내재화하고 코드는 자체). 외부 패키지 도입 시 첫 사례.
   2. **라이선스 마찰**: `korcen` 은 Apache-2.0 — 본 프로젝트 MIT 와 호환되지만 NOTICE 파일 추가 의무가 발생할 수 있음. badwords-ko 의 MIT 처럼 "데이터만 내재화 + 라이선스 헤더 주석" 의 가벼운 처리가 안 됨.
   3. **bundle 영향 미측정**: korcen 은 한글 자모 분해·변형 매트릭스를 내장해 수십 KB 단위. 청첩장 1 페이지 SPA 의 critical path 에 추가하기엔 무겁다.
   4. **유지보수 외부화의 양면성**: 외부 패키지가 잘 유지보수되는 동안엔 좋지만, 한 번 stale 해지면 fork 해야 함. 데이터 array 가 무엇인지 명확한 자체 구현 (badwords-ko 원본 + 자체 ADDITIONAL_PROFANITY) 이 OSS 템플릿 사용자에게도 투명.
@@ -55,7 +55,7 @@ const ALL_PROFANITY = [...PROFANITY_LIST, ...ADDITIONAL_PROFANITY];
 
 "ㅅㅂ" 을 보면 자음 분리 후 한글 자모 매핑으로 "시발" 등 후보를 생성해 매칭하는 식. 알고리즘 직접 작성.
 
-- **거부 근거**: 자체 구현 복잡도가 ADDITIONAL_PROFANITY 직접 추가 대비 10x 이상이고, 청첩장 스코프에서 그만한 알고리즘 자산을 lib/* 에 두는 것은 over-engineering. 강력한 변형 검출이 정말 필요해지는 순간엔 B 의 외부 패키지를 채택하는 게 자체 구현보다 합리적이다.
+- **거부 근거**: 자체 구현 복잡도가 ADDITIONAL_PROFANITY 직접 추가 대비 10x 이상이고, 청첩장 스코프에서 그만한 알고리즘 자산을 lib/\* 에 두는 것은 over-engineering. 강력한 변형 검출이 정말 필요해지는 순간엔 B 의 외부 패키지를 채택하는 게 자체 구현보다 합리적이다.
 
 ### D. 욕설 필터 강화 자체 보류 (거부)
 

@@ -4,6 +4,14 @@
 
 포맷은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/) 을 따르며, 버전 표기는 [Semantic Versioning](https://semver.org/lang/ko/) 을 따릅니다.
 
+## [Unreleased]
+
+v1.1+ 첫 호흡 — 12주차 closure 시점 v1.1 마일스톤 (`docs/00-roadmap.md:299-307`) 의 1순위 후보 7종 중 가벼운 보완부터 진입.
+
+### Performance
+
+- **OG 썸네일 PNG → JPG (q=85, sips)** — `public/images/og.png` (800×396, 631 KB) → `public/images/og.jpg` (143 KB, **−77%**). screenshots 12주차 `807c40a` 와 동일 정책. JPG 는 alpha 미지원이지만 카카오톡·iMessage·Twitter 카드는 항상 불투명 배경 위에 렌더되므로 영향 없음. 카카오 CDN 강한 캐시 무효화 위해 `share.thumbnailUrl` 에 `?v=2` 쿼리스트링 부착 (`kakao-sdk.md` 의 Gotcha 패턴). `app/layout.tsx` 의 `openGraph` · `twitter` metadata 는 `config.share.thumbnailUrl` 단일 진입점 경유라 코드 수정 0.
+
 ## [1.0.1] - 2026-04-25
 
 12주차 closure 호흡 — v1.0.0 의 보완 + 마이너 결정 4 호흡 (방명록 본인 삭제 ADR 007 + PNG 최적화 + Performance lazy import + 12주 호흡 closure 정리). v1.0.0 → v1.0.1 누적 5 커밋 + 본 release 커밋.

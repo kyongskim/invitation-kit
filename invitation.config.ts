@@ -282,7 +282,7 @@ export const config: InvitationConfig = {
   share: {
     title: "김철수 ♥ 이영희 결혼합니다",
     description: "2026년 5월 17일 토요일 낮 12시 · 더채플 광화문",
-    thumbnailUrl: "https://invitation-kit.vercel.app/images/og.png",
+    thumbnailUrl: "https://invitation-kit.vercel.app/images/og.jpg?v=2",
     buttons: {
       site: { enabled: true },
       map: { enabled: true },

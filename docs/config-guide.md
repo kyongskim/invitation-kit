@@ -257,21 +257,21 @@ interface ShareConfig {
 }
 ```
 
-| 필드                   | 타입    | 기본값                                              | 효과                                                    |
-| ---------------------- | ------- | --------------------------------------------------- | ------------------------------------------------------- |
-| `title`                | string  | `"김철수 ♥ 이영희 결혼합니다"`                      | 카카오톡 카드 상단 굵은 글씨                            |
-| `description`          | string  | `"2026년 5월 17일 토요일 낮 12시 · 더채플 광화문"`  | 카드 본문 한 줄                                         |
-| `thumbnailUrl`         | string  | `"https://invitation-kit.vercel.app/images/og.png"` | **절대 URL 필수.** 800×400 권장 비율                    |
-| `buttons.site.enabled` | bool?   | 미설정 시 `true`                                    | 카드 좌측 "청첩장 보기" 버튼. URL 자동 = `meta.siteUrl` |
-| `buttons.site.label`   | string? | `"청첩장 보기"`                                     | 버튼 라벨 커스텀                                        |
-| `buttons.map.enabled`  | bool?   | 미설정 시 `false`                                   | 카드 우측 "지도 보기" 버튼. URL 자동 조립               |
-| `buttons.map.label`    | string? | `"지도 보기"`                                       | 버튼 라벨 커스텀                                        |
+| 필드                   | 타입    | 기본값                                                  | 효과                                                    |
+| ---------------------- | ------- | ------------------------------------------------------- | ------------------------------------------------------- |
+| `title`                | string  | `"김철수 ♥ 이영희 결혼합니다"`                          | 카카오톡 카드 상단 굵은 글씨                            |
+| `description`          | string  | `"2026년 5월 17일 토요일 낮 12시 · 더채플 광화문"`      | 카드 본문 한 줄                                         |
+| `thumbnailUrl`         | string  | `"https://invitation-kit.vercel.app/images/og.jpg?v=2"` | **절대 URL 필수.** 800×400 권장 비율                    |
+| `buttons.site.enabled` | bool?   | 미설정 시 `true`                                        | 카드 좌측 "청첩장 보기" 버튼. URL 자동 = `meta.siteUrl` |
+| `buttons.site.label`   | string? | `"청첩장 보기"`                                         | 버튼 라벨 커스텀                                        |
+| `buttons.map.enabled`  | bool?   | 미설정 시 `false`                                       | 카드 우측 "지도 보기" 버튼. URL 자동 조립               |
+| `buttons.map.label`    | string? | `"지도 보기"`                                           | 버튼 라벨 커스텀                                        |
 
 ### 썸네일 이미지 규칙
 
 - **반드시 절대 URL** (`https://...`). 상대 경로는 카카오 서버가 fetch 못 합니다.
 - **호스트가 카카오 콘솔 웹 도메인 등록 도메인이어야** 합니다. 미등록 도메인의 이미지는 default 로 강제 치환됩니다.
-- 권장 크기 800×400. `public/images/og.png` 에 본인 이미지를 두고 URL 을 거기로 가리키는 게 가장 단순합니다.
+- 권장 크기 800×400. `public/images/og.jpg` 에 본인 이미지를 두고 URL 을 거기로 가리키는 게 가장 단순합니다 (PNG 도 동작하지만 JPG 가 카카오톡 카드 압축에 더 가벼움).
 - 이미지 변경 후에도 카카오 CDN 이 강하게 캐시하므로, 즉시 반영 검증이 필요하면 `?v=2` 같은 쿼리스트링을 붙여 새 URL 로 취급시킵니다.
 
 ### buttons 활성 조합

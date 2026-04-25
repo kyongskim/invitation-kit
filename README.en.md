@@ -151,7 +151,7 @@ Copy the 6 fields from `firebaseConfig` into Vercel Environment Variables as `NE
 - 💬 **KakaoTalk share** — Kakao SDK v2.8.1 `Kakao.Share.sendDefault` with the feed template. Falls back to URL clipboard copy when the SDK isn't ready (in-app webviews, desktop, etc.)
 - 🚨 **In-app webview banner** — detects KakaoTalk / Instagram / Facebook / Naver / Line webviews and prompts users to open in an external browser. `sessionStorage`-based dismiss
 - 🎨 **Multi-theme (Classic · Modern · Floral)** — `:root[data-theme]` + Tailwind v4 `@theme` CSS variable overrides. Theme switching requires zero component changes
-- 🌐 **OG meta tags** — preview thumbnails for KakaoTalk / iMessage / Twitter (800×400 `public/images/og.png`)
+- 🌐 **OG meta tags** — preview thumbnails for KakaoTalk / iMessage / Twitter (800×400 `public/images/og.jpg`)
 
 ### v1.0.0 targets (Week 10)
 
@@ -230,7 +230,7 @@ invitation-kit/
 │   ├── userAgent.ts          # in-app webview detection
 │   ├── date.ts               # D-day computation
 │   └── hooks.ts              # useIsClient (useSyncExternalStore)
-├── public/images/            # og.png + gallery/sample-01~09.jpg
+├── public/images/            # og.jpg + gallery/sample-01~09.jpg
 ├── invitation.config.ts       # ✨ the only file you need to edit
 ├── .env.example              # 1 Kakao key + 6 Firebase keys (sample)
 ├── firestore.rules           # guestbook security rules

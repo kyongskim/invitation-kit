@@ -144,6 +144,10 @@ export function Guestbook() {
             profanityFilterOn={profanityFilterOn}
             onSubmit={handleSubmit}
           />
+
+          <p className="text-secondary mt-6 text-center text-xs leading-relaxed">
+            메시지 삭제는 신랑·신부에게 문의해주세요
+          </p>
         </div>
       </section>
       {toast && (

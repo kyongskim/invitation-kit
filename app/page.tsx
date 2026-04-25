@@ -2,9 +2,11 @@ import { InAppBrowserNotice } from "@/components/InAppBrowserNotice";
 import { Accounts } from "@/components/sections/Accounts";
 import { Gallery } from "@/components/sections/Gallery";
 import { Greeting } from "@/components/sections/Greeting";
+import { Guestbook } from "@/components/sections/Guestbook";
 import { Main } from "@/components/sections/Main";
 import { Share } from "@/components/sections/Share";
 import { Venue } from "@/components/sections/Venue";
+import { config } from "@/invitation.config";
 
 export default function Home() {
   return (
@@ -15,6 +17,7 @@ export default function Home() {
       <Gallery />
       <Venue />
       <Accounts />
+      {config.guestbook.enabled && <Guestbook />}
       <Share />
     </main>
   );

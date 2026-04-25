@@ -4,7 +4,7 @@
    설계 근거는 docs/adr/005-multi-theme-runtime-strategy.md. */
 @theme {
   --color-primary: #c9a87c;
-  --color-secondary: #8b7355;
+  --color-secondary: #6b5942;
   --color-background: #faf6ee;
   --color-text: #3d342c;
   --color-accent: #e8dfd0;
@@ -26,7 +26,7 @@
 
 :root[data-theme="floral"] {
   --color-primary: #d4a5a5;
-  --color-secondary: #8b6b6b;
+  --color-secondary: #6b4f4f;
   --color-background: #fdf8f5;
   --color-text: #3d2929;
   --color-accent: #e8d0cc;

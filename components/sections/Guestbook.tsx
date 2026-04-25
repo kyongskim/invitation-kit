@@ -1,9 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
+  getDoc,
   getDocs,
   limit,
   orderBy,
@@ -15,9 +19,10 @@ import {
 
 import { config } from "@/invitation.config";
 import { db } from "@/lib/firebase";
-import { hashPassword } from "@/lib/hash";
+import { hashPassword, verifyPassword } from "@/lib/hash";
 import { useIsClient } from "@/lib/hooks";
 
+import { DeleteConfirmModal } from "./guestbook/DeleteConfirmModal";
 import {
   GuestbookForm,
   type GuestbookSubmitInput,
@@ -56,6 +61,9 @@ export function Guestbook() {
   const [status, setStatus] = useState<FetchStatus>("loading");
   const [toast, setToast] = useState<string | null>(null);
   const [fetchTrigger, setFetchTrigger] = useState(0);
+  const [deletingEntry, setDeletingEntry] = useState<GuestbookEntry | null>(
+    null,
+  );
 
   useEffect(() => {
     if (!isClient) return;
@@ -107,6 +115,32 @@ export function Guestbook() {
     showToast("메시지가 등록되었습니다");
   };
 
+  // 비밀번호 검증 + 삭제. 실패 시 throw — 모달이 inline 에러로 표시.
+  // 보안 모델은 docs/adr/007 의 C' 경로 (도메인 적정 트레이드오프).
+  const handleDelete = async (entry: GuestbookEntry, password: string) => {
+    const ref = doc(db, COLLECTION, entry.id);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) {
+      // 다른 사용자가 먼저 삭제. 로컬 entries 에서 제거하고 모달 닫기.
+      setEntries((prev) => prev.filter((e) => e.id !== entry.id));
+      setDeletingEntry(null);
+      showToast("이미 삭제된 메시지입니다");
+      return;
+    }
+    const hash = snap.data().passwordHash as string | undefined;
+    if (!hash || hash.length !== 60) {
+      throw new Error("invalid_hash");
+    }
+    const ok = await verifyPassword(password, hash);
+    if (!ok) {
+      throw new Error("password_mismatch");
+    }
+    await deleteDoc(ref);
+    setEntries((prev) => prev.filter((e) => e.id !== entry.id));
+    setDeletingEntry(null);
+    showToast("메시지가 삭제되었습니다");
+  };
+
   const retryFetch = () => {
     setStatus("loading");
     setFetchTrigger((n) => n + 1);
@@ -137,6 +171,7 @@ export function Guestbook() {
             entries={entries}
             status={status}
             onRetry={retryFetch}
+            onDeleteRequest={setDeletingEntry}
           />
 
           <GuestbookForm
@@ -146,10 +181,21 @@ export function Guestbook() {
           />
 
           <p className="text-secondary mt-6 text-center text-xs leading-relaxed">
-            메시지 삭제는 신랑·신부에게 문의해주세요
+            비밀번호 분실 시 신랑·신부에게 문의해주세요
           </p>
         </div>
       </section>
+
+      <AnimatePresence>
+        {deletingEntry && (
+          <DeleteConfirmModal
+            entry={deletingEntry}
+            onConfirm={handleDelete}
+            onCancel={() => setDeletingEntry(null)}
+          />
+        )}
+      </AnimatePresence>
+
       {toast && (
         <div
           role="status"

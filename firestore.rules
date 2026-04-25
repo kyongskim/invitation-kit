@@ -1,14 +1,19 @@
 rules_version = '2';
 
 // invitation-kit 방명록 보안 규칙.
-// 자세한 설계 근거는 `.claude/rules/firebase.md` 의
-// "Firestore 보안 규칙" 섹션 참조.
+// 자세한 설계 근거는 docs/adr/007-guestbook-self-delete-strategy.md
+// (12주차 C → C' 전환) 및 .claude/rules/firebase.md 의
+// "삭제 전략 — C' 경로" 섹션 참조.
 //
 // 핵심:
 // - 방명록은 공개 read (실명·일상 메시지 전제)
 // - 작성은 스키마 4 필드 정확히 + 길이·타입·서버 타임스탬프 검증
-// - update / delete 전부 금지 (MVP 의 C 경로). 운영자는 Firebase Console
-//   에서 수동 삭제.
+// - update 금지 (글 수정 기능은 v1.1+ 후보)
+// - delete 는 누구든 허용 — 클라이언트가 verifyPassword 후
+//   일치 시에만 deleteDoc 호출하는 책임을 진다. 우회 가능
+//   (도메인 적정 트레이드오프: 청첩장 위협 모델 약함, 운영자
+//   Console export 백업 복구 가능). 다른 도메인 fork 시 부적합 —
+//   서버 매개 (Vercel Route Handler + Admin SDK) 로 갈아끼울 것.
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -28,7 +33,7 @@ service cloud.firestore {
         && request.resource.data.createdAt == request.time;
 
       allow update: if false;
-      allow delete: if false;
+      allow delete: if true;
     }
   }
 }

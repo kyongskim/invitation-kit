@@ -6,6 +6,7 @@ type Props = {
   entries: GuestbookEntry[];
   status: FetchStatus;
   onRetry: () => void;
+  onDeleteRequest: (entry: GuestbookEntry) => void;
 };
 
 function formatRelative(d: Date, now: Date = new Date()): string {
@@ -22,7 +23,12 @@ function formatRelative(d: Date, now: Date = new Date()): string {
   return `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()}`;
 }
 
-export function GuestbookList({ entries, status, onRetry }: Props) {
+export function GuestbookList({
+  entries,
+  status,
+  onRetry,
+  onDeleteRequest,
+}: Props) {
   return (
     <div className="mt-10 flex flex-col gap-3">
       {status === "loading" && (
@@ -62,6 +68,16 @@ export function GuestbookList({ entries, status, onRetry }: Props) {
             <p className="text-text mt-2 text-sm leading-relaxed whitespace-pre-line">
               {entry.message}
             </p>
+            <div className="mt-3 flex justify-end">
+              <button
+                type="button"
+                onClick={() => onDeleteRequest(entry)}
+                aria-label={`${entry.name} 님의 메시지 삭제`}
+                className="text-secondary hover:text-text text-xs underline underline-offset-4 transition-colors"
+              >
+                삭제
+              </button>
+            </div>
           </article>
         ))}
     </div>

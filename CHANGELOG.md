@@ -4,6 +4,20 @@
 
 포맷은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/) 을 따르며, 버전 표기는 [Semantic Versioning](https://semver.org/lang/ko/) 을 따릅니다.
 
+## [Unreleased]
+
+### Added
+
+- **방명록 본인 삭제 (비밀번호 일치 검증)** — 글마다 "삭제" 버튼 + 비밀번호 입력 모달. `lib/hash.ts` 에 `verifyPassword` 추가, `firestore.rules` `allow delete: if true;`, `components/sections/guestbook/DeleteConfirmModal.tsx` 신규. 보안 모델: 클라이언트 bcrypt 검증 + delete 허용 (ADR 007 "C' 경로"). 청첩장 도메인 적정 트레이드오프 — 위협 모델 약함, 운영자 Console export 백업 복구 가능. **다른 도메인 fork 시 부적합** — 진짜 안전 (서버 매개 = Vercel Route Handler + Admin SDK) 은 v1.1+ 후보.
+
+### Changed
+
+- **운영자 안내 카피** — "메시지 삭제는 신랑·신부에게 문의해주세요" → "비밀번호 분실 시 신랑·신부에게 문의해주세요" (본인 삭제 도입 후 fallback 안내로 의미 전환).
+
+### Decisions
+
+- **ADR 007 신규** — 방명록 본인 삭제 전략 C → C' 전환 + 거부 대안 5종 (B Vercel Route Handler · C Cloud Function · D Soft delete · E 입력 빼기) 명시 + v1.1+ 재검토 트리거. 8주차 firebase.md 한정이던 결정을 ADR 격상.
+
 ## [1.0.0] - 2026-04-25
 
 10주차 누적 — 비개발자 5분 배포 가이드 안정화 + 데모 사이트 가시화 + 첫 Performance/Accessibility 측정 사이클 + 외부 기여자 환영 준비. v0.2 → v1.0 누적 6 커밋 + 본 릴리스 커밋.

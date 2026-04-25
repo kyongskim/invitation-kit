@@ -184,7 +184,7 @@ service cloud.firestore {
 - **글로벌 Provider/Context 만들지 않는다.** `lib/firebase.ts` 의 `db` 싱글톤을 필요한 컴포넌트에서 직접 import. 방명록은 1 곳에서만 쓰이므로 Context 는 오버엔지니어링.
 - 방명록 `'use client'` 경계는 `components/sections/Guestbook.tsx`. 초안은 **단일 파일**, 200 줄 넘어가면 `GuestbookForm.tsx` + `GuestbookList.tsx` 로 분리.
 - **`useIsClient` 훅 rule of three**: 현재 `DDayBadge.tsx:9-13`, `InAppBrowserNotice.tsx:9-13` 에 동일 구현 (useSyncExternalStore 기반). 방명록 form 이 3 번째 사용처가 되는 순간 **`lib/hooks.ts` 로 추출**. 첫 커밋에서 복제 + 직후 커밋에서 추출 2단계 진행도 허용 (실사용 전 premature extraction 방지).
-- **`useEffect` 내 setState 주의**: React 19 `react-hooks/set-state-in-effect` rule 재발 위험. Firestore `onSnapshot` 구독 결과를 setState 로 옮길 때 cleanup 함수 올바로 반환. `getDocs` 1회 로드 패턴도 동일 — 6 주차 D-day `useSyncExternalStore` 전환 경험 재참조.
+- **`useEffect` 내 동기 setState 절대 금지**: React 19 `react-hooks/set-state-in-effect` rule 위반. 5주차→6주차→8주차 3 회 재발했고 회고 격상 결정 (8주차) 으로 톤 강화. **fetch effect 는 초기 state 자체를 시작 상태 (`"loading"` 등) 로 표현**, 재시도는 effect 가 아닌 핸들러 (예: `retryFetch`) 에서 setState. Firestore `onSnapshot` / `getDocs` 1회 로드 모두 동일. cleanup 함수 (`cancelled` flag 패턴) 올바로 반환. 6 주차 D-day `useSyncExternalStore` 전환 경험 재참조.
 
 ## 테스트
 

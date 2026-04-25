@@ -309,7 +309,7 @@
 ### v1.2+ (여유 시 후보)
 
 - ✅ **BGM** — 우상단 floating 토글 + fade 300ms + loop. 자동재생 시도 X (iOS 무음 모드 호환). 음원 ship X (OSS 라이선스). v1.1+ 호흡 4번째로 앞당겨 진입
-- **Apple Calendar** 추가 — 구글 캘린더 외 두 번째 옵션
+- ✅ **Apple Calendar** 추가 — `appleCalendarUrl` (RFC 5545 + data URL) + Venue 두 번째 버튼. v1.1+ 6번째 호흡
 - **GIF 데모** — 갤러리 swipe 인터랙션 (정적 SS 못 잡는 부분)
 - **욕설 필터 외부 패키지** (ADR 006 트리거) — `ADDITIONAL_PROFANITY` 50 항목 초과 또는 변형 우회 30건 보고 시 재검토
 

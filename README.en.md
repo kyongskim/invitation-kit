@@ -145,7 +145,7 @@ Copy the 6 fields from `firebaseConfig` into Vercel Environment Variables as `NE
 - 🏷 **Main hero** — groom & bride names, wedding date, auto-computed D-day badge
 - ✉️ **Greeting section** — paragraphs from config, animated with CSS fade-in
 - 📸 **Photo gallery + lightbox** — CSS columns masonry, prev/next buttons, ArrowLeft/Right keys, touch swipe (100px threshold), backdrop tap, Escape, wrap-around. Optimized via `next/image`
-- 📍 **Venue** — address + Kakao/Naver Map deeplink buttons + **Add-to-Google-Calendar** button + transit info (subway / bus / car / parking)
+- 📍 **Venue** — address + Kakao/Naver Map deeplink buttons + **Add-to-Google-Calendar / Apple-Calendar** buttons (Apple is self-contained via RFC 5545 + data URL — no hosting required) + transit info (subway / bus / car / parking)
 - 💰 **Bank-account copy** — segmented toggle for groom/bride sides + accordion + hyphen-stripped copy (some Korean banking apps reject hyphens) + optional KakaoPay/Toss deeplinks
 - ✍️ **Guestbook** — Firebase Firestore + bcryptjs password hashing (salt 10) + profanity filter (574 entries from `badwords-ko` + 10 self-curated consonant-variant entries). Loading / ready / error / empty states + optimistic prepend. Self-delete via password match (ADR 007 C')
 - 📝 **RSVP** — attendance form: name, yes/no, groom/bride side, companions, optional message. Auto-disables after `config.rsvp.deadline`. Responses go to a Firestore `rsvp` collection with `read: false` (only the host views via Firebase Console). Design rationale in ADR 008
@@ -164,7 +164,7 @@ Copy the 6 fields from `firebaseConfig` into Vercel Environment Variables as `NE
 
 ### v1.1+ roadmap
 
-See [`docs/00-roadmap.md`](./docs/00-roadmap.md#-v11-마일스톤) for the full prioritized list. Shipped: OG optimization ✅ · text-primary contrast ✅ · guestbook self-delete (C' path) ✅ · RSVP ✅. Open: i18n · App Check · Pretendard dynamic-subset · server-mediated self-delete (B path) · BGM · Apple Calendar.
+See [`docs/00-roadmap.md`](./docs/00-roadmap.md#-v11-마일스톤) for the full prioritized list. Shipped: OG optimization ✅ · text-primary contrast ✅ · guestbook self-delete (C' path) ✅ · RSVP ✅ · BGM ✅ · App Check ✅ · Apple Calendar ✅. Open: i18n · Pretendard dynamic-subset · server-mediated self-delete (B path).
 
 > Full change history: [CHANGELOG.md](./CHANGELOG.md).
 
@@ -219,7 +219,7 @@ invitation-kit/
 │   ├── firebase.ts           # Firestore db singleton (HMR-safe)
 │   ├── kakao.ts              # Kakao Share SDK wrapper
 │   ├── map.ts                # Kakao / Naver Map deeplinks
-│   ├── calendar.ts           # Google Calendar URL pure function
+│   ├── calendar.ts           # Google · Apple Calendar URL pure function
 │   ├── clipboard.ts          # clipboard helpers
 │   ├── hash.ts               # bcryptjs password hashing
 │   ├── profanity.ts          # profanity filter (badwords-ko + consonant variants)

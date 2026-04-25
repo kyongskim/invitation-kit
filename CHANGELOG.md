@@ -8,6 +8,10 @@
 
 v1.1.0 release 직후 추가 호흡.
 
+### Added
+
+- **Apple Calendar 추가 버튼** — `lib/calendar.ts` 에 `appleCalendarUrl` 신규. RFC 5545 minimal VEVENT 를 `data:text/calendar` URL 로 self-contained 인코딩. iOS Safari 에서 탭 시 Calendar 앱의 "이벤트 추가" 시트 자동 호출, 데스크톱·Android 는 `wedding.ics` 다운로드 → 더블클릭으로 기본 캘린더 앱 열림. `webcal://` 대신 data URL 채택 — 별도 호스팅 없이 동작 (OSS 템플릿 정체성 일관). Venue 섹션 기존 "캘린더에 일정 추가" 단일 버튼이 "Google 캘린더에 추가" + "Apple 캘린더에 추가" 두 버튼으로 분리. v1.2+ 로드맵 후보 → v1.1+ 호흡 6번째로 앞당겨 진입.
+
 ### Security
 
 - **Firebase App Check 도입** (ADR 009) — 방명록·RSVP 봇 스팸·스크래핑 방어. `firebase/app-check` 의 `ReCaptchaV3Provider` (무료 티어) + `lib/firebase.ts` 에 `initializeAppCheck` 블록. **graceful degradation**: `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` env var 누락 시 init 자동 skip — App Check 미사용 사용자도 코드 그대로 동작. **enforcement 는 Firebase Console 토글** 로 코드 외부에서 monitoring → enforce 단계 전환 가능 (rules 단 강제 거부 — 코드 변경 없이 운영 모드 전환 가능한 path 보존). debug token 은 dev 환경에서 자동 활성 (`self.FIREBASE_APPCHECK_DEBUG_TOKEN = true`). **거부 대안 5종** (A `ReCaptchaEnterpriseProvider` · B rules 단 강제 · C 즉시 enforce · D Play Integrity 동반 · E 도입 안 함) 모두 ADR 009 명시. v1.1+ 호흡 5번째.

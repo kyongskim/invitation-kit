@@ -4,7 +4,9 @@
 
 포맷은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/) 을 따르며, 버전 표기는 [Semantic Versioning](https://semver.org/lang/ko/) 을 따릅니다.
 
-## [Unreleased]
+## [1.0.1] - 2026-04-25
+
+12주차 closure 호흡 — v1.0.0 의 보완 + 마이너 결정 4 호흡 (방명록 본인 삭제 ADR 007 + PNG 최적화 + Performance lazy import + 12주 호흡 closure 정리). v1.0.0 → v1.0.1 누적 5 커밋 + 본 release 커밋.
 
 ### Added
 
@@ -17,7 +19,8 @@
 
 ### Performance
 
-- **Guestbook `next/dynamic` lazy import** — `app/page.tsx` 의 Guestbook 만 별도 chunk 로 분리. firebase (~150KB) + bcryptjs (~25KB) + framer-motion (모달용) 이 initial bundle 에서 빠지고 viewport 도달 (또는 idle prefetch) 시점에 로드. Build chunk 비교: 가장 큰 chunk **463 KB → 309 KB (−154 KB, −33%)**. critical path JS evaluate 시간 단축 → TBT/TTI/Performance 개선 기대. v1.0 마지막 simulate 78 점 대비 실 측정 (Lighthouse 모바일 simulate + PSI) 으로 90+ 도달 여부 검증 예정 — 결과는 본 항목 갱신.
+- **Guestbook `next/dynamic` lazy import** — `app/page.tsx` 의 Guestbook 만 별도 chunk 로 분리. firebase (~150KB) + bcryptjs (~25KB) + framer-motion (모달용) 이 initial bundle 에서 빠지고 viewport 도달 (또는 idle prefetch) 시점에 로드. Build chunk 비교: 가장 큰 chunk **463 KB → 309 KB (−154 KB, −33%)**.
+- **측정 한계 finding** — 12주차 PSI + Lighthouse CLI 시도에서 모바일 simulate Slow 4G 환경 **NO_FCP / LCP·TBT 측정 에러** (헤드리스 / 일반 모드 모두). 본 사이트의 6 폰트 preload + 다중 chunks + Slow 4G 조합이 측정 윈도우 timeout 유발. **사용자 시각 검수**: FCP 즉시·메인 hero 1-2초 안 표시 (정상). **CLS = 0** (layout shift 없음 — dynamic import 의 우려 시나리오 회피 검증). 10주차 desktop preset null 이슈와 같은 결의 finding — simulate 환경 측정 한계, 실 환경 정상. 90+ 도달 여부는 실기기 매트릭스 (iPhone Safari · Galaxy Chrome · 카톡 인앱) 측정으로 v1.1+ 검증 후보.
 
 ### Decisions
 
@@ -218,6 +221,7 @@
 
 세부 가이드는 [README.md](README.md) 참조.
 
+[1.0.1]: https://github.com/kyongskim/invitation-kit/releases/tag/v1.0.1
 [1.0.0]: https://github.com/kyongskim/invitation-kit/releases/tag/v1.0.0
 [0.2.0]: https://github.com/kyongskim/invitation-kit/releases/tag/v0.2.0
 [0.1.0]: https://github.com/kyongskim/invitation-kit/releases/tag/v0.1.0

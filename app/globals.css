@@ -3,7 +3,7 @@
 /* Classic 테마 기본값. 다른 테마는 :root[data-theme="..."] 블록에서 override.
    설계 근거는 docs/adr/005-multi-theme-runtime-strategy.md. */
 @theme {
-  --color-primary: #c9a87c;
+  --color-primary: #896536;
   --color-secondary: #6b5942;
   --color-background: #faf6ee;
   --color-text: #3d342c;
@@ -25,7 +25,7 @@
 }
 
 :root[data-theme="floral"] {
-  --color-primary: #d4a5a5;
+  --color-primary: #9a6464;
   --color-secondary: #6b4f4f;
   --color-background: #fdf8f5;
   --color-text: #3d2929;

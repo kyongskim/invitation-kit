@@ -12,6 +12,10 @@ v1.1+ 첫 호흡 — 12주차 closure 시점 v1.1 마일스톤 (`docs/00-roadmap
 
 - **OG 썸네일 PNG → JPG (q=85, sips)** — `public/images/og.png` (800×396, 631 KB) → `public/images/og.jpg` (143 KB, **−77%**). screenshots 12주차 `807c40a` 와 동일 정책. JPG 는 alpha 미지원이지만 카카오톡·iMessage·Twitter 카드는 항상 불투명 배경 위에 렌더되므로 영향 없음. 카카오 CDN 강한 캐시 무효화 위해 `share.thumbnailUrl` 에 `?v=2` 쿼리스트링 부착 (`kakao-sdk.md` 의 Gotcha 패턴). `app/layout.tsx` 의 `openGraph` · `twitter` metadata 는 `config.share.thumbnailUrl` 단일 진입점 경유라 코드 수정 0.
 
+### Accessibility
+
+- **`text-primary` 색 contrast WCAG AA 4.5:1 충족** (Classic·Floral 동시 — 10주차 D-3 보류 항목 결정). Classic `--color-primary: #c9a87c` (2.08:1) → `#896536` (4.90:1 on `#faf6ee`), Floral `--color-primary: #d4a5a5` (2.05:1) → `#9a6464` (4.55:1 on `#fdf8f5`). Modern `#0f172a` 17.10:1 은 변경 없음. **Floral 도 같은 결손 발견** — 10주차 Lighthouse audit 이 `theme: "classic"` 으로만 돌아 Floral 미플래그였음. `text-primary` 가 Tailwind class 라 3 테마 공통 영향, 동일 패턴 동시 fix. **거부 대안 (B 보류 + ADR 격상)** — "디자인 셀링 우선" 결정을 ADR 008 로 박을 수도 있었으나 사용자 선택 A (정공법). 데이터 점: 10주차 `b1c30fd` 의 `--color-secondary` 4.5:1 조정 패턴을 `--color-primary` 에도 동일하게 확장. 이로써 Classic·Floral 의 모든 `--color-*` 토큰이 4.5:1 이상.
+
 ## [1.0.1] - 2026-04-25
 
 12주차 closure 호흡 — v1.0.0 의 보완 + 마이너 결정 4 호흡 (방명록 본인 삭제 ADR 007 + PNG 최적화 + Performance lazy import + 12주 호흡 closure 정리). v1.0.0 → v1.0.1 누적 5 커밋 + 본 release 커밋.

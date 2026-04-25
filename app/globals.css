@@ -30,7 +30,8 @@
   --color-background: #fdf8f5;
   --color-text: #3d2929;
   --color-accent: #e8d0cc;
-  /* --font-serif · --radius-sm 는 Classic 기본 (Cormorant · 0.375rem) 재사용 */
+  --font-serif: var(--font-italiana);
+  --radius-sm: 0.625rem;
 }
 
 @keyframes fade-in-up {

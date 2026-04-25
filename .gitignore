@@ -59,3 +59,10 @@ public/images/gallery/*
 
 # 로컬 환경 파일
 .env.local
+
+# Firebase — 프로젝트별 ID 는 사용자가 `firebase use <project-id>` 로 지정.
+# `firestore.rules` · `firebase.json` 는 공유, `.firebaserc` · 디버그·캐시는 미공유.
+.firebaserc
+.firebase/
+firebase-debug.log
+firestore-debug.log

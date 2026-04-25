@@ -3,7 +3,7 @@
 > **살아있는 문서 (Living document).** 매 주차 끝날 때 이 문서를 업데이트하세요.
 > 지난 주차는 "실제 한 것" 기준으로 기록하고, 남은 주차는 필요에 따라 재설계해도 됩니다.
 
-**마지막 업데이트:** 2026-04-25 (7주차 완료 시점)
+**마지막 업데이트:** 2026-04-25 (8주차 Day1~Day3 완료 시점)
 
 ---
 
@@ -21,12 +21,12 @@
 | ------------------------- | :--------: | :--------: | ----------------------------------------------- |
 | 1단계: 기획 + 셋업        |  Week 1-2  |  ✅ 완료   | 자동 배포 환경 + 디자인 토큰                    |
 | 2단계: Must 기능 개발     |  Week 3-6  |  ✅ 완료   | v0.1.0 MVP                                      |
-| 3단계: Should 기능 + 테마 |  Week 7-8  | 🔄 진행 중 | 다중 테마 + 방명록 (Week 7 완료, Week 8 방명록) |
-| 4단계: 문서화 + QA        |   Week 9   |  ⏳ 예정   | 비개발자도 5분 배포                             |
+| 3단계: Should 기능 + 테마 |  Week 7-8  |  ✅ 완료   | 다중 테마 (Classic·Modern·Floral) + 방명록      |
+| 4단계: 문서화 + QA        |   Week 9   | 🔄 진행 중 | 비개발자도 5분 배포 + v0.2 릴리스               |
 | 5단계: 릴리스 + 홍보      | Week 10-11 |  ⏳ 예정   | v1.0.0 + 커뮤니티 공개                          |
 | 6단계: 유지보수 기반      |  Week 12   |  ⏳ 예정   | 루틴 정착                                       |
 
-**현재 진행도:** ⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜ 7/12 주 (58%)
+**현재 진행도:** ⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜ 8/12 주 (67%)
 
 ---
 
@@ -172,45 +172,66 @@
   - 태스크 3: 구글 캘린더 실기기 검증 (Android 구글 앱 · iOS Safari 에서 KST 12:00 표시 확인) — 기회 생길 때
   - 후보: Modern accent 색 재검토 (`#e2e8f0` 이 약해 보이면 포인트 색 도입) — 사용자 피드백 트리거
 
+### Week 8 · Floral 테마 + Firebase 방명록 + ADR 006 (Day1~Day3)
+
+- **원래 계획:** Floral 테마 1종 · `firebase.md` 규칙 신규 · Firebase 프로젝트 + Firestore 초기화 · 방명록 CRUD + 욕설 필터 · (기회 시) 구글 캘린더 실기기 검증
+- **실제 결과물:** Day1~Day3 누적 12 커밋
+  - **Floral 테마 (`1f5b3a5` + `b52f44e`)**: `:root[data-theme="floral"]` Blush Rose & Mauve 팔레트 + Italiana serif + `--radius-sm: 0.625rem`. `ThemeName` union 3종 (`"classic" | "modern" | "floral"`). 컴포넌트 수정 0 건. **단, 인상 만족도 부족 → 재검토 보류 (메모리 항목)**
+  - **`.claude/rules/firebase.md` 신규 (`c51fd39`)** — 스코프 5건 (in/out · SDK · 삭제 전략 C 채택 · 욕설 필터) 명문화. Progressive Disclosure placeholder 첫 실체화
+  - **Firebase SDK 통합 (`3fd18bf`)** — `lib/firebase.ts` 싱글톤 (`getApps().length` 가드), `.env.example` 6 키, Firebase Console UI 갱신 (Standard / asia-northeast3 / 프로덕션 모드). 의존성 +1 (`firebase`)
+  - **방명록 헬퍼 (`9887f2a`)** — `lib/hash.ts` (`hashPassword`, bcryptjs salt 10, 60자 고정), `lib/profanity.ts` (`containsProfanity` + badwords-ko 574 단어 내재화). 의존성 +1 (`bcryptjs`)
+  - **`useIsClient` 추출 (`c1ac4a1`)** — rule-of-three 트리거. `lib/hooks.ts` 신설, DDayBadge·InAppBrowserNotice 마이그레이션. 회귀 0
+  - **방명록 UI (`f06e325`)** — `components/sections/Guestbook.tsx` 신규. `getDocs` 1회 + optimistic prepend, 4상태 (loading/ready/error/empty), cancelled flag 패턴, Accounts↔Share 사이 마운트
+  - **ADR 006 (`b71d365`) + 자음 변형 보강 (`ccc8c7a`)** — "ㅅㅂ 통과" 사례 트리거. 외부 패키지 (korcen) 거부 결정 명문화. `ADDITIONAL_PROFANITY` 별도 배열 10항목, false positive 위험 5건 (ㅗ·ㄴㄴ·ㅈㅅ·ㅂㄹ·ㅂㅂ) 의식적 제외
+  - **`firestore.rules` + `firebase.json` 레포 포함 (`3412ef5`)** — 콘솔 미배포 deny-all 사례 후속. emulator 포트 8080 정의. `.firebaserc` 는 사용자별이라 `.gitignore`
+  - **Guestbook 3분할 (`3b93f48`)** — 364줄 → 159 (orchestrator) + 196 (Form) + 69 (List). 책임별 분리, props 인터페이스 (`GuestbookSubmitInput`)
+  - **메시지 삭제 운영자 안내 (`2ca5aee`)** — 폼 아래 "메시지 삭제는 신랑·신부에게 문의해주세요". 삭제 전략 C 경로의 UI 가시화
+- **배운 것:**
+  - 7주차 약속 ("컴포넌트 수정 0 건") 이 Floral 추가에서 그대로 통과. 단, 토큰 인프라가 자유롭다고 디자인 인상 결정도 자유로운 건 아님 — 재설정은 별도 세션 호흡
+  - 규칙 파일 (`firebase.md`) 을 SDK 통합 *이전* 에 작성해두면 결정 (스코프 · 삭제 전략 · 욕설 필터) 이 코드보다 먼저 박혀 후속 변경이 "기존 결정의 연장" 으로 자연스러움. ADR 006 도 firebase.md 의 "변형 정규화 보류" 한 줄이 트리거 메모로 작동
+  - `firestore.rules` 는 SDK 통합 커밋과 같이 레포에 두는 게 맞음. 별도 커밋으로 보강했지만 "프로덕션 모드 deny-all → Missing or insufficient permissions" 한 번 우회 가능 구간
+  - React 19 `react-hooks/set-state-in-effect` 룰 재발 (5주차→6주차→8주차). firebase.md 메모를 "주의" → "fetch effect 는 초기 state 로 상태 표현, 동기 setState 절대 금지" 로 격상 후보
+  - badwords-ko 가 정상 한글 표기 위주 → 자음 변형 (ㅅㅂ 등) 미커버. 외부 패키지 (korcen) 의 trade-off (Apache-2.0 NOTICE · bundle · 의존성) 가 청첩장 스코프엔 과도 — ADR 006 으로 자체 데이터 (`ADDITIONAL_PROFANITY`) 채택
+  - `gh run view` polling 형태가 hook 정책에 false positive 차단 — `.claude/settings.json` 에 명시 허용 필요
+- **9주차로 넘긴 것:**
+  - 태스크 1 (회고 1번): v0.2 태그 + GitHub Release. v0.1.0 → v0.2 누적 12 커밋 묶어 릴리스. 7주차 v0.1.0 패턴 미러
+  - 태스크 2 (회고 2번): Week 9 가이드 — `docs/config-guide.md` · `docs/api-keys.md` · `docs/theme-guide.md`. 비개발자 5분 배포 약속의 본격 준비
+  - 태스크 3 (회고 3번): 구글 캘린더 실기기 검증. v0.2 배포 직후 자연 발생
+  - 태스크 4 (회고 4번): firebase.md 의 set-state-in-effect 메모 격상. 1줄 수정
+  - 태스크 5 (회고 5번): `.claude/settings.json` 의 `gh run view` polling 허용 명시
+  - **보류 (사용자 트리거 시):** Floral 디자인 재설정, Modern accent 색 재검토
+
 ---
 
 ## 🔜 남은 주차 계획
 
 > 지난 5주 경험을 반영해 재조정합니다. 여기 적힌 건 계획일 뿐, 주차가 끝날 때 "실제 한 것"으로 위 섹션에 옮겨 적으세요.
 
-### Week 8 · Floral 테마 + 방명록 (Firebase) 진입
+### Week 9 · v0.2 릴리스 + 비개발자 가이드 + 최종 QA 진입
 
-**목표:** Week 7 테마 인프라 위에 Floral 을 가볍게 얹고, 방명록으로 Firebase 데이터 레이어 첫 도입.
+**목표:** 8주차 누적 12 커밋을 v0.2 로 닫고, "비개발자도 5분 배포" 약속을 실제로 지킬 수 있도록 가이드 3종 작성. v1.0 직전 QA 의 시작.
 
-- [ ] Floral 테마 추가 — `:root[data-theme="floral"]` 블록 + `ThemeName` union 확장 + serif 폰트 1 개. 색 방향 (핑크/로즈 계열) 은 시작 시 사용자와 합의
-- [ ] `.claude/rules/firebase.md` 신규 — 방명록 스키마 · Firestore 보안 규칙 · 비밀번호 해싱 · 욕설 필터 · `NEXT_PUBLIC_FIREBASE_*` 환경 변수 정책
-- [ ] Firebase 프로젝트 생성 + Firestore 초기화 (사용자 직접 Console 작업)
-- [ ] 방명록 CRUD (작성/조회/삭제, 비밀번호 해싱) + 욕설 필터 (금칙어 리스트)
-- [ ] 구글 캘린더 실기기 검증 (Android 구글 앱 · iOS Safari 에서 KST 12:00 표시) — 기회 생길 때
-- [ ] (후보) Modern accent 색 재검토 — 실사용자 피드백 시
+- [ ] **v0.2 릴리스** — `CHANGELOG.md` 의 v0.2 섹션 (Modern·Floral · 캘린더 · 방명록 · firestore.rules 등 누적), annotated tag `v0.2.0`, GitHub Release 노트 (한국어 primary + 영문 summary). 7주차 v0.1.0 패턴 미러
+- [ ] `docs/config-guide.md` — 모든 config 필드 설명 (meta · theme · groom·bride · venue · gallery · share · accounts · guestbook · music)
+- [ ] `docs/api-keys.md` — 카카오/네이버/Firebase 키 발급 단계별 스크린샷. firebase.md 의 콘솔 가이드를 사용자 시점으로 재정리
+- [ ] `docs/theme-guide.md` — 새 테마 기여 방법 (`:root[data-theme]` override + 폰트 변수 + ThemeName union)
+- [ ] 구글 캘린더 실기기 검증 (Android 구글 앱 · iOS Safari) — v0.2 배포 직후 자연 발생
+- [ ] firebase.md 의 set-state-in-effect 메모 격상 (1줄 수정)
+- [ ] `.claude/settings.json` 에 `gh run view` polling 명시 허용
+- [ ] (가능 시) `README.md` 스크린샷 · GIF · 데모 링크 정리. 5주차 현실화 이후 v1.0 대비 재정비
 
-**주의점**
+**보류 (사용자 트리거 시):**
 
-- Firestore 보안 규칙 꼭 설정 — 방치하면 누구나 쓰기/삭제 가능
-- `NEXT_PUBLIC_` 프리픽스 이해 (클라이언트 노출) — Admin 키는 절대 프론트엔드 금지
-- Firebase 관련 작업 시 `.claude/rules/firebase.md` 참조 (이 주차에 생성)
-- 방명록 form Client Component 는 `useSyncExternalStore` 기반 `useIsClient` 훅 3 번째 사용처 후보 → `lib/hooks.ts` 추출 고려
+- Floral 디자인 재설정 — 8주차 1차 구현 인상 부족, 별도 세션 호흡 필요
+- Modern accent 색 (`#e2e8f0` 약함) — 실사용자 피드백 시
 
-### Week 9 · 문서화 + 최종 QA + v1.0 준비
+### Week 10 · v1.0.0 마감 + 릴리스
 
-**목표:** "비개발자도 5분 배포" 약속을 실제로 지킬 수 있도록 + 릴리스 직전 QA.
-
-- [ ] `docs/config-guide.md` — 모든 config 필드 설명
-- [ ] `docs/api-keys.md` — 카카오/네이버/Firebase 키 발급 단계별 스크린샷
-- [ ] `docs/theme-guide.md` — 새 테마 기여 방법
-- [ ] `README.md` 스크린샷 · GIF · 데모 링크 최종 정리 (5 주차에 한 번 현실화, v1.0 대비 재정비)
-- [ ] 영상 튜토리얼 1개 (5~10분, YouTube 또는 Loom) — 선택
+- [ ] `README.md` 영문 섹션 보강 (5주차 이후 변경 반영)
 - [ ] 브라우저/기기 매트릭스 테스트 · Lighthouse 90+ 목표
 - [ ] 성능 최적화 (이미지, 번들 사이즈)
-- [ ] `CHANGELOG.md` v0.1.0 → v1.0.0 누적 정리 · 라이선스/저작권 고지 최종 점검
-
-### Week 10 · v1.0.0 릴리스
-
+- [ ] `CHANGELOG.md` v0.2 → v1.0.0 누적 정리 · 라이선스/저작권 고지 최종 점검
+- [ ] 영상 튜토리얼 1개 (5~10분, YouTube 또는 Loom) — 선택
 - [ ] v1.0.0 태그 + GitHub 릴리스 노트
 - [ ] 데모 사이트 배포 (가상의 커플 예시)
 - [ ] Product Hunt 제출 준비 (Ship 페이지)

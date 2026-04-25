@@ -3,7 +3,7 @@
 > **살아있는 문서 (Living document).** 매 주차 끝날 때 이 문서를 업데이트하세요.
 > 지난 주차는 "실제 한 것" 기준으로 기록하고, 남은 주차는 필요에 따라 재설계해도 됩니다.
 
-**마지막 업데이트:** 2026-04-25 (9주차 Day1~Day2 완료 시점)
+**마지막 업데이트:** 2026-04-25 (10주차 Day 1 완료 · `v1.0.0` 릴리스)
 
 ---
 
@@ -17,16 +17,16 @@
 
 ## 📊 전체 진행 상황
 
-| 단계                      |    주차    |  상태   | 마일스톤                                   |
-| ------------------------- | :--------: | :-----: | ------------------------------------------ |
-| 1단계: 기획 + 셋업        |  Week 1-2  | ✅ 완료 | 자동 배포 환경 + 디자인 토큰               |
-| 2단계: Must 기능 개발     |  Week 3-6  | ✅ 완료 | v0.1.0 MVP                                 |
-| 3단계: Should 기능 + 테마 |  Week 7-8  | ✅ 완료 | 다중 테마 (Classic·Modern·Floral) + 방명록 |
-| 4단계: 문서화 + QA        |   Week 9   | ✅ 완료 | 비개발자도 5분 배포 + v0.2 릴리스          |
-| 5단계: 릴리스 + 홍보      | Week 10-11 | ⏳ 예정 | v1.0.0 + 커뮤니티 공개                     |
-| 6단계: 유지보수 기반      |  Week 12   | ⏳ 예정 | 루틴 정착                                  |
+| 단계                      |    주차    |    상태    | 마일스톤                                    |
+| ------------------------- | :--------: | :--------: | ------------------------------------------- |
+| 1단계: 기획 + 셋업        |  Week 1-2  |  ✅ 완료   | 자동 배포 환경 + 디자인 토큰                |
+| 2단계: Must 기능 개발     |  Week 3-6  |  ✅ 완료   | v0.1.0 MVP                                  |
+| 3단계: Should 기능 + 테마 |  Week 7-8  |  ✅ 완료   | 다중 테마 (Classic·Modern·Floral) + 방명록  |
+| 4단계: 문서화 + QA        |   Week 9   |  ✅ 완료   | 비개발자도 5분 배포 + v0.2 릴리스           |
+| 5단계: 릴리스 + 홍보      | Week 10-11 | 🔄 진행 중 | v1.0.0 ✅ (10주차) → 커뮤니티 공개 (11주차) |
+| 6단계: 유지보수 기반      |  Week 12   |  ⏳ 예정   | 루틴 정착                                   |
 
-**현재 진행도:** ⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜ 9/12 주 (75%)
+**현재 진행도:** ⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜ 10/12 주 (83%)
 
 ---
 
@@ -230,37 +230,61 @@
   - 태스크 6 (작은): Vercel 환경변수 등록 누락 사례를 README 에도 한 줄. 현재는 firebase.md + api-keys.md 에만 박힘
   - **보류 (사용자 트리거 시):** Floral 디자인 재설정, Modern accent 색 재검토
 
+### Week 10 · v1.0.0 마감 + 데모 가시화 + 첫 Performance 측정 사이클 (Day 1)
+
+- **원래 계획:** README 영문 동기화 · Lighthouse 90+ + 기기 매트릭스 · 데모 사이트 · `v1.0.0` 태그 + Release · CONTRIBUTING.md · (작은) Vercel env 한 줄. 9주차 회고 우선 7 항목.
+- **실제 결과물:** Day 1 단일 호흡 누적 7 커밋 (회고 커밋 제외) + annotated tag + GitHub Release Latest
+  - **README 한·영 v0.2 동기화 (`8fc950e`)** — 5주차 `22e90ad` 이후 양쪽 README 모두 변경 0 였던 갭 해소. 한국어도 미갱신이었던 사실 발견 → 한·영 동시 1 커밋 확장. H2 9 개 양쪽 대칭, 라인 수 243/243. Quick Start 5 번 Firebase 단계 신규 (Vercel env 한 줄 자연 흡수, 회고 작은 후보 6번). Guides 섹션 신규.
+  - **데모 섹션 신규 (`222234c`)** — `## 🎬 데모/Demo` H2 신규 (양쪽 H2 10 개로 확장). 데스크톱 풀페이지 + 모바일 4 컷 markdown 표 + 다중 테마 collage. `public/images/screenshots/` 6 PNG (~7MB). `invitation-kit.vercel.app` 자체가 가상 커플 (`김철수 ♥ 이영희`) OSS 데모로 작동.
+  - **Lighthouse 측정 사이클 (`d378bb2` · `b1c30fd` · `82f30c7`)** — 1차 가설 두 개 (Gallery priority · text-secondary) 부정확 → 진단 audit detail 깊게 → 진짜 원인 = Pretendard variable 2MB. variable → 3 weight Korean subset 784KB (62% 절감). Performance 71 → 78, LCP 15.1 s → 5.1 s (-10 s).
+  - **CONTRIBUTING.md (`2010211`)** — 한국어 only (가이드 3 종 정책 일관). 환영 4 종 + 환영 안 하는 5 종 + quality gate + 새 테마 PR 5 단계 + 모바일 Safari 의무 + 라이선스. README v1.0 targets 갱신.
+  - **`v1.0.0` 릴리스 (`1a83c27` + tag + Release)** — 7주차 v0.1.0 / 9주차 v0.2.0 패턴 미러. CHANGELOG `[1.0.0]` (Performance 표 포함) + package.json 1.0.0 + annotated tag + GitHub Release Latest (한국어 primary + 영문 summary). 라이선스 점검 통과 (의존성 신규 0, Pretendard install/uninstall 후 dist 만 carry over).
+- **배운 것:**
+  - **회고 "넘기는 것" 명세는 시작 시점 가정 — 실 작업에서 확장될 수 있음** (1번 작업의 한국어 README 갭 발견). plan mode Phase 1 Explore 단계가 이 갭을 정확히 잡음 — `git log 22e90ad..HEAD` 같은 원자료 검증이 plan ROI 의 일부.
+  - **Performance 가설은 측정으로만 검증 가능** — 1차 두 가설 (Gallery priority · text-secondary) 모두 부정확. 진단 audit detail (`network-requests`, `largest-contentful-paint-element`, `bootup-time`) 깊이 파야 진짜 원인 (Pretendard 2MB) 식별. 미래 Performance 작업 패턴: **데이터부터, 가설은 출발점일 뿐**. 다만 1차 가설의 코드 의도 옳으면 효과 미미해도 보존 (forward-only).
+  - **Lighthouse CLI 한계 + simulate vs 실 환경 갭은 정직 기록** — desktop preset 측정 불안정 (LCP/TBT/TTI null), mobile simulate Slow 4G 78 점이 실 환경과 다름. v1.0 release notes Known Limitations 에 정직 기록 + 사용자 영역 (PSI 측정) 보강 안내. **점수 미달을 숨기지 않는 것이 OSS 신뢰 자산** — 인위적 micro-optimization 또는 measurement gaming 회피.
+  - **Auto mode 운영 — 결정 명료 + 즉시 실행 + 끊을 수 있는 신호**. 사용자 "뭐 어떻게 하라고?" 피드백 후 학습. 옵션 4-5 개 나열은 결단력 부재 신호. 추천 1 안 즉시 실행 + "끊어줘" 한 줄로 멈출 수 있게. 다만 진짜 큰 의사결정 (디자인 D-1/D-2/D-3 같은) 은 옵션 합의 적절.
+  - **Quality gate 1 패스 패턴 lock-in** — 8주차 (`b2af838`) · 9주차 (`b934f9b`) 두 차례 fix-forward 후 10주차 7 커밋 모두 1 패스. 표준 시퀀스 명시 (CLAUDE.md 라인 94, 9주차 `c58b50f`) + format → format:check 두 단계 + prettier 가 markdown table padding 자동 정렬한다는 인지의 누적 효과.
+  - **v1.0 의 정직성 — "사이클 closure" vs "점수 closure" trade-off**. 회고 우선 2번 90+ 미달 (78점) 인데 closure 처리. 정의: 진단 → 수정 → 재측정 → 한계 발견 → 다음 후보 정리 → 사이클 완수. 인위적 미세 최적화로 90+ 만들기보다 정직 기록 + v1.1+ 후보 명시.
+- **11주차로 넘긴 것 (회고와 동일):**
+  - 태스크 1: velog/브런치 개발 회고 포스트 (12 주 호흡 전체)
+  - 태스크 2: X/Twitter 쓰레드
+  - 태스크 3: OKKY · Discord · 페이스북 그룹 공유
+  - 태스크 4: Hacker News "Show HN" (영문)
+  - 태스크 5: Awesome Korean 개발자 리스트 PR
+  - 태스크 6: 첫 외부 Contributor 환영 (CONTRIBUTING.md 활용, 24h 응답 루틴)
+  - 사용자 영역: 데스크톱 PSI 측정 + 실기기 매트릭스 (iPhone Safari · Galaxy Chrome · 카톡/Instagram 인앱)
+  - v1.0 후속 (작은~큰): PNG 사이즈 최적화 · GIF 데모 · firebase·bcryptjs lazy · Pretendard dynamic-subset · text-primary contrast 결정
+  - **보류 (사용자 트리거 시):** Floral 디자인 재설정, Modern accent 색 재검토, text-primary 색 결정
+
 ---
 
 ## 🔜 남은 주차 계획
 
 > 지난 5주 경험을 반영해 재조정합니다. 여기 적힌 건 계획일 뿐, 주차가 끝날 때 "실제 한 것"으로 위 섹션에 옮겨 적으세요.
 
-### Week 10 · v1.0.0 마감 + 릴리스
+### Week 11 · 공개 및 홍보
 
-**목표:** v0.2 → v1.0 누적을 닫고 OSS 첫 공개. 9주차에 가이드 3종이 한 주 앞당겨 끝나서 본 주차에 README 영문 동기화 · QA · 데모 사이트 · 릴리스 노트까지 묶어 마감.
+- [ ] velog/브런치에 개발 회고 포스트 (12 주 호흡 전체 정리)
+- [ ] X/Twitter 쓰레드 (개발 과정 스토리텔링, 데모 SS·다중 테마 collage 활용)
+- [ ] OKKY · 개발자 Discord · 페이스북 그룹 공유
+- [ ] Hacker News "Show HN" 제출 (영문, README.en + Live demo + Performance 자료)
+- [ ] Awesome Korean 개발자 리스트에 PR
+- [ ] 첫 외부 Contributor 환영 — CONTRIBUTING.md (10주차 ship) 활용, 이슈/PR 24h 이내 응답 루틴 정착
+- [ ] (병렬, 사용자 영역) 데스크톱 PSI 측정 + 실기기 매트릭스 (iPhone Safari · Galaxy Chrome · 카톡/Instagram 인앱) — Lighthouse 데이터 보강
 
-- [ ] **README 영문 섹션 5주차 이후 동기화** — 6·7·8·9주차 누적 변경 (다중 테마 · 캘린더 · 방명록 · 가이드 3종 · v0.2) 반영. OSS 첫 진입자 (한국 외 fork 시도) 의 첫 인상이라 v1.0 직전 정비 필수
-- [ ] **Lighthouse 90+ + 기기 매트릭스** — 모바일 Safari · Android Chrome · 인앱 웹뷰 (카카오톡 · Instagram) 4 환경에서 점수 + 갤러리·방명록·공유·캘린더 시나리오 통과. 이미지·번들 사이즈 최적화 동반
-- [ ] **데모 사이트 배포** — 가상의 커플 (`demo-config.ts` 또는 별도 Vercel 프로젝트) 로 OSS 첫 방문자가 즉시 청첩장 동작을 볼 수 있는 데모. README 데모 링크 + 스크린샷·GIF
-- [ ] **`v1.0.0` 태그 + GitHub Release** — 7주차 `v0.1.0` · 9주차 `v0.2.0` 패턴 미러. CHANGELOG `[1.0.0]` 섹션 (v0.2 → v1.0 누적, 가이드 3종 · README 영문 · Lighthouse 결과). 라이선스 / 저작권 고지 최종 점검
-- [ ] **CONTRIBUTING.md 최종 점검** — Week 11 외부 기여자 환영 준비. 새 테마 PR 흐름 (`theme-guide.md` 5단계) · 이슈 템플릿 · PR 템플릿 점검
-- [ ] (작은) Vercel 환경변수 등록 누락 사례를 README 에도 한 줄 — 현재 firebase.md + api-keys.md 에만 박힘
-- [ ] 영상 튜토리얼 1개 (5~10분, YouTube 또는 Loom) — 선택, v1.0 마감 시간 여유 보고
+**v1.0 후속 후보 (작은 → 큰, 11주차 또는 12주차로 분배):**
+
+- PNG 사이즈 최적화 (desktop-home 3MB · mobile-gallery-lightbox 2.4MB) — pngquant 30~50% 절감
+- GIF 데모 추가 (갤러리 swipe 인터랙션, 정적 SS 못 잡음)
+- `firebase` · `bcryptjs` lazy import (Performance 90+ 도달 시도, SSR boundary 검증)
+- Pretendard dynamic-subset (~200~400KB 만 실 fetch, git 사이즈 + next/font 우회 trade-off)
+- text-primary contrast 결정 (D-3 보류 → 디자인·a11y 합의)
 
 **보류 (사용자 트리거 시):**
 
-- Floral 디자인 재설정 — 8주차 1차 구현 인상 부족, 별도 세션 호흡 필요
+- Floral 디자인 재설정 — 8주차 1차 구현 인상 부족
 - Modern accent 색 (`#e2e8f0` 약함) — 실사용자 피드백 시
-
-### Week 11 · 공개 및 홍보
-
-- [ ] velog/브런치에 개발 회고 포스트
-- [ ] X/Twitter 쓰레드 (개발 과정 스토리텔링)
-- [ ] OKKY, 개발자 Discord, 페이스북 그룹 공유
-- [ ] Awesome Korean 개발자 리스트에 PR
-- [ ] Hacker News "Show HN" 제출 (영문)
-- [ ] 첫 외부 Contributor 환영 준비 (CONTRIBUTING.md 최종 점검)
 
 **목표:** ⭐ 50개, 실사용 커플 1쌍 확보
 

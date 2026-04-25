@@ -163,11 +163,15 @@ service cloud.firestore {
 
 - **클라이언트 단순 필터.** 작성 submit 직전에 금칙어 포함 여부 검사 → 포함 시 "부적절한 단어가 포함되어 있습니다" 안내 + submit 차단.
 - 금칙어 리스트는 **`lib/profanity.ts` 에 한국어 배열** 로 관리. 외부 npm 의존성 미도입 — Tree-shake 친화적이고 라이브러리 갱신 주기 의존성 차단.
-- **단어 데이터는 `yoonheyjung/badwords-ko` (MIT) 의 `badwords.ko.config.json` 을 내재화** (574 단어, 원본 순서 유지, 2026-04-25 시점 main 브랜치 스냅샷). MIT 의무로 라이선스 전문 + Copyright 는 `lib/profanity.ts` 헤더 주석에 그대로 포함. 업스트림 갱신 sync 는 수동 스냅샷 (실수요 발생 시).
+- **단어 데이터는 두 배열로 분리 관리** (분리 근거 ADR 006):
+  - `PROFANITY_LIST` — `yoonheyjung/badwords-ko` (MIT) 의 `badwords.ko.config.json` 을 내재화 (574 단어, 원본 순서 유지, 2026-04-25 시점 main 브랜치 스냅샷). MIT 의무로 라이선스 전문 + Copyright 는 `lib/profanity.ts` 헤더 주석에 그대로 포함. 업스트림 갱신 sync 는 수동 스냅샷 (실수요 발생 시).
+  - `ADDITIONAL_PROFANITY` — 본 프로젝트 자체 데이터. 자음 변형 (ㅅㅂ·ㅂㅅ·ㅈㄴ 등) 보강용. badwords-ko 가 정상 한글 표기 위주라 substring 매치로 못 잡는 결손을 메운다. 원본 sync 호환 + 출처 추적성 + 라이선스 분리 목적으로 별도 배열.
+- `containsProfanity(text)` 는 두 배열 모두 검사 (`.some` 단락 평가). `text.replace(/\s+/g, "")` 공백 정규화로 "씨 발" 같은 단순 공백 우회 1차 방어.
 - `config.guestbook.profanityFilter === false` 면 필터 자체 스킵. 부모 세대 특수 이름 오탐 · single-char 단어 (덬·봊·앰 등) false positive 회피용 탈출구.
 - **서버 검증 없음** — 클라이언트 우회 가능. 의도적 우회자는 소수 + 한국 결혼식 방명록의 실명 문화 + 비개발자 하객 대부분 기본 플로우 사용이라는 가정. 프로덕션에서 사례 발생 시 Cloud Function 프록시 경로 (위 삭제 전략 A) 와 묶어 재설계.
-- 필터 통과한 후에도 운영자 (신랑/신부) 가 **Firebase Console 에서 수동 삭제** 가능. Console 삭제는 보안 규칙과 무관하게 프로젝트 소유자 권한으로 즉시 동작. badwords-ko 가 잡지 못한 변형 · 정상 단어 false positive 모두 이 경로로 보완.
-- **변형·confusable 정규화는 도입 안 함** — false positive 와 유지 비용 증가. 필요해지는 시점이 오면 별도 lib 또는 외부 패키지 (예: `Tanat05/korcen` Apache-2.0) 도입을 별도 결정으로 검토.
+- 필터 통과한 후에도 운영자 (신랑/신부) 가 **Firebase Console 에서 수동 삭제** 가능. Console 삭제는 보안 규칙과 무관하게 프로젝트 소유자 권한으로 즉시 동작. 두 배열이 잡지 못한 변형 · 정상 단어 false positive 모두 이 경로로 보완.
+- **외부 패키지 기반 변형·confusable 정규화는 도입 안 함** (예: `Tanat05/korcen` Apache-2.0) — bundle · 라이선스 NOTICE 의무 · 의존성 비용 사유. ADR 006 에 거부 근거 정리. ADDITIONAL_PROFANITY 가 50 항목을 넘거나 운영 중 변형 우회 30 건 이상 보고되면 ADR 재검토.
+- **ADDITIONAL_PROFANITY 신규 항목 추가 절차**: PR (또는 커밋) 단위로 일반 메시지 false positive 빠른 검증 — 브라우저 콘솔에서 `containsProfanity("축하해 행복한 가정 이뤄줘")` 등 호출. 의식적 제외 항목 (`ㅗ`·`ㄴㄴ`·`ㅈㅅ`·`ㅂㄹ`·`ㅂㅂ` 등) 은 ADR 006 기록 참조.
 
 ## Next.js 통합 패턴
 

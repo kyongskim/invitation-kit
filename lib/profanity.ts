@@ -39,10 +39,16 @@
 /**
  * 입력 문자열에 금칙어가 포함됐는지 검사한다.
  * 공백 제거로 "씨 발" 같은 단순 공백 우회를 1차 방어한다.
+ *
+ * 두 배열을 모두 검사한다 — 원본 badwords-ko (`PROFANITY_LIST`) +
+ * 자체 추가한 자음 변형 (`ADDITIONAL_PROFANITY`). 분리 근거는 ADR 006.
  */
 export function containsProfanity(text: string): boolean {
   const normalized = text.replace(/\s+/g, "");
-  return PROFANITY_LIST.some((word) => normalized.includes(word));
+  return (
+    PROFANITY_LIST.some((word) => normalized.includes(word)) ||
+    ADDITIONAL_PROFANITY.some((word) => normalized.includes(word))
+  );
 }
 
 const PROFANITY_LIST: readonly string[] = [
@@ -620,4 +626,30 @@ const PROFANITY_LIST: readonly string[] = [
   "쳐-",
   "씹-",
   "자살",
+];
+
+/**
+ * 자음 변형 (ㅅㅂ·ㅂㅅ 등) 보강 리스트. badwords-ko 원본 (`PROFANITY_LIST`) 가
+ * 정상 한글 표기 위주라 자음 줄임은 substring 매치로 못 잡는 결손을 메운다.
+ *
+ * 출처: 본 프로젝트 자체 데이터. 라이선스 의무 분리를 위해 `PROFANITY_LIST`
+ * 와 별도 배열로 둔다. 선별 기준·거부된 항목 (ㅗ·ㄴㄴ·ㅈㅅ 등 false positive
+ * 위험) 은 ADR 006 참조.
+ *
+ * 추가 시 체크: 일반 한글 메시지에 우연 결합 가능성, 그리고 다른 변형
+ * 항목과의 substring 포함 관계 (긴 항목 우선 — 짧은 항목이 긴 항목의
+ * 부분이면 짧은 쪽만 두는 등). 신규 항목은 브라우저 콘솔에서 직접
+ * `containsProfanity(메시지)` 로 false positive 빠르게 검증.
+ */
+const ADDITIONAL_PROFANITY: readonly string[] = [
+  "ㅅㅂ",
+  "ㅆㅂ",
+  "ㅂㅅ",
+  "ㅄ",
+  "ㅈㄴ",
+  "ㅈㄹ",
+  "ㄲㅈ",
+  "ㅁㅊ",
+  "ㅈ밥",
+  "ㅈ까",
 ];

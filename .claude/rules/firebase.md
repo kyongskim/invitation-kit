@@ -129,21 +129,30 @@ service cloud.firestore {
         && request.resource.data.createdAt == request.time;
 
       allow update: if false;
-      allow delete: if false;
+      allow delete: if true;
     }
   }
 }
 ```
 
-### 삭제 전략 — 왜 `allow delete: if false;` 인가
+### 삭제 전략 — C' 경로 (클라이언트 검증 + 도메인 적정 모델)
 
-비밀번호 기반 "본인 글만 삭제" 는 Firebase Auth 없이 **Firestore 보안 규칙만으로는 안전하게 구현 불가**. 3 가지 후보를 비교한 결과 MVP 는 **C 경로**.
+비밀번호 기반 "본인 글만 삭제" 는 Firebase Auth 없이 **Firestore 보안 규칙만으로는 안전하게 구현 불가**. 8주차 MVP 시점엔 C 경로 (delete 금지 + 운영자 안내) 로 시작했고, 12주차에 ADR 007 으로 **C' 경로 (클라이언트 검증 + delete 허용)** 로 전환했다. 결정 근거 전문은 [`docs/adr/007-guestbook-self-delete-strategy.md`](../../docs/adr/007-guestbook-self-delete-strategy.md) 참조.
 
-1. **A. Cloud Function 프록시** — 클라이언트가 `{docId, password}` 를 Function 에 보내고, Function 이 bcrypt 비교 후 admin 권한으로 삭제. 안전하나 **이 규칙 파일 Scope 에서 Cloud Functions 를 제외**했으므로 MVP 밖. v1.0 이후 도입 시 이 섹션 개정.
-2. **B. Soft delete (update 로 tombstone)** — `allow update` 를 한 필드 (`deletedAt`) 추가로만 허용하는 룰. 하지만 **"본인만 tombstone 가능" 을 룰로 증명할 수 없다** — 어느 클라이언트든 아무 문서의 tombstone 을 설정할 수 있어 악의적 vandalism 가능. **거부**.
-3. **C. Delete 허용 안 함 + UI 에서 삭제 버튼 미노출 + "삭제는 운영자 문의" 안내.** 가장 안전. MVP 적합.
+**채택 (C')**: `firestore.rules` 가 `allow delete: if true;` 로 누구든 delete 허용. 클라이언트가 `verifyPassword(input, hashFromDoc)` 후 일치 시에만 `deleteDoc` 호출. **클라이언트 검증 우회 가능 (DevTools 1줄)** 임을 도메인 적정 트레이드오프로 수용 — 청첩장 도메인 위협 모델 약함, 작성자 풀 single-digit~~100명, 사고 시 Firestore Console export 백업 복구.
 
-→ **C 채택.** `passwordHash` 필드는 스키마에 유지 (v1.0 이후 A 경로 이행 시 기존 데이터와 호환되도록 미래 대비 저장). UI 에서는 비밀번호 입력을 받아 해싱 후 Firestore 에 함께 저장만 하고, 실제 검증 경로는 두지 않는다.
+**거부 (v1.1+ 후보)**:
+
+1. **B (Vercel Route Handler + Admin SDK)** — 안전 100%. service account 발급 + Vercel env 등록 추가 setup 부담 → 비개발자 5분 배포 약속과 충돌. v1.1+ 재검토 트리거: vandalism 사례 보고 또는 작성자 풀 100명+
+2. **C (Cloud Function)** — Spark 플랜 제한 + Blaze 카드 등록 마찰 + Vercel 일관성 손실
+3. **D (Soft delete tombstone)** — rules 단 본인 검증 불가, vandalism 가능. C' 와 보안 동등하면서 구현 더 복잡
+4. **E (비밀번호 입력 빼기 + 운영자 수동만)** — 사용자 의도 미반영, 일반 청첩장 관행 미충족
+
+**보안 모델 한계 — 청첩장 도메인 적정**:
+
+본 C' 모델은 청첩장 도메인 (실명 문화, 가족·지인 풀, 위협 모델 약함) 의 트레이드오프. **다른 도메인 (커뮤니티 게시판, 댓글 시스템 등) 으로 fork 시 부적합** — 같은 패턴이 진짜 공격자 환경에서 vandalism 으로 깨짐. fork 사용자가 다른 도메인 적용 시 B 경로 (서버 매개) 로 갈아끼우는 명시 권고가 README/CONTRIBUTING 에 들어가는 것이 OSS 템플릿 정체성 보호.
+
+**운영자 백업 권장**: 글 삭제는 hard delete. 사고 시 복구 = Firestore Console 의 export 백업이 유일. 운영자가 결혼식 전후 주기적으로 Console 의 "데이터 내보내기" 로 백업 권장.
 
 ### 기타 규칙 메모
 
@@ -155,13 +164,13 @@ service cloud.firestore {
 
 - **라이브러리**: `bcryptjs` (pure JS, 브라우저 · Node 동시 지원). **`bcrypt` (native binding, Node 전용) 금지** — Next.js 클라이언트 번들 불가.
 - **salt rounds: 10** (2026 기준 client-side 적정값. 12 이상은 저사양 모바일에서 체감 지연).
-- `lib/hash.ts` 에 `hashPassword(plain: string): Promise<string>` 로 캡슐화. 호출측은 `bcryptjs` 를 직접 import 하지 않는다.
+- `lib/hash.ts` 에 `hashPassword(plain: string): Promise<string>` · `verifyPassword(plain: string, hash: string): Promise<boolean>` 두 함수로 캡슐화. 호출측은 `bcryptjs` 를 직접 import 하지 않는다.
 - **해시 길이 60자 고정** (`$2a$10$...` 포맷) — 보안 규칙의 `passwordHash.size() == 60` 과 일치시켜 과거/미래 알고리즘 혼입을 차단.
 
-### 클라이언트 해싱의 한계와 MVP 맥락
+### 클라이언트 해싱의 한계와 도메인 적정 맥락
 
 - DevTools 로 임의 해시를 `passwordHash` 에 넣는 것은 막지 못한다. 본인이 본인 글에 대해 하는 행위라 자체 위협은 아니다.
-- 타인이 내 글을 삭제하는 것은 위 "보안 규칙 C 경로" 로 모든 delete 가 막혀 있어 **불가능**. 해싱의 현재 역할은 **미래 삭제 기능 도입 대비 저장** 으로 수렴.
+- **타인이 내 글을 삭제하는 것은 클라이언트 검증 우회로 가능하다** (`firestore.rules` 의 `allow delete: if true;` + DevTools 의 `deleteDoc` 호출). 청첩장 도메인 위협 모델 약함 + 운영자 Console export 백업 복구 가능을 전제로 수용 — 자세한 트레이드오프는 ADR 007 + 위 "삭제 전략 C' 경로" 참조.
 - 평문 저장 금지 원칙은 변함 없음 — 하객이 다른 서비스에서 재사용하는 비밀번호가 평문으로 Firestore 에 남는 설계는 OSS 템플릿 기준 허용 불가.
 
 ## 욕설 필터
@@ -210,4 +219,4 @@ service cloud.firestore {
 - **스코프 확장**: Firebase Auth · Storage · Cloud Functions · App Check 도입 결정 시
 - **방명록 스키마 확장** (새 필드, tombstone 도입 등) — 스키마 표 · 보안 규칙 `hasOnly` · UI 3 곳 동시 갱신 체크
 - `invitation.config.ts` 의 `GuestbookConfig` / RSVP 관련 스키마 변경
-- **"비밀번호 삭제" 전략을 MVP=C (delete 금지) 에서 A (Cloud Function) 또는 B (soft delete) 로 전환** 시 — "Firestore 보안 규칙" · "비밀번호 해싱" 섹션 전면 개정
+- **"비밀번호 삭제" 전략을 C' (클라이언트 검증 + delete 허용, 12주차 ADR 007) 에서 B (Vercel Route Handler + Admin SDK) 로 전환** 시 — "Firestore 보안 규칙" · "비밀번호 해싱" · "Scope" (Admin SDK 정책) 섹션 전면 개정. 트리거 조건은 ADR 007 의 "미래 트리거" 절 참조

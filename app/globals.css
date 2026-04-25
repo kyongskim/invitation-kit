@@ -24,6 +24,15 @@
   --radius-sm: 0;
 }
 
+:root[data-theme="floral"] {
+  --color-primary: #d4a5a5;
+  --color-secondary: #8b6b6b;
+  --color-background: #fdf8f5;
+  --color-text: #3d2929;
+  --color-accent: #e8d0cc;
+  /* --font-serif · --radius-sm 는 Classic 기본 (Cormorant · 0.375rem) 재사용 */
+}
+
 @keyframes fade-in-up {
   from {
     opacity: 0;

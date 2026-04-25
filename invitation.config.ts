@@ -6,10 +6,10 @@
  */
 
 /**
- * 현재 구현된 테마 목록. 추가 테마는 Week 8 (Floral) 이후 순차 확장 예정.
+ * 현재 구현된 테마 목록. 추가 테마는 v1.1+ 후보 (minimal · vintage).
  * 설계 근거는 docs/adr/005-multi-theme-runtime-strategy.md.
  */
-export type ThemeName = "classic" | "modern";
+export type ThemeName = "classic" | "modern" | "floral";
 
 export interface Person {
   /** 이름 (예: '김철수') */

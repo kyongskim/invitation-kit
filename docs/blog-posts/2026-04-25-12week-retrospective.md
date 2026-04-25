@@ -25,7 +25,7 @@
 
 `invitation.config.ts` 한 파일만 수정하면 신랑·신부 이름부터 갤러리·계좌·지도·캘린더·방명록까지 전부 바뀐다. 컴포넌트 코드는 건드릴 필요가 없다.
 
-![데스크톱 홈 풀페이지 — 메인 hero 부터 닫는 인사까지](../../public/images/screenshots/desktop-home.png)
+![데스크톱 홈 풀페이지 — 메인 hero 부터 닫는 인사까지](../../public/images/screenshots/desktop-home.jpg)
 
 `theme: "modern"` 한 값만 바꾸면 전체 분위기가 이렇게 바뀐다 — 컴포넌트 코드 수정은 0 건:
 

@@ -34,13 +34,13 @@
 
 ### 데스크톱
 
-<img src="./public/images/screenshots/desktop-home.png" alt="데스크톱 홈 풀페이지 — 메인 hero 부터 닫는 인사까지" width="800" />
+<img src="./public/images/screenshots/desktop-home.jpg" alt="데스크톱 홈 풀페이지 — 메인 hero 부터 닫는 인사까지" width="800" />
 
 ### 모바일
 
 |                                                         메인                                                          |                                                  갤러리 라이트박스                                                  |                                                        Venue (지도·캘린더)                                                        |                                                  방명록                                                  |
 | :-------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------: |
-| <img src="./public/images/screenshots/mobile-home.png" alt="모바일 메인 — 신랑·신부 이름 + D-day 배지" width="200" /> | <img src="./public/images/screenshots/mobile-gallery-lightbox.png" alt="갤러리 라이트박스 열린 상태" width="200" /> | <img src="./public/images/screenshots/mobile-venue.png" alt="Venue 섹션 — 카카오맵·네이버 지도·구글 캘린더 3 버튼" width="200" /> | <img src="./public/images/screenshots/mobile-guestbook.png" alt="방명록 — 작성 폼 + 댓글" width="200" /> |
+| <img src="./public/images/screenshots/mobile-home.jpg" alt="모바일 메인 — 신랑·신부 이름 + D-day 배지" width="200" /> | <img src="./public/images/screenshots/mobile-gallery-lightbox.jpg" alt="갤러리 라이트박스 열린 상태" width="200" /> | <img src="./public/images/screenshots/mobile-venue.jpg" alt="Venue 섹션 — 카카오맵·네이버 지도·구글 캘린더 3 버튼" width="200" /> | <img src="./public/images/screenshots/mobile-guestbook.jpg" alt="방명록 — 작성 폼 + 댓글" width="200" /> |
 
 ### 다중 테마
 

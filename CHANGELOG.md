@@ -13,6 +13,7 @@
 ### Changed
 
 - **운영자 안내 카피** — "메시지 삭제는 신랑·신부에게 문의해주세요" → "비밀번호 분실 시 신랑·신부에게 문의해주세요" (본인 삭제 도입 후 fallback 안내로 의미 전환).
+- **README 데모 스크린샷 PNG → JPG (q=85, sips)** — `desktop-home` · `mobile-home` · `mobile-gallery-lightbox` · `mobile-venue` · `mobile-guestbook` 5 장 변환. `screenshots/` 디렉토리 7.1 MB → 2.7 MB (62% 절감). `theme-comparison.png` 은 collage 단색 영역 많아 PNG 가 더 효율적이라 유지. 청첩장 사이트 자체엔 미사용 (Lighthouse 영향 0) — GitHub README 페이지 로드 + 레포 위생 개선용.
 
 ### Decisions
 

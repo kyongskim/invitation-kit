@@ -34,13 +34,13 @@ Edit one config file, deploy in 5 minutes.
 
 ### Desktop
 
-<img src="./public/images/screenshots/desktop-home.png" alt="Desktop home, full-length capture from main hero through closing" width="800" />
+<img src="./public/images/screenshots/desktop-home.jpg" alt="Desktop home, full-length capture from main hero through closing" width="800" />
 
 ### Mobile
 
 |                                                          Home                                                          |                                               Gallery lightbox                                                |                                                              Venue (maps · calendar)                                                              |                                                    Guestbook                                                     |
 | :--------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------: |
-| <img src="./public/images/screenshots/mobile-home.png" alt="Mobile home — couple names and D-day badge" width="200" /> | <img src="./public/images/screenshots/mobile-gallery-lightbox.png" alt="Gallery lightbox open" width="200" /> | <img src="./public/images/screenshots/mobile-venue.png" alt="Venue section with Kakao Map, Naver Map, and Google Calendar buttons" width="200" /> | <img src="./public/images/screenshots/mobile-guestbook.png" alt="Guestbook with form and entries" width="200" /> |
+| <img src="./public/images/screenshots/mobile-home.jpg" alt="Mobile home — couple names and D-day badge" width="200" /> | <img src="./public/images/screenshots/mobile-gallery-lightbox.jpg" alt="Gallery lightbox open" width="200" /> | <img src="./public/images/screenshots/mobile-venue.jpg" alt="Venue section with Kakao Map, Naver Map, and Google Calendar buttons" width="200" /> | <img src="./public/images/screenshots/mobile-guestbook.jpg" alt="Guestbook with form and entries" width="200" /> |
 
 ### Multi-theme
 

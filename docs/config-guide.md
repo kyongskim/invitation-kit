@@ -1,0 +1,394 @@
+# Config 가이드
+
+> `invitation.config.ts` 한 파일에서 청첩장 모든 내용을 제어합니다. 이 문서는 그 파일의 모든 필드를 사용자 시점으로 설명한 매뉴얼입니다.
+
+## 시작하기
+
+1. 레포를 fork (또는 clone) 합니다.
+2. 카카오·Firebase 키를 발급받아 `.env.local` 과 Vercel 에 등록합니다 → [`api-keys.md`](./api-keys.md).
+3. **레포 루트의 `invitation.config.ts` 를 엽니다.**
+4. 본인 정보로 필드를 수정합니다 (이 문서가 가이드).
+5. `npm run dev` 로 로컬에서 확인 → `git push` 로 Vercel 자동 배포.
+
+```sh
+npm install
+npm run dev          # http://localhost:3000
+npm run typecheck    # 스키마 위반 즉시 발견
+```
+
+청첩장 본문은 `invitation.config.ts` 한 파일만 수정하면 됩니다. 컴포넌트 코드는 건드리지 않는 게 원칙 — config-driven 이 이 프로젝트의 절대 원칙입니다.
+
+---
+
+## 전체 구조
+
+`InvitationConfig` 인터페이스 한눈에:
+
+```ts
+{
+  meta:      { title, description, siteUrl }       // 페이지 메타데이터·OG 태그
+  theme:     "classic" | "modern" | "floral"        // 디자인 테마
+  groom:     Person                                 // 신랑 (이름·order·부모)
+  bride:     Person                                 // 신부
+  date:      string                                 // ISO 8601 + 타임존
+  venue:     Venue                                  // 식장 (이름·주소·좌표·교통편)
+  greeting:  { title?, message }                    // 인사말
+  gallery:   GalleryImage[]                         // 사진 배열
+  accounts:  { groomSide, brideSide }               // 양가 계좌
+  share:     ShareConfig                            // 카카오톡 공유 카드
+  guestbook: GuestbookConfig                        // 방명록 활성·옵션
+  music?:    { enabled, src }                       // (선택) 배경 음악
+  closing?:  { message?, signature? }               // (선택) 끝인사
+}
+```
+
+타입 정의는 `invitation.config.ts` 상단에 인라인되어 있습니다 — 표는 그 정의를 그대로 옮긴 것입니다.
+
+---
+
+## meta — 페이지 메타데이터
+
+브라우저 탭 제목, 검색·SNS 공유 시의 OG 태그에 사용됩니다.
+
+| 필드          | 타입   | 기본값                                      | 효과                                          |
+| ------------- | ------ | ------------------------------------------- | --------------------------------------------- |
+| `title`       | string | `"김철수 ♥ 이영희의 결혼식에 초대합니다"`   | `<title>` · OG title · Twitter card 제목      |
+| `description` | string | `"2026년 5월 17일, 저희 두 사람의 시작을…"` | meta description · OG description             |
+| `siteUrl`     | string | `"https://invitation-kit.vercel.app"`       | OG URL · 카카오 공유 카드의 `link.webUrl`    |
+
+**⚠️ `siteUrl` 은 카카오 콘솔에 등록한 도메인과 정확히 같아야 합니다.** 다르면 카카오가 카드 링크 호스트를 default 로 강제 치환합니다 — [`api-keys.md`](./api-keys.md) 의 1-5 절 참조.
+
+---
+
+## theme — 테마 선택
+
+세 가지 중 하나를 선택합니다.
+
+| 값          | 인상                                                              |
+| ----------- | ----------------------------------------------------------------- |
+| `"classic"` | 따뜻한 베이지·골드, Cormorant Garamond. 한국 결혼식 기본 톤      |
+| `"modern"`  | 슬레이트 블랙·화이트, Playfair Display, sharp edges (radius 0)   |
+| `"floral"`  | 로즈·뮤트한 마우브, Italiana, 살짝 더 둥근 모서리                |
+
+새로운 테마를 추가하려면 [`theme-guide.md`](./theme-guide.md) 참조.
+
+---
+
+## groom · bride — 신랑·신부
+
+```ts
+interface Person {
+  name: string;
+  order?: string;   // 예: "장남" "차녀"
+  father?: string;
+  mother?: string;
+}
+```
+
+| 필드     | 타입    | 필수 | 효과                                                   |
+| -------- | ------- | ---- | ------------------------------------------------------ |
+| `name`   | string  | ✓    | 메인 화면·인사말 등 모든 위치에 표시                  |
+| `order`  | string? | -    | 양가 부모 라인 옆 (예: "김아버지·박어머니의 장남")    |
+| `father` | string? | -    | 부모 라인. 미설정 시 부모 라인 자체가 생략됨          |
+| `mother` | string? | -    | 부모 라인. 미설정 시 부모 라인 자체가 생략됨          |
+
+**부모 한 분만 표기**해야 하는 경우 (예: 한쪽 부모를 여의신 경우) `father` 만 또는 `mother` 만 채우면 됩니다 — 빈 쪽은 자동으로 생략됩니다.
+
+---
+
+## date — 예식 일시
+
+```ts
+date: "2026-05-17T12:00:00+09:00"
+```
+
+**ISO 8601 + 타임존 (`+09:00` KST) 권장.** 이 값은:
+
+- 메인 화면의 날짜·시간 표시
+- D-day 배지 (현재 날짜와 비교)
+- 카카오 공유 카드의 자동 description (필요 시)
+- 캘린더 추가 버튼의 시작 시각
+
+타임존 없이 `"2026-05-17T12:00:00"` 만 쓰면 사용자 브라우저의 로컬 시각으로 해석돼 해외 하객 화면에서 날짜가 어긋날 수 있습니다.
+
+---
+
+## venue — 식장
+
+```ts
+interface Venue {
+  name: string;
+  hall?: string;
+  address: string;
+  coords: { lat: number; lng: number };
+  transportation?: { subway?, bus?, car?, parking? };
+}
+```
+
+| 필드                        | 타입    | 필수 | 예시                                       |
+| --------------------------- | ------- | ---- | ------------------------------------------ |
+| `name`                      | string  | ✓    | `"더채플 광화문"`                          |
+| `hall`                      | string? | -    | `"2층 그랜드볼룸"`                         |
+| `address`                   | string  | ✓    | `"서울특별시 종로구 세종대로 175"` (도로명 권장) |
+| `coords.lat` · `coords.lng` | number  | ✓    | `37.5725` · `126.9769`                     |
+| `transportation.subway`     | string? | -    | `"5호선 광화문역 2번 출구 도보 5분"`       |
+| `transportation.bus`        | string? | -    | `"간선 101, 103 광화문 정류장 하차"`       |
+| `transportation.car`        | string? | -    | `"내비게이션에 \"더채플 광화문\" 검색"`    |
+| `transportation.parking`    | string? | -    | `"건물 지하 주차장 2시간 무료"`            |
+
+### 좌표 얻는 법
+
+1. [카카오맵](https://map.kakao.com) 또는 [네이버 지도](https://map.naver.com) 에서 식장 검색.
+2. **카카오맵**: 결과 > 우측 상단 "공유" > URL 의 좌표 파라미터 복사. 또는 지도에서 식장 핀 위 우클릭 > "좌표 보기".
+3. **네이버 지도**: 식장 핀 우클릭 > "이 위치 좌표".
+
+정확도는 소수점 4 자리 (10m 정도) 면 충분합니다. 좌표는:
+
+- 카카오맵 딥링크 (`share.buttons.map` 활성 시)
+- 네이버 지도 버튼
+- 길찾기 링크
+
+생성에 사용됩니다.
+
+**⚠️ `share.buttons.map` 을 활성화한다면** 카카오 콘솔 웹 도메인에 `https://map.kakao.com` 도 추가해야 합니다 — [`api-keys.md`](./api-keys.md) 1-4 절.
+
+---
+
+## greeting — 인사말
+
+```ts
+greeting: {
+  title?: string;
+  message: string;
+}
+```
+
+| 필드      | 타입    | 필수 | 효과                                       |
+| --------- | ------- | ---- | ------------------------------------------ |
+| `title`   | string? | -    | 인사말 섹션 헤드라인                      |
+| `message` | string  | ✓    | 인사말 본문. `\n` 으로 줄바꿈, `\n\n` 단락 |
+
+JSX 의 `<br />` 도 지원하지만 `\n` 이 더 가독성이 좋습니다.
+
+```ts
+message: "서로의 다름을 존중하고 같음을 기뻐하며\n\n한 길을 걸어가려 합니다.\n\n축복해 주시면 감사하겠습니다.",
+```
+
+---
+
+## gallery — 사진 갤러리
+
+```ts
+gallery: GalleryImage[]
+
+interface GalleryImage {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+}
+```
+
+| 필드              | 타입    | 필수 | 효과                                                              |
+| ----------------- | ------- | ---- | ----------------------------------------------------------------- |
+| `src`             | string  | ✓    | `public/images/gallery/` 기준 상대 경로 (예: `/images/gallery/01.jpg`) |
+| `alt`             | string  | ✓    | 접근성 대체 텍스트                                                |
+| `width` · `height`| number? | 권장 | 원본 픽셀 크기. 레이아웃 안정화 (CLS 방지)                       |
+
+### 사진 추가 절차
+
+1. JPEG 또는 PNG 파일을 `public/images/gallery/` 에 복사 (예: `wedding-01.jpg`).
+2. `gallery` 배열에 항목을 추가:
+   ```ts
+   { src: "/images/gallery/wedding-01.jpg", alt: "본식 입장", width: 1200, height: 1500 },
+   ```
+3. 원본 가로/세로를 같이 적습니다 — Next.js Image 가 비율을 잡아 모바일에서 갑자기 점프하는 현상을 막습니다.
+
+권장 사진 매수: **9~12 장**. 예시 config 는 9 장입니다. 너무 많으면 첫 페인트가 느려지고 너무 적으면 갤러리 섹션이 빈약해 보입니다.
+
+이미지 최적화는 Next.js Image 컴포넌트가 자동 처리하므로 원본을 넣어도 OK입니다. 다만 한 장당 5MB 이상이면 Vercel 빌드 시간이 늘어나니 사전에 `~2MB` 이하로 압축을 권장합니다.
+
+---
+
+## accounts — 양가 계좌
+
+```ts
+accounts: {
+  groomSide: Account[];
+  brideSide: Account[];
+}
+
+interface Account {
+  label: string;
+  bank: string;
+  number: string;
+  holder: string;
+  kakaoPayUrl?: string;
+  tossUrl?: string;
+}
+```
+
+| 필드          | 타입    | 필수 | 예시                                  |
+| ------------- | ------- | ---- | ------------------------------------- |
+| `label`       | string  | ✓    | `"신랑"` · `"신랑 아버지"`            |
+| `bank`        | string  | ✓    | `"국민은행"`                          |
+| `number`      | string  | ✓    | `"123-45-678901"` (하이픈 포함 권장)  |
+| `holder`      | string  | ✓    | 예금주 이름                           |
+| `kakaoPayUrl` | string? | -    | 카카오페이 송금 딥링크                |
+| `tossUrl`     | string? | -    | 토스 송금 딥링크                      |
+
+양가 분리 표시가 기본입니다. 한쪽 계좌만 받는다면 빈 배열 (`brideSide: []`) 도 가능 — 빈 쪽 카드는 렌더링되지 않습니다.
+
+`kakaoPayUrl` · `tossUrl` 미설정 시 해당 버튼은 표시되지 않습니다 — 계좌번호 복사 버튼만 노출됩니다.
+
+---
+
+## share — 카카오톡 공유 카드
+
+```ts
+interface ShareConfig {
+  title: string;
+  description: string;
+  thumbnailUrl: string;
+  buttons?: {
+    site?: { enabled?: boolean; label?: string };
+    map?:  { enabled?: boolean; label?: string };
+  };
+}
+```
+
+| 필드             | 타입    | 기본값                                             | 효과                                                  |
+| ---------------- | ------- | -------------------------------------------------- | ----------------------------------------------------- |
+| `title`          | string  | `"김철수 ♥ 이영희 결혼합니다"`                     | 카카오톡 카드 상단 굵은 글씨                          |
+| `description`    | string  | `"2026년 5월 17일 토요일 낮 12시 · 더채플 광화문"` | 카드 본문 한 줄                                       |
+| `thumbnailUrl`   | string  | `"https://invitation-kit.vercel.app/images/og.png"` | **절대 URL 필수.** 800×400 권장 비율                  |
+| `buttons.site.enabled` | bool? | 미설정 시 `true`                                | 카드 좌측 "청첩장 보기" 버튼. URL 자동 = `meta.siteUrl` |
+| `buttons.site.label`   | string? | `"청첩장 보기"`                                  | 버튼 라벨 커스텀                                      |
+| `buttons.map.enabled`  | bool? | 미설정 시 `false`                               | 카드 우측 "지도 보기" 버튼. URL 자동 조립             |
+| `buttons.map.label`    | string? | `"지도 보기"`                                    | 버튼 라벨 커스텀                                      |
+
+### 썸네일 이미지 규칙
+
+- **반드시 절대 URL** (`https://...`). 상대 경로는 카카오 서버가 fetch 못 합니다.
+- **호스트가 카카오 콘솔 웹 도메인 등록 도메인이어야** 합니다. 미등록 도메인의 이미지는 default 로 강제 치환됩니다.
+- 권장 크기 800×400. `public/images/og.png` 에 본인 이미지를 두고 URL 을 거기로 가리키는 게 가장 단순합니다.
+- 이미지 변경 후에도 카카오 CDN 이 강하게 캐시하므로, 즉시 반영 검증이 필요하면 `?v=2` 같은 쿼리스트링을 붙여 새 URL 로 취급시킵니다.
+
+### buttons 활성 조합
+
+| 조합                              | 카드 동작                                          |
+| --------------------------------- | -------------------------------------------------- |
+| `site: true`, `map: false` (기본) | 청첩장 보기 버튼 1 개. 카드 본체 탭 = 청첩장으로 이동 |
+| `site: true`, `map: true`         | 두 버튼 노출. 카드 본체 탭 = 청첩장                |
+| 둘 다 비활성                      | 버튼 없음. 카드 본체 탭 = `meta.siteUrl`           |
+
+카카오 feed 템플릿은 최대 2 개 버튼까지 — 본 스키마가 그 제한을 그대로 반영합니다.
+
+---
+
+## guestbook — 방명록
+
+```ts
+interface GuestbookConfig {
+  enabled: boolean;
+  minPasswordLength?: number;
+  profanityFilter?: boolean;
+}
+```
+
+| 필드                | 타입    | 기본값 | 효과                                                       |
+| ------------------- | ------- | ------ | ---------------------------------------------------------- |
+| `enabled`           | boolean | -      | `false` 시 방명록 섹션 자체가 렌더링되지 않음. Firebase 키도 생략 가능 |
+| `minPasswordLength` | number? | `4`    | 메시지 작성 시 비밀번호 최소 길이                          |
+| `profanityFilter`   | boolean?| `true` | 욕설 필터 활성. 부모 세대 이름 false positive 발생 시 `false` 로 비활성 |
+
+방명록 데이터는 Firebase Firestore 에 저장됩니다. 사용 절차는 [`api-keys.md`](./api-keys.md) 의 2 절 참조.
+
+**비밀번호의 의미**: 현재 MVP 는 **삭제 기능을 제공하지 않습니다** (모든 삭제는 운영자가 Firebase Console 에서 수동). 비밀번호는 미래 삭제 기능 도입 대비로 해시 저장만 하고 검증 경로는 두지 않습니다 — 이 결정의 근거는 [`.claude/rules/firebase.md`](../.claude/rules/firebase.md) "삭제 전략" 섹션.
+
+**욕설 필터**: 한국어 574 단어 (`badwords-ko` MIT) + 자체 자음 변형 보강. 부모 세대 특수 이름·single-char 단어 false positive 가능성이 있어 비활성 옵션 제공. 운영자는 Firebase Console 에서 수동 삭제도 가능합니다.
+
+---
+
+## music — 배경 음악 (선택)
+
+```ts
+music?: {
+  enabled: boolean;
+  src: string;
+}
+```
+
+| 필드      | 타입    | 효과                                          |
+| --------- | ------- | --------------------------------------------- |
+| `enabled` | boolean | `true` 시 음악 토글 버튼 노출                |
+| `src`     | string  | `public/` 기준 상대 경로 (예: `"/audio/bg.mp3"`) |
+
+**iOS Safari 의 자동 재생 차단을 전제로 설계되어 있습니다** — 사용자가 직접 토글 버튼을 눌러야만 재생됩니다. 무음 모드일 때도 차단됩니다.
+
+음악 파일은 `public/audio/bg.mp3` 같은 경로에 직접 두세요. Vercel 의 정적 파일 호스팅이 자동 처리합니다. 라이선스가 명확한 음원 (저작권자 직접 허락 또는 CC0/Royalty-free) 만 사용하세요 — 청첩장은 짧게 운영되더라도 공개 페이지입니다.
+
+본 필드 자체를 생략하면 (`music` 키가 없는 경우) 음악 섹션이 렌더링되지 않습니다.
+
+---
+
+## closing — 끝인사 (선택)
+
+```ts
+closing?: {
+  message?: string;
+  signature?: string;
+}
+```
+
+| 필드        | 타입    | 예시                                       |
+| ----------- | ------- | ------------------------------------------ |
+| `message`   | string? | `"귀한 걸음으로 축복해 주시면 감사하겠습니다."` |
+| `signature` | string? | `"김철수 · 이영희 드림"`                    |
+
+생략 가능. 두 필드 모두 비워두면 closing 섹션이 렌더링되지 않습니다.
+
+---
+
+## 검증 체크리스트
+
+본인 정보로 채운 뒤 다음을 확인하세요.
+
+### 로컬
+
+```sh
+npm run typecheck
+npm run dev
+```
+
+- `typecheck` — 스키마 위반 (필수 필드 누락, 잘못된 타입) 즉시 발견. 빨간 줄이 있으면 push 하지 말 것.
+- `dev` 후 `http://localhost:3000` — 데스크톱 + Chrome 모바일 시뮬레이터 둘 다 확인.
+
+### 모바일 실기기
+
+청첩장의 1 순위 타깃은 **모바일 Safari**. 다음 시나리오를 실기기로 검증:
+
+- iOS Safari 에서 첫 페인트 → 갤러리 스크롤 → 카카오톡 공유 (실기기 카카오톡 설치 필요) → 방명록 작성
+- Android Chrome 에서 동일
+
+### 프로덕션 직전
+
+```sh
+rm -f .eslintcache && npm run lint && npm run typecheck && npm run format:check && npm run build
+```
+
+CI 와 동일한 quality gate 입니다. `format:check` 누락 시 `prettier` 가 잡지 못한 미포맷 파일이 CI 에서 빨간불이 됩니다.
+
+---
+
+## 다음 단계
+
+- 키 발급이 아직이라면 → [`api-keys.md`](./api-keys.md)
+- 새로운 테마를 추가하고 싶다면 → [`theme-guide.md`](./theme-guide.md)
+- Vercel 배포 절차 일반은 → [`03-claude-code-setup.md`](./03-claude-code-setup.md) 또는 레포 README
+
+설계 근거 문서 (대부분의 사용자는 읽을 필요 없음):
+
+- 프로젝트 기획·타깃·MoSCoW: [`01-project-brief.md`](./01-project-brief.md)
+- 12 주 로드맵: [`00-roadmap.md`](./00-roadmap.md)
+- 디자인 결정 기록: [`adr/`](./adr/) (테마 시스템 · 공유 버튼 스키마 · 욕설 필터 등 6 건)

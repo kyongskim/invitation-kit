@@ -15,6 +15,10 @@
 - **운영자 안내 카피** — "메시지 삭제는 신랑·신부에게 문의해주세요" → "비밀번호 분실 시 신랑·신부에게 문의해주세요" (본인 삭제 도입 후 fallback 안내로 의미 전환).
 - **README 데모 스크린샷 PNG → JPG (q=85, sips)** — `desktop-home` · `mobile-home` · `mobile-gallery-lightbox` · `mobile-venue` · `mobile-guestbook` 5 장 변환. `screenshots/` 디렉토리 7.1 MB → 2.7 MB (62% 절감). `theme-comparison.png` 은 collage 단색 영역 많아 PNG 가 더 효율적이라 유지. 청첩장 사이트 자체엔 미사용 (Lighthouse 영향 0) — GitHub README 페이지 로드 + 레포 위생 개선용.
 
+### Performance
+
+- **Guestbook `next/dynamic` lazy import** — `app/page.tsx` 의 Guestbook 만 별도 chunk 로 분리. firebase (~150KB) + bcryptjs (~25KB) + framer-motion (모달용) 이 initial bundle 에서 빠지고 viewport 도달 (또는 idle prefetch) 시점에 로드. Build chunk 비교: 가장 큰 chunk **463 KB → 309 KB (−154 KB, −33%)**. critical path JS evaluate 시간 단축 → TBT/TTI/Performance 개선 기대. v1.0 마지막 simulate 78 점 대비 실 측정 (Lighthouse 모바일 simulate + PSI) 으로 90+ 도달 여부 검증 예정 — 결과는 본 항목 갱신.
+
 ### Decisions
 
 - **ADR 007 신규** — 방명록 본인 삭제 전략 C → C' 전환 + 거부 대안 5종 (B Vercel Route Handler · C Cloud Function · D Soft delete · E 입력 빼기) 명시 + v1.1+ 재검토 트리거. 8주차 firebase.md 한정이던 결정을 ADR 격상.

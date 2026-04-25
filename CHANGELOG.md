@@ -4,6 +4,65 @@
 
 포맷은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/) 을 따르며, 버전 표기는 [Semantic Versioning](https://semver.org/lang/ko/) 을 따릅니다.
 
+## [0.2.0] - 2026-04-25
+
+8주차 누적 — 다중 테마 인프라 (Modern · Floral) · 구글 캘린더 일정 추가 · Firebase Firestore 방명록 · 운영 결정 명문화 (ADR 005·006).
+
+### Added
+
+- **Modern 테마 + 다중 테마 전환 인프라** (`9f01ff2`) — `:root[data-theme="modern"]` CSS 변수 override 블록, `--radius-sm` 토큰, `app/layout.tsx` 의 Playfair Display 상시 로드 + `<html data-theme={config.theme}>`. `ThemeName` union 도입 (`invitation.config.ts`). **컴포넌트 파일 수정 0 건** — 토큰 인프라가 자동 전환 흡수.
+- **Floral 테마** (`1f5b3a5` · `b52f44e`) — Blush Rose & Mauve 팔레트 5색 + Italiana serif (`next/font/google` 상시 로드, `--font-italiana`) + `--radius-sm: 0.625rem`. `ThemeName` union `"classic" | "modern" | "floral"` 3종 확정.
+- **구글 캘린더 일정 추가 버튼** (`7a4ebac`) — `lib/calendar.ts` 의 `googleCalendarUrl` pure function (UTC `YYYYMMDDTHHmmssZ` 변환), Venue 섹션 3번째 버튼. config 스키마 무변화.
+- **방명록 (Firebase Firestore)** (`f06e325` · `9887f2a` · `ccc8c7a` · `3b93f48` · `2ca5aee`) — `getDocs` 1회 + 작성 후 optimistic prepend, 4상태 (loading / ready / error / empty), cancelled flag 패턴 (Strict Mode + React 19 `react-hooks/set-state-in-effect` 동시 대응). `bcryptjs` 비밀번호 해싱 (salt 10, 60자 고정), `badwords-ko` 574 단어 (MIT 내재화) + `ADDITIONAL_PROFANITY` 자음 변형 10종 (자체 데이터). 메시지 삭제는 운영자 문의 (Firebase Console 수동) — MVP `allow delete: if false` UI 가시화. 단일 파일 364줄 → orchestrator (159) + Form (196) + List (69) 3분할 (`components/sections/Guestbook.tsx` + `components/sections/guestbook/`).
+- **레포 인프라** — `firestore.rules` · `firebase.json` 레포 루트 (`3412ef5`), `lib/firebase.ts` (Firestore db 싱글톤 + `getApps().length` HMR 가드), `lib/hash.ts` (`hashPassword`), `lib/profanity.ts` (`containsProfanity` + 두 배열 분리), `lib/hooks.ts` (`useIsClient` 추출, useSyncExternalStore 기반).
+- **`.env.example`** — Firebase 6 키 (`NEXT_PUBLIC_FIREBASE_*`) 빈 값 샘플 추가.
+- **문서** — ADR 005 (`다중 테마 전환 메커니즘 — data-theme 속성 + CSS 변수 override`), ADR 006 (`욕설 필터 자음 변형 보강 전략`), `.claude/rules/firebase.md` (스코프 5건 · 삭제 전략 C 채택 · 욕설 필터 정책 · 콘솔 가이드 · 60자 해시 보안 규칙).
+
+### Changed
+
+- **`useIsClient` 추출** (`c1ac4a1`) — `DDayBadge.tsx` · `InAppBrowserNotice.tsx` 의 동일 구현이 방명록 form 에서 3번째 사용처가 되며 `lib/hooks.ts` 로 이동 (rule of three). 두 컴포넌트 회귀 0.
+- **Guestbook 3분할** (`3b93f48`) — 단일 파일이 200줄 가이드 초과 (364줄). 데이터 fetch (orchestrator) ↔ 입력 검증 (Form) ↔ 표시 (List) 책임 분리. `GuestbookSubmitInput` 객체 prop 으로 통신, `profanityFilterOn` · `minPasswordLength` 는 prop 패스다운.
+
+### Decisions
+
+- **ADR 005** — `:root[data-theme]` + CSS 변수 override 채택. 거부된 대안 A~E (Tailwind preset · CSS-in-JS · class-based · 조건부 import · 별도 빌드) 와 비교 근거 명문화. **컴포넌트 수정 0 건** 으로 7주차 약속 실증.
+- **ADR 006** — 욕설 필터 외부 패키지 (`korcen` Apache-2.0 등) 거부, 자체 데이터 (`ADDITIONAL_PROFANITY`) 채택. 거부 근거 5건 (의존성 비용 · NOTICE 의무 · bundle 미측정 · 유지보수 외부화 · 사용 강도 불일치). 재검토 트리거 3건 (50 항목 초과 · 30건 우회 보고 · 작성자 100명+).
+
+### Known Limitations
+
+- **방명록 본인 삭제 미지원** — 보안 규칙은 `allow delete: if false`. 운영자가 Firebase Console 에서 수동 삭제. Firebase Auth 없이 비밀번호 기반 삭제는 룰만으로 안전 구현 불가 (vandalism 가능). v1.0 이후 Cloud Function 프록시 (A 경로) 도입 검토. 자세한 비교는 [`.claude/rules/firebase.md`](.claude/rules/firebase.md) 의 "삭제 전략" 섹션.
+- **욕설 필터는 클라이언트 단순 substring 매치** — DevTools 우회 가능. 한국 결혼식 방명록 실명 문화 + 비개발자 하객 대부분 기본 플로우 가정. 프로덕션 우회 사례 발생 시 Cloud Function 프록시와 묶어 재설계.
+- **Floral 테마 디자인 인상 부족** — Blush Rose & Mauve + Italiana 1차 구현 후 Modern 만큼의 차별 미달. 재검토는 별도 세션 호흡 — 사용자 트리거 시까지 자동 재진입 금지 (8주차 회고 결정).
+- **카카오 콘솔 도메인 등록 + Firebase Authorized Domains** — OSS fork 사용자별 작업. v0.1.0 이후 변경 없음.
+
+### Not yet (v1.0 목표 — 10주차)
+
+- 비개발자 5분 배포 가이드 — `docs/config-guide.md` (모든 config 필드 설명) · `docs/api-keys.md` (카카오·네이버·Firebase 키 발급 단계별 스크린샷) · `docs/theme-guide.md` (새 테마 기여 방법)
+- README 영문 섹션 보강 (5주차 이후 변경 반영)
+- Lighthouse 90+ · 브라우저/기기 매트릭스 테스트 · 이미지·번들 사이즈 최적화
+- 구글 캘린더 실기기 검증 (Android 구글 앱 · iOS Safari 에서 KST 12:00 표시 확인)
+
+### Not yet (v1.1+ 후보)
+
+- 웹 에디터 UI (비개발자 대상 SaaS 방향, 실사용 수요 보고 재검토)
+- RSVP · 참석 여부 응답
+- 다국어 UI
+- BGM · 배경음악
+- Apple Calendar 일정 추가
+- 방명록 본인 삭제 (Cloud Function 프록시 A 경로)
+- App Check (방명록 스팸·스크래핑 방지)
+
+### 설치·배포
+
+1. [GitHub 리포](https://github.com/kyongskim/invitation-kit) 를 Fork.
+2. `invitation.config.ts` 를 본인 결혼식 정보로 수정 (`theme: "classic" | "modern" | "floral"` 선택).
+3. `public/images/gallery/` 에 본인 사진을 `sample-0N.jpg` 파일명으로 교체.
+4. Vercel 에 연결 — `NEXT_PUBLIC_KAKAO_APP_KEY` (선택) + `NEXT_PUBLIC_FIREBASE_*` 6 키 (방명록 사용 시) 환경 변수 설정.
+5. 카카오 개발자 콘솔에 JavaScript SDK 도메인 + 웹 도메인 두 필드에 프로덕션 URL 등록 (+ `map.kakao.com`).
+6. Firebase Console 에서 Firestore Database 생성 (Standard edition · `asia-northeast3` · 프로덕션 모드) → 보안 규칙 탭에 `firestore.rules` 본문 붙여넣기.
+
+세부 가이드는 [README.md](README.md) · [`.claude/rules/firebase.md`](.claude/rules/firebase.md) 참조.
+
 ## [0.1.0] - 2026-04-25
 
 한국 결혼식에 최적화된 오픈소스 모바일 청첩장 템플릿의 첫 공개 릴리스. MVP Must 기능 6 건 + Should 기능 2 건 포함.
@@ -58,4 +117,5 @@
 
 세부 가이드는 [README.md](README.md) 참조.
 
+[0.2.0]: https://github.com/kyongskim/invitation-kit/releases/tag/v0.2.0
 [0.1.0]: https://github.com/kyongskim/invitation-kit/releases/tag/v0.1.0

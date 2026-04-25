@@ -3,7 +3,7 @@
 > **살아있는 문서 (Living document).** 매 주차 끝날 때 이 문서를 업데이트하세요.
 > 지난 주차는 "실제 한 것" 기준으로 기록하고, 남은 주차는 필요에 따라 재설계해도 됩니다.
 
-**마지막 업데이트:** 2026-04-25 (8주차 Day1~Day3 완료 시점)
+**마지막 업데이트:** 2026-04-25 (9주차 Day1~Day2 완료 시점)
 
 ---
 
@@ -17,16 +17,16 @@
 
 ## 📊 전체 진행 상황
 
-| 단계                      |    주차    |    상태    | 마일스톤                                   |
-| ------------------------- | :--------: | :--------: | ------------------------------------------ |
-| 1단계: 기획 + 셋업        |  Week 1-2  |  ✅ 완료   | 자동 배포 환경 + 디자인 토큰               |
-| 2단계: Must 기능 개발     |  Week 3-6  |  ✅ 완료   | v0.1.0 MVP                                 |
-| 3단계: Should 기능 + 테마 |  Week 7-8  |  ✅ 완료   | 다중 테마 (Classic·Modern·Floral) + 방명록 |
-| 4단계: 문서화 + QA        |   Week 9   | 🔄 진행 중 | 비개발자도 5분 배포 + v0.2 릴리스          |
-| 5단계: 릴리스 + 홍보      | Week 10-11 |  ⏳ 예정   | v1.0.0 + 커뮤니티 공개                     |
-| 6단계: 유지보수 기반      |  Week 12   |  ⏳ 예정   | 루틴 정착                                  |
+| 단계                      |    주차    |  상태   | 마일스톤                                   |
+| ------------------------- | :--------: | :-----: | ------------------------------------------ |
+| 1단계: 기획 + 셋업        |  Week 1-2  | ✅ 완료 | 자동 배포 환경 + 디자인 토큰               |
+| 2단계: Must 기능 개발     |  Week 3-6  | ✅ 완료 | v0.1.0 MVP                                 |
+| 3단계: Should 기능 + 테마 |  Week 7-8  | ✅ 완료 | 다중 테마 (Classic·Modern·Floral) + 방명록 |
+| 4단계: 문서화 + QA        |   Week 9   | ✅ 완료 | 비개발자도 5분 배포 + v0.2 릴리스          |
+| 5단계: 릴리스 + 홍보      | Week 10-11 | ⏳ 예정 | v1.0.0 + 커뮤니티 공개                     |
+| 6단계: 유지보수 기반      |  Week 12   | ⏳ 예정 | 루틴 정착                                  |
 
-**현재 진행도:** ⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜ 8/12 주 (67%)
+**현재 진행도:** ⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜ 9/12 주 (75%)
 
 ---
 
@@ -201,41 +201,57 @@
   - 태스크 5 (회고 5번): `.claude/settings.json` 의 `gh run view` polling 허용 명시
   - **보류 (사용자 트리거 시):** Floral 디자인 재설정, Modern accent 색 재검토
 
+### Week 9 · v0.2 릴리스 + 비개발자 가이드 3종 + 회고 우선 태스크 일괄 마감 (Day1~Day2)
+
+- **원래 계획:** v0.2 태그 + 가이드 3종 (`api-keys` · `config-guide` · `theme-guide`) + 캘린더 실기기 검증 + firebase.md 메모 격상 + settings 명시 + quality gate 시퀀스 명시. 8주차 회고 우선 태스크 6 항목.
+- **실제 결과물:** Day1~Day2 누적 10 커밋 (회고 커밋 제외)
+  - **`v0.2.0` 릴리스 (`aa122f8`)** — `CHANGELOG.md` `[0.2.0]` 섹션 (Added 6 카테고리 · Changed 2 · Decisions 2 · Known Limitations 4 · Not yet 7), `package.json` `0.1.0 → 0.2.0`, annotated tag, GitHub Release Latest 공개. 7주차 `v0.1.0` (`b629ba6`) 패턴 미러
+  - **표준 quality gate 시퀀스 (`c58b50f`)** — CLAUDE.md 라인 94 에 `rm -f .eslintcache && lint && typecheck && format:check && build` 명시. 회고 우선 6번
+  - **`firebase.md` 환경변수 + Console 8단계 + Gotcha 영구화 (`b3ec400`)** — v0.2 직후 dev 만 동작 / prod 작성 실패 사례 후속. Vercel Environment Variables 6 키 등록 + Production·Preview 체크 + 재배포 단계 명시. 회고 외 보너스
+  - **`firebase.md` set-state-in-effect 톤 격상 (`05f13fc`)** — "주의" → "절대 금지", fetch effect 초기 state 패턴 명시. 5주차→6주차→8주차 3 회 재발 후 회고 격상. 회고 우선 4번
+  - **`docs/api-keys.md`** (204줄, `1851f89`) — 카카오 + Firebase 키 발급 사용자 시점. 카카오 도메인 2 필드 표 + Firebase Console 핵심 4 가지 + Vercel Production·Preview + 재배포 + 흔한 실수 5건. 회고 우선 2번 (1/3)
+  - **`docs/config-guide.md`** (394줄, `212fd04`) — `invitation.config.ts` 11 top-level 키 전수, 표 + 외부 setup 박스 + 좌표 얻는 법·부모 한 분만 표기·iOS 자동재생 차단·CLS 방지 등 운영 시점 변형 패턴. 회고 우선 2번 (2/3)
+  - **`docs/theme-guide.md`** (214줄, `988e5a8`) — 9 변수 토큰 카탈로그, 4번째 테마 (`vintage` 가상 시나리오) 5단계, Modern worked example + Floral 짧은 노트, 디자인 결정 가이드 + Gotcha 5건. 회고 우선 2번 (3/3)
+  - **회고 우선 5번 가설 정정 (`c1e5348`)** — 8주차 회고 본문에 9주차 fact-check sub-bullet 추가. settings 변경 불필요 + 정답은 Monitor 도구 채택 (1순위) → Bash `run_in_background` + `until` 루프 (fallback). Day 2 Monitor 거부 케이스 1건 추가 finding 포함
+  - **`b2af838` · `b934f9b`** — Prettier `format:check` 누락 fix-forward 2건 (Day 1 8주차 회고 / Day 2 가이드 3종). 8주차 동일 패턴 재발
+  - **구글 캘린더 실기기 검증 통과** — Day 2 사용자 자가 검증 (Android Chrome / iOS Safari, KST 12:00 정상). 회고 우선 3번
+- **배운 것:**
+  - **회고 가설은 보존하고 정정은 인라인 sub-bullet 으로** — 회고 우선 5번 ("settings 추가") 진단 부정확 발견 후 본문은 그대로 두고 `### N번 9주차 fact-check` sub-bullet 으로 정정 박음. retroactive rewrite 로 가설을 지우면 학습 가치 사라짐. 회고 = 스냅샷 + 후속 패치 모델
+  - **운영 갭은 한 사이클 안에서 영구화** — Vercel 환경변수 등록 누락 사례를 발견 → 진단 → `firebase.md` 영구화 → `api-keys.md` 흔한 실수 인용 → 회고 보너스까지 ~30 분. 사이클 길이가 길어지면 흐릿한 기억으로만 남고 영구화 안 됨
+  - **README-Driven Documentation 의 ROI** — 가이드 3종 작성 자체가 코드 정합성 외부 검증으로 작동. `theme-guide.md` 의 9 변수 토큰 카탈로그 작성 과정에서 globals.css 와 의도 일치 재확인
+  - **Plan Mode 의 ROI 는 작업 종류에 따라 다르다** — 문서 작성은 architecture 결정이 아니라 톤·범위·분량 합의가 핵심. Phase 2 의 Plan agent 는 본 호흡에서 skip. 시스템 reminder 보다 더 광범위한 skip 가능 영역
+  - **회고 우선 태스크의 8 할은 small loop** — 1줄 수정 / 검증 / 가설 정정 / 회고 패치 같은 짧은 단위. 큰 분량 (가이드 3종) 은 하나뿐. v1.0 직전 우선 태스크 설계 시 자연스러운 비율
+- **10주차로 넘긴 것:**
+  - 태스크 1: README 영문 섹션 5주차 이후 동기화. 6·7·8·9주차 누적 변경 (다중 테마 · 캘린더 · 방명록 · 가이드 3종 · v0.2) 반영
+  - 태스크 2: Lighthouse 90+ + 기기 매트릭스 (모바일 Safari · Android Chrome · 인앱 웹뷰)
+  - 태스크 3: 데모 사이트 배포 (가상 커플) + README 데모 링크 + 스크린샷·GIF
+  - 태스크 4: `v1.0.0` 태그 + GitHub Release. 7주차 v0.1.0 · 9주차 v0.2.0 패턴 미러
+  - 태스크 5: CONTRIBUTING.md 최종 점검 (Week 11 외부 기여자 환영 준비)
+  - 태스크 6 (작은): Vercel 환경변수 등록 누락 사례를 README 에도 한 줄. 현재는 firebase.md + api-keys.md 에만 박힘
+  - **보류 (사용자 트리거 시):** Floral 디자인 재설정, Modern accent 색 재검토
+
 ---
 
 ## 🔜 남은 주차 계획
 
 > 지난 5주 경험을 반영해 재조정합니다. 여기 적힌 건 계획일 뿐, 주차가 끝날 때 "실제 한 것"으로 위 섹션에 옮겨 적으세요.
 
-### Week 9 · v0.2 릴리스 + 비개발자 가이드 + 최종 QA 진입
+### Week 10 · v1.0.0 마감 + 릴리스
 
-**목표:** 8주차 누적 12 커밋을 v0.2 로 닫고, "비개발자도 5분 배포" 약속을 실제로 지킬 수 있도록 가이드 3종 작성. v1.0 직전 QA 의 시작.
+**목표:** v0.2 → v1.0 누적을 닫고 OSS 첫 공개. 9주차에 가이드 3종이 한 주 앞당겨 끝나서 본 주차에 README 영문 동기화 · QA · 데모 사이트 · 릴리스 노트까지 묶어 마감.
 
-- [ ] **v0.2 릴리스** — `CHANGELOG.md` 의 v0.2 섹션 (Modern·Floral · 캘린더 · 방명록 · firestore.rules 등 누적), annotated tag `v0.2.0`, GitHub Release 노트 (한국어 primary + 영문 summary). 7주차 v0.1.0 패턴 미러
-- [ ] `docs/config-guide.md` — 모든 config 필드 설명 (meta · theme · groom·bride · venue · gallery · share · accounts · guestbook · music)
-- [ ] `docs/api-keys.md` — 카카오/네이버/Firebase 키 발급 단계별 스크린샷. firebase.md 의 콘솔 가이드를 사용자 시점으로 재정리
-- [ ] `docs/theme-guide.md` — 새 테마 기여 방법 (`:root[data-theme]` override + 폰트 변수 + ThemeName union)
-- [ ] 구글 캘린더 실기기 검증 (Android 구글 앱 · iOS Safari) — v0.2 배포 직후 자연 발생
-- [ ] firebase.md 의 set-state-in-effect 메모 격상 (1줄 수정)
-- [ ] `.claude/settings.json` 에 `gh run view` polling 명시 허용
-- [ ] (가능 시) `README.md` 스크린샷 · GIF · 데모 링크 정리. 5주차 현실화 이후 v1.0 대비 재정비
+- [ ] **README 영문 섹션 5주차 이후 동기화** — 6·7·8·9주차 누적 변경 (다중 테마 · 캘린더 · 방명록 · 가이드 3종 · v0.2) 반영. OSS 첫 진입자 (한국 외 fork 시도) 의 첫 인상이라 v1.0 직전 정비 필수
+- [ ] **Lighthouse 90+ + 기기 매트릭스** — 모바일 Safari · Android Chrome · 인앱 웹뷰 (카카오톡 · Instagram) 4 환경에서 점수 + 갤러리·방명록·공유·캘린더 시나리오 통과. 이미지·번들 사이즈 최적화 동반
+- [ ] **데모 사이트 배포** — 가상의 커플 (`demo-config.ts` 또는 별도 Vercel 프로젝트) 로 OSS 첫 방문자가 즉시 청첩장 동작을 볼 수 있는 데모. README 데모 링크 + 스크린샷·GIF
+- [ ] **`v1.0.0` 태그 + GitHub Release** — 7주차 `v0.1.0` · 9주차 `v0.2.0` 패턴 미러. CHANGELOG `[1.0.0]` 섹션 (v0.2 → v1.0 누적, 가이드 3종 · README 영문 · Lighthouse 결과). 라이선스 / 저작권 고지 최종 점검
+- [ ] **CONTRIBUTING.md 최종 점검** — Week 11 외부 기여자 환영 준비. 새 테마 PR 흐름 (`theme-guide.md` 5단계) · 이슈 템플릿 · PR 템플릿 점검
+- [ ] (작은) Vercel 환경변수 등록 누락 사례를 README 에도 한 줄 — 현재 firebase.md + api-keys.md 에만 박힘
+- [ ] 영상 튜토리얼 1개 (5~10분, YouTube 또는 Loom) — 선택, v1.0 마감 시간 여유 보고
 
 **보류 (사용자 트리거 시):**
 
 - Floral 디자인 재설정 — 8주차 1차 구현 인상 부족, 별도 세션 호흡 필요
 - Modern accent 색 (`#e2e8f0` 약함) — 실사용자 피드백 시
-
-### Week 10 · v1.0.0 마감 + 릴리스
-
-- [ ] `README.md` 영문 섹션 보강 (5주차 이후 변경 반영)
-- [ ] 브라우저/기기 매트릭스 테스트 · Lighthouse 90+ 목표
-- [ ] 성능 최적화 (이미지, 번들 사이즈)
-- [ ] `CHANGELOG.md` v0.2 → v1.0.0 누적 정리 · 라이선스/저작권 고지 최종 점검
-- [ ] 영상 튜토리얼 1개 (5~10분, YouTube 또는 Loom) — 선택
-- [ ] v1.0.0 태그 + GitHub 릴리스 노트
-- [ ] 데모 사이트 배포 (가상의 커플 예시)
-- [ ] Product Hunt 제출 준비 (Ship 페이지)
-- [ ] 홍보용 스크린샷/GIF 제작
 
 ### Week 11 · 공개 및 홍보
 

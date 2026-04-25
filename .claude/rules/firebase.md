@@ -64,6 +64,7 @@ export const db: Firestore = getFirestore(app);
 
 - **Admin SDK `serviceAccountKey.json` · Service Account Private Key 는 절대 저장소·프론트엔드 노출 금지.** 현재 프로젝트는 Admin SDK 사용 계획 없음. 도입이 필요해지는 시점이 오면 Next.js Route Handler (서버) 로 분리.
 - 개발 로컬은 `.env.local` (gitignored), 프로덕션은 Vercel Environment Variables. 두 곳 외의 위치 (코드, `.env`, README 예시) 에 실제 키를 기록하지 않는다.
+- **`.env.local` 작성만으로는 프로덕션 동작 안 함.** `NEXT_PUBLIC_*` 변수는 Next.js 빌드 시점에 클라이언트 번들에 **인라인** 되는 값이라, Vercel 빌드 환경에 등록돼 있지 않으면 `process.env.NEXT_PUBLIC_FIREBASE_*` 가 전부 `undefined` 로 박혀 `initializeApp({apiKey: undefined, ...})` 가 만들어지고, 런타임에 `auth/invalid-api-key` 또는 `apiKey must be a non-empty string` 류 에러로 SDK 가 죽는다. 9주차 v0.2 직후 발견 사례 — dev 만 동작, prod 작성 실패. 등록·재배포 절차는 아래 "Firebase Console 설정" 8 단계 참조.
 - **`.env.example` 은 실제 Firebase SDK 도입 커밋에서** 6 줄 빈 값 샘플 추가 (본 규칙 커밋엔 포함하지 않음). 카카오 키와 동일 정책.
 
 ## Firebase Console 설정 (사용자 직접)
@@ -79,7 +80,11 @@ export const db: Firestore = getFirestore(app);
 5. **모드 선택** (위치 선택 _후_ 에 나오는 화면): **프로덕션 모드로 시작** 선택. **테스트 모드 금지** (30일 후 만료 + 그 전엔 누구나 쓰기 가능). 단, 일부 신규 UI 에선 모드 선택 자체가 사라지고 Standard 기본값이 deny-all 프로덕션 모드인 경우도 있음 — 그때는 그냥 다음 단계로.
 6. **사용 설정** 클릭 → 1~2분 프로비저닝 대기 → 빈 Firestore 데이터 탭 화면.
 7. 좌측 상단 프로젝트 이름 옆 **톱니바퀴 (⚙️)** > **프로젝트 설정** > "일반" 탭 > "내 앱" 섹션 > **웹 앱 (`</>`)** 추가. 앱 닉네임 임의. ⚠️ **"이 앱에 Firebase Hosting 도 설정하기" 체크 해제** (Vercel 사용 — Hosting 충돌 회피).
-8. **앱 등록** 클릭 → 화면에 노출되는 `firebaseConfig` 객체 6 필드를 `.env.local` · Vercel Environment Variables 양쪽에 복사. (창 닫은 뒤엔 같은 페이지의 "SDK 설정 및 구성" > "구성" 라디오로 다시 노출 가능.)
+8. **앱 등록** 클릭 → 화면에 노출되는 `firebaseConfig` 객체 6 필드를 **두 곳 모두에 복사**:
+   - **로컬 `.env.local`** (gitignored, dev 서버용).
+   - **Vercel Environment Variables** (Vercel Dashboard > 프로젝트 > Settings > Environment Variables) — 6 키 각각을 **Production · Preview 환경에 체크** 후 Save. Development 환경은 Vercel CLI 로 dev 돌릴 때만 필요해 보통 미체크. **이 단계 누락이 9주차 v0.2 직후 발견 사례** (dev 만 동작, prod 작성 실패) — `.env.local` 만 채우고 Vercel 쪽을 빠뜨리면 빌드 시점 인라인이 `undefined` 로 박혀 SDK init 실패.
+   - **재배포 트리거**: env 변경만으론 자동 재배포 안 됨. Deployments 탭 > 최신 배포 우측 `...` > Redeploy (옵션 모달 그대로 Redeploy). 또는 빈 commit push (`git commit --allow-empty -m "chore: trigger Vercel redeploy"`).
+   - 창 닫은 뒤엔 같은 페이지의 "SDK 설정 및 구성" > "구성" 라디오로 6 필드 재노출 가능.
 9. Authentication · Storage · Functions 는 **활성화하지 않는다** (범위 밖).
 10. **Authorized Domains** (Authentication > Settings) 는 Auth 미사용인 현 단계에서는 기본값 유지. Auth 도입 시에만 프로덕션 도메인 추가.
 
@@ -194,6 +199,7 @@ service cloud.firestore {
 - **Firestore 무료 티어 쿼터**: daily 50K reads · 20K writes · 20K deletes · 1GB storage. 결혼식 1 회 방문자 수 (~500) · 방명록 쓰기 (~100) · 축의금 페이지 여러 번 조회 기준으로 **충분히 여유**. OSS 템플릿을 여러 커플이 같은 Firebase 프로젝트로 공유 운영하는 시나리오는 사용 사례 아님 — 각 커플이 본인 프로젝트를 생성하는 게 전제.
 - **보안 규칙 배포 전파**: Firebase Console 에서 규칙 저장 후 **최대 1분** 전파 지연. 이 시간 동안 dev/prod 괴리 가능.
 - **프로덕션 모드 기본값 = deny-all**: 콘솔에서 "프로덕션 모드" 로 초기화하면 Firestore 기본 규칙이 `allow read, write: if false;`. 위 `firestore.rules` 를 붙여넣기 전까지는 모든 요청이 거부되는 게 정상.
+- **Vercel Environment Variables 누락 — dev 만 동작, prod 작성 실패**: `NEXT_PUBLIC_*` 변수는 빌드 시점에 인라인되는 값이라 `.env.local` 만으로는 Vercel 프로덕션 빌드에 반영되지 않는다. 6 키를 Vercel Settings > Environment Variables 에 등록 + Production · Preview 체크 + 재배포까지가 한 묶음. 9주차 v0.2 직후 실제 발화한 사례. 증상: 프로덕션에서 방명록 submit 시 `auth/invalid-api-key` 또는 `apiKey must be a non-empty string`. 환경 변수 섹션 + Console 설정 8 단계 참조.
 - **한국어 정렬**: `orderBy('createdAt', 'desc')` 는 Timestamp 기반이라 한글 유니코드 정렬 이슈 없음. 향후 이름 필드 정렬을 추가할 경우 유니코드 정렬이 한국어 가나다 순과 완전히 일치하지 않는 점 참고.
 
 ## 이 규칙 파일을 갱신해야 하는 순간

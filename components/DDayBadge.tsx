@@ -1,17 +1,8 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
-
 import { config } from "@/invitation.config";
 import { daysUntil } from "@/lib/date";
-
-const subscribe = () => () => {};
-const getClientSnapshot = () => true;
-const getServerSnapshot = () => false;
-
-function useIsClient(): boolean {
-  return useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
-}
+import { useIsClient } from "@/lib/hooks";
 
 export function DDayBadge() {
   const isClient = useIsClient();

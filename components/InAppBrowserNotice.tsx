@@ -1,18 +1,11 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 
+import { useIsClient } from "@/lib/hooks";
 import { isInAppBrowser } from "@/lib/userAgent";
 
 const STORAGE_KEY = "inapp-notice-dismissed";
-
-const subscribe = () => () => {};
-const getClientSnapshot = () => true;
-const getServerSnapshot = () => false;
-
-function useIsClient(): boolean {
-  return useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
-}
 
 function readDismissed(): boolean {
   if (typeof window === "undefined") return false;

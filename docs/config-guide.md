@@ -351,16 +351,33 @@ music?: {
 }
 ```
 
-| 필드      | 타입    | 효과                                             |
-| --------- | ------- | ------------------------------------------------ |
-| `enabled` | boolean | `true` 시 음악 토글 버튼 노출                    |
-| `src`     | string  | `public/` 기준 상대 경로 (예: `"/audio/bg.mp3"`) |
+| 필드      | 타입    | 효과                                                                   |
+| --------- | ------- | ---------------------------------------------------------------------- |
+| `enabled` | boolean | `true` 시 우상단 floating 토글 버튼 노출 (`enabled=false` 면 미마운트) |
+| `src`     | string  | `public/` 기준 상대 경로 (예: `"/audio/wedding.mp3"`) 또는 절대 URL    |
 
-**iOS Safari 의 자동 재생 차단을 전제로 설계되어 있습니다** — 사용자가 직접 토글 버튼을 눌러야만 재생됩니다. 무음 모드일 때도 차단됩니다.
+### UX 동작
 
-음악 파일은 `public/audio/bg.mp3` 같은 경로에 직접 두세요. Vercel 의 정적 파일 호스팅이 자동 처리합니다. 라이선스가 명확한 음원 (저작권자 직접 허락 또는 CC0/Royalty-free) 만 사용하세요 — 청첩장은 짧게 운영되더라도 공개 페이지입니다.
+- **자동재생 시도하지 않음.** iOS Safari 의 무음 모드 + Low Power Mode + autoplay 정책 변수가 너무 많아 시도 자체가 음수 ROI. 사용자가 우상단 스피커 버튼을 눌러야만 재생.
+- **첫 클릭**: `audio.play()` → fade-in 300ms (volume 0→1) → 재생 상태로 전환. 트랙 끝나면 `loop` 으로 자동 반복.
+- **다시 클릭**: fade-out 300ms (volume 현재값→0) → pause. 다음 클릭 시 같은 위치에서 재생 재개.
+- **에러**: 음원 404 / 디코딩 실패 시 console 에러 + 버튼 상태 `error` (사용자에겐 visual feedback 없음 — MVP 범위).
 
-본 필드 자체를 생략하면 (`music` 키가 없는 경우) 음악 섹션이 렌더링되지 않습니다.
+### 음원 파일
+
+- **OSS 라이선스 제약으로 본 레포에 샘플 음원을 ship 하지 않습니다.** `public/audio/.gitkeep` 만 있는 빈 디렉토리. 본인 음원을 추가해서 사용.
+- 권장 음원 출처: **CC0 / Public Domain** ([Pixabay Music](https://pixabay.com/music/), [FreePD](https://freepd.com/), [Free Music Archive](https://freemusicarchive.org/) CC0 필터). 라이선스가 명확한 트랙만 — 청첩장은 짧게 운영되더라도 공개 URL 입니다.
+- 형식: `.mp3` 가 가장 호환성 높음 (`.ogg`, `.m4a` 도 가능하나 일부 브라우저 제외 사례). 비트레이트 128~192kbps 권장 — 모바일 데이터 절약.
+- 길이: 보통 2~4분 트랙 1개를 loop. 너무 짧은 트랙 (10~30초) 은 loop 이음새가 거슬릴 수 있음.
+
+### iOS 무음 모드 (해결 불가)
+
+- iPhone 의 측면 ringer 스위치가 OFF (오렌지 라인 보임) 이면 청첩장 음악이 들리지 않습니다. **JavaScript 레벨에서 우회 불가** — Safari 의 의도적 차단.
+- 안내 문구를 페이지에 두고 싶으면 `greeting.message` 또는 `closing.message` 에 "🔊 무음 모드를 해제하시면 음악이 재생됩니다" 한 줄 추가 권장.
+
+### 비활성
+
+- `music.enabled = false` 또는 `music` 키 자체 생략 시 토글 버튼이 마운트되지 않습니다. 청첩장이 audio 자산을 fetch 하지도 않음 (preload 안 됨).
 
 ---
 

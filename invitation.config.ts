@@ -329,6 +329,15 @@ export const config: InvitationConfig = {
     },
   },
 
+  // 배경 음악. 음원 파일은 OSS 라이선스 제약으로 ship 하지 않습니다 —
+  // 본인 음원 (CC0 / Public Domain / 직접 라이선스 보유) 을
+  // public/audio/ 에 두고 enabled: true + src 경로 갱신.
+  // iOS 무음 모드 (ringer 스위치 OFF) 에선 들리지 않습니다.
+  music: {
+    enabled: false,
+    src: "/audio/wedding.mp3",
+  },
+
   closing: {
     message: "귀한 걸음으로 축복해 주시면 감사하겠습니다.",
     signature: "김철수 · 이영희 드림",

@@ -14,6 +14,8 @@ v1.1+ 첫 호흡 — 12주차 closure 시점 v1.1 마일스톤 (`docs/00-roadmap
 
 ### Added
 
+- **배경 음악 토글 (BGM)** — `config.music?.enabled` + `src` 활성 시 우상단 floating 스피커 버튼 노출. 첫 클릭 → `audio.play()` + fade-in 300ms (rAF 기반, `lib/audio.ts`), 다시 클릭 → fade-out 300ms 후 pause. `loop` 자동 반복. **자동재생 시도 안 함** — iOS Safari 무음 모드 + Low Power Mode + autoplay 정책 변수 종합 결과 시도 자체가 음수 ROI (CLAUDE.md 4번 원칙). 음원 파일은 **OSS 라이선스 제약으로 ship 하지 않음** — `public/audio/.gitkeep` 빈 디렉토리, 사용자가 본인 음원 (CC0 권장) 추가. 샘플 config 의 `music` 은 `enabled: false` 기본. v1.2+ 로드맵 후보 → v1.1+ 호흡 4번째로 앞당겨 진입.
+
 - **RSVP — 참석 의사 응답 신기능** (ADR 008). Firestore `rsvp` 컬렉션 신규, 6 필드 (`name` · `attendance` · `side` · `companions` · `message` · `createdAt`), `allow read: if false` (host 만 Firebase Console 조회) + `update/delete: if false` (Firestore 단 편집/취소 차단). `config.rsvp.deadline` (ISO 8601) 으로 클라이언트 단 form disable. 페이지 배치는 Accounts 와 Guestbook 사이. `next/dynamic` lazy import 로 firebase 의존 chunk 분리 (Guestbook 패턴 재사용). UI 는 라디오 카드 (참석/불참 · 신랑/신부측) + 동반 인원 (0~5) + 200자 메시지 + 성공 상태. **거부 대안 6 종 (A `read: true` · B 비밀번호 편집 · C admin 페이지 · D 식사/아동/연락처 · E 마감일 미도입 · F update/delete 허용) 모두 ADR 008 에 명시**. 청첩장 도메인 적정 트레이드오프 (결혼식 1회 + ~100명 + 위협 모델 약함) — 다른 도메인 fork 시 부적합. **UX**: 첫 방문 자동 모달 popup (`sessionStorage` `rsvp-modal-shown` 으로 세션당 1회) + 닫기 가능 (X · backdrop · ESC) + inline 섹션의 "참석 의사 보내기" 버튼이 모달 재오픈. 응답 후엔 inline 에 성공 카드 + "응답을 수정하거나 다시 보낼게요" 링크 — 클릭 시 모달 빈 폼 재오픈, submit 시 새 doc 생성 (host 가 Firebase Console 에서 createdAt 기준 dedup). 한국 결혼식 청첩장 SaaS 의 모달 패턴 + OSS 단순성 양립. v1.1+ 호흡 3번째.
 
 ### Accessibility

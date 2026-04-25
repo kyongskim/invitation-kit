@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 
 import { InAppBrowserNotice } from "@/components/InAppBrowserNotice";
+import { MusicToggle } from "@/components/MusicToggle";
 import { Accounts } from "@/components/sections/Accounts";
 import { Gallery } from "@/components/sections/Gallery";
 import { Greeting } from "@/components/sections/Greeting";
@@ -25,6 +26,9 @@ export default function Home() {
   return (
     <main className="flex flex-col">
       <InAppBrowserNotice />
+      {config.music?.enabled && config.music.src && (
+        <MusicToggle src={config.music.src} />
+      )}
       <Main />
       <Greeting />
       <Gallery />

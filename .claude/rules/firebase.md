@@ -162,11 +162,12 @@ service cloud.firestore {
 ## 욕설 필터
 
 - **클라이언트 단순 필터.** 작성 submit 직전에 금칙어 포함 여부 검사 → 포함 시 "부적절한 단어가 포함되어 있습니다" 안내 + submit 차단.
-- 금칙어 리스트는 **`lib/profanity.ts` 에 한국어 배열** 로 관리. 외부 라이브러리 미사용 — MIT/Apache 라이선스 명확한 한국어 욕설 필터 패키지가 드물고, 맥락 기반 조정이 상시 필요해 내재화가 편하다.
-- 초기 리스트는 10~20 단어 수준으로 짧게. 필요 시 사용자가 `invitation.config.ts` 외부에서 리스트 확장 가능하게 할지는 v1.1+ 과제.
-- `config.guestbook.profanityFilter === false` 면 필터 자체 스킵. 부모 세대 특수 이름 오탐 등 회피용 탈출구.
+- 금칙어 리스트는 **`lib/profanity.ts` 에 한국어 배열** 로 관리. 외부 npm 의존성 미도입 — Tree-shake 친화적이고 라이브러리 갱신 주기 의존성 차단.
+- **단어 데이터는 `yoonheyjung/badwords-ko` (MIT) 의 `badwords.ko.config.json` 을 내재화** (574 단어, 원본 순서 유지, 2026-04-25 시점 main 브랜치 스냅샷). MIT 의무로 라이선스 전문 + Copyright 는 `lib/profanity.ts` 헤더 주석에 그대로 포함. 업스트림 갱신 sync 는 수동 스냅샷 (실수요 발생 시).
+- `config.guestbook.profanityFilter === false` 면 필터 자체 스킵. 부모 세대 특수 이름 오탐 · single-char 단어 (덬·봊·앰 등) false positive 회피용 탈출구.
 - **서버 검증 없음** — 클라이언트 우회 가능. 의도적 우회자는 소수 + 한국 결혼식 방명록의 실명 문화 + 비개발자 하객 대부분 기본 플로우 사용이라는 가정. 프로덕션에서 사례 발생 시 Cloud Function 프록시 경로 (위 삭제 전략 A) 와 묶어 재설계.
-- 필터 통과한 후에도 운영자 (신랑/신부) 가 **Firebase Console 에서 수동 삭제** 가능. Console 삭제는 보안 규칙과 무관하게 프로젝트 소유자 권한으로 즉시 동작.
+- 필터 통과한 후에도 운영자 (신랑/신부) 가 **Firebase Console 에서 수동 삭제** 가능. Console 삭제는 보안 규칙과 무관하게 프로젝트 소유자 권한으로 즉시 동작. badwords-ko 가 잡지 못한 변형 · 정상 단어 false positive 모두 이 경로로 보완.
+- **변형·confusable 정규화는 도입 안 함** — false positive 와 유지 비용 증가. 필요해지는 시점이 오면 별도 lib 또는 외부 패키지 (예: `Tanat05/korcen` Apache-2.0) 도입을 별도 결정으로 검토.
 
 ## Next.js 통합 패턴
 

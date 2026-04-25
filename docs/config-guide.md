@@ -50,11 +50,11 @@ npm run typecheck    # 스키마 위반 즉시 발견
 
 브라우저 탭 제목, 검색·SNS 공유 시의 OG 태그에 사용됩니다.
 
-| 필드          | 타입   | 기본값                                      | 효과                                          |
-| ------------- | ------ | ------------------------------------------- | --------------------------------------------- |
-| `title`       | string | `"김철수 ♥ 이영희의 결혼식에 초대합니다"`   | `<title>` · OG title · Twitter card 제목      |
-| `description` | string | `"2026년 5월 17일, 저희 두 사람의 시작을…"` | meta description · OG description             |
-| `siteUrl`     | string | `"https://invitation-kit.vercel.app"`       | OG URL · 카카오 공유 카드의 `link.webUrl`    |
+| 필드          | 타입   | 기본값                                      | 효과                                      |
+| ------------- | ------ | ------------------------------------------- | ----------------------------------------- |
+| `title`       | string | `"김철수 ♥ 이영희의 결혼식에 초대합니다"`   | `<title>` · OG title · Twitter card 제목  |
+| `description` | string | `"2026년 5월 17일, 저희 두 사람의 시작을…"` | meta description · OG description         |
+| `siteUrl`     | string | `"https://invitation-kit.vercel.app"`       | OG URL · 카카오 공유 카드의 `link.webUrl` |
 
 **⚠️ `siteUrl` 은 카카오 콘솔에 등록한 도메인과 정확히 같아야 합니다.** 다르면 카카오가 카드 링크 호스트를 default 로 강제 치환합니다 — [`api-keys.md`](./api-keys.md) 의 1-5 절 참조.
 
@@ -64,11 +64,11 @@ npm run typecheck    # 스키마 위반 즉시 발견
 
 세 가지 중 하나를 선택합니다.
 
-| 값          | 인상                                                              |
-| ----------- | ----------------------------------------------------------------- |
-| `"classic"` | 따뜻한 베이지·골드, Cormorant Garamond. 한국 결혼식 기본 톤      |
-| `"modern"`  | 슬레이트 블랙·화이트, Playfair Display, sharp edges (radius 0)   |
-| `"floral"`  | 로즈·뮤트한 마우브, Italiana, 살짝 더 둥근 모서리                |
+| 값          | 인상                                                           |
+| ----------- | -------------------------------------------------------------- |
+| `"classic"` | 따뜻한 베이지·골드, Cormorant Garamond. 한국 결혼식 기본 톤    |
+| `"modern"`  | 슬레이트 블랙·화이트, Playfair Display, sharp edges (radius 0) |
+| `"floral"`  | 로즈·뮤트한 마우브, Italiana, 살짝 더 둥근 모서리              |
 
 새로운 테마를 추가하려면 [`theme-guide.md`](./theme-guide.md) 참조.
 
@@ -79,18 +79,18 @@ npm run typecheck    # 스키마 위반 즉시 발견
 ```ts
 interface Person {
   name: string;
-  order?: string;   // 예: "장남" "차녀"
+  order?: string; // 예: "장남" "차녀"
   father?: string;
   mother?: string;
 }
 ```
 
-| 필드     | 타입    | 필수 | 효과                                                   |
-| -------- | ------- | ---- | ------------------------------------------------------ |
-| `name`   | string  | ✓    | 메인 화면·인사말 등 모든 위치에 표시                  |
-| `order`  | string? | -    | 양가 부모 라인 옆 (예: "김아버지·박어머니의 장남")    |
-| `father` | string? | -    | 부모 라인. 미설정 시 부모 라인 자체가 생략됨          |
-| `mother` | string? | -    | 부모 라인. 미설정 시 부모 라인 자체가 생략됨          |
+| 필드     | 타입    | 필수 | 효과                                               |
+| -------- | ------- | ---- | -------------------------------------------------- |
+| `name`   | string  | ✓    | 메인 화면·인사말 등 모든 위치에 표시               |
+| `order`  | string? | -    | 양가 부모 라인 옆 (예: "김아버지·박어머니의 장남") |
+| `father` | string? | -    | 부모 라인. 미설정 시 부모 라인 자체가 생략됨       |
+| `mother` | string? | -    | 부모 라인. 미설정 시 부모 라인 자체가 생략됨       |
 
 **부모 한 분만 표기**해야 하는 경우 (예: 한쪽 부모를 여의신 경우) `father` 만 또는 `mother` 만 채우면 됩니다 — 빈 쪽은 자동으로 생략됩니다.
 
@@ -99,7 +99,7 @@ interface Person {
 ## date — 예식 일시
 
 ```ts
-date: "2026-05-17T12:00:00+09:00"
+date: "2026-05-17T12:00:00+09:00";
 ```
 
 **ISO 8601 + 타임존 (`+09:00` KST) 권장.** 이 값은:
@@ -121,20 +121,20 @@ interface Venue {
   hall?: string;
   address: string;
   coords: { lat: number; lng: number };
-  transportation?: { subway?, bus?, car?, parking? };
+  transportation?: { subway?; bus?; car?; parking? };
 }
 ```
 
-| 필드                        | 타입    | 필수 | 예시                                       |
-| --------------------------- | ------- | ---- | ------------------------------------------ |
-| `name`                      | string  | ✓    | `"더채플 광화문"`                          |
-| `hall`                      | string? | -    | `"2층 그랜드볼룸"`                         |
+| 필드                        | 타입    | 필수 | 예시                                             |
+| --------------------------- | ------- | ---- | ------------------------------------------------ |
+| `name`                      | string  | ✓    | `"더채플 광화문"`                                |
+| `hall`                      | string? | -    | `"2층 그랜드볼룸"`                               |
 | `address`                   | string  | ✓    | `"서울특별시 종로구 세종대로 175"` (도로명 권장) |
-| `coords.lat` · `coords.lng` | number  | ✓    | `37.5725` · `126.9769`                     |
-| `transportation.subway`     | string? | -    | `"5호선 광화문역 2번 출구 도보 5분"`       |
-| `transportation.bus`        | string? | -    | `"간선 101, 103 광화문 정류장 하차"`       |
-| `transportation.car`        | string? | -    | `"내비게이션에 \"더채플 광화문\" 검색"`    |
-| `transportation.parking`    | string? | -    | `"건물 지하 주차장 2시간 무료"`            |
+| `coords.lat` · `coords.lng` | number  | ✓    | `37.5725` · `126.9769`                           |
+| `transportation.subway`     | string? | -    | `"5호선 광화문역 2번 출구 도보 5분"`             |
+| `transportation.bus`        | string? | -    | `"간선 101, 103 광화문 정류장 하차"`             |
+| `transportation.car`        | string? | -    | `"내비게이션에 \"더채플 광화문\" 검색"`          |
+| `transportation.parking`    | string? | -    | `"건물 지하 주차장 2시간 무료"`                  |
 
 ### 좌표 얻는 법
 
@@ -165,7 +165,7 @@ greeting: {
 
 | 필드      | 타입    | 필수 | 효과                                       |
 | --------- | ------- | ---- | ------------------------------------------ |
-| `title`   | string? | -    | 인사말 섹션 헤드라인                      |
+| `title`   | string? | -    | 인사말 섹션 헤드라인                       |
 | `message` | string  | ✓    | 인사말 본문. `\n` 으로 줄바꿈, `\n\n` 단락 |
 
 JSX 의 `<br />` 도 지원하지만 `\n` 이 더 가독성이 좋습니다.
@@ -189,11 +189,11 @@ interface GalleryImage {
 }
 ```
 
-| 필드              | 타입    | 필수 | 효과                                                              |
-| ----------------- | ------- | ---- | ----------------------------------------------------------------- |
-| `src`             | string  | ✓    | `public/images/gallery/` 기준 상대 경로 (예: `/images/gallery/01.jpg`) |
-| `alt`             | string  | ✓    | 접근성 대체 텍스트                                                |
-| `width` · `height`| number? | 권장 | 원본 픽셀 크기. 레이아웃 안정화 (CLS 방지)                       |
+| 필드               | 타입    | 필수 | 효과                                                                   |
+| ------------------ | ------- | ---- | ---------------------------------------------------------------------- |
+| `src`              | string  | ✓    | `public/images/gallery/` 기준 상대 경로 (예: `/images/gallery/01.jpg`) |
+| `alt`              | string  | ✓    | 접근성 대체 텍스트                                                     |
+| `width` · `height` | number? | 권장 | 원본 픽셀 크기. 레이아웃 안정화 (CLS 방지)                             |
 
 ### 사진 추가 절차
 
@@ -228,14 +228,14 @@ interface Account {
 }
 ```
 
-| 필드          | 타입    | 필수 | 예시                                  |
-| ------------- | ------- | ---- | ------------------------------------- |
-| `label`       | string  | ✓    | `"신랑"` · `"신랑 아버지"`            |
-| `bank`        | string  | ✓    | `"국민은행"`                          |
-| `number`      | string  | ✓    | `"123-45-678901"` (하이픈 포함 권장)  |
-| `holder`      | string  | ✓    | 예금주 이름                           |
-| `kakaoPayUrl` | string? | -    | 카카오페이 송금 딥링크                |
-| `tossUrl`     | string? | -    | 토스 송금 딥링크                      |
+| 필드          | 타입    | 필수 | 예시                                 |
+| ------------- | ------- | ---- | ------------------------------------ |
+| `label`       | string  | ✓    | `"신랑"` · `"신랑 아버지"`           |
+| `bank`        | string  | ✓    | `"국민은행"`                         |
+| `number`      | string  | ✓    | `"123-45-678901"` (하이픈 포함 권장) |
+| `holder`      | string  | ✓    | 예금주 이름                          |
+| `kakaoPayUrl` | string? | -    | 카카오페이 송금 딥링크               |
+| `tossUrl`     | string? | -    | 토스 송금 딥링크                     |
 
 양가 분리 표시가 기본입니다. 한쪽 계좌만 받는다면 빈 배열 (`brideSide: []`) 도 가능 — 빈 쪽 카드는 렌더링되지 않습니다.
 
@@ -252,20 +252,20 @@ interface ShareConfig {
   thumbnailUrl: string;
   buttons?: {
     site?: { enabled?: boolean; label?: string };
-    map?:  { enabled?: boolean; label?: string };
+    map?: { enabled?: boolean; label?: string };
   };
 }
 ```
 
-| 필드             | 타입    | 기본값                                             | 효과                                                  |
-| ---------------- | ------- | -------------------------------------------------- | ----------------------------------------------------- |
-| `title`          | string  | `"김철수 ♥ 이영희 결혼합니다"`                     | 카카오톡 카드 상단 굵은 글씨                          |
-| `description`    | string  | `"2026년 5월 17일 토요일 낮 12시 · 더채플 광화문"` | 카드 본문 한 줄                                       |
-| `thumbnailUrl`   | string  | `"https://invitation-kit.vercel.app/images/og.png"` | **절대 URL 필수.** 800×400 권장 비율                  |
-| `buttons.site.enabled` | bool? | 미설정 시 `true`                                | 카드 좌측 "청첩장 보기" 버튼. URL 자동 = `meta.siteUrl` |
-| `buttons.site.label`   | string? | `"청첩장 보기"`                                  | 버튼 라벨 커스텀                                      |
-| `buttons.map.enabled`  | bool? | 미설정 시 `false`                               | 카드 우측 "지도 보기" 버튼. URL 자동 조립             |
-| `buttons.map.label`    | string? | `"지도 보기"`                                    | 버튼 라벨 커스텀                                      |
+| 필드                   | 타입    | 기본값                                              | 효과                                                    |
+| ---------------------- | ------- | --------------------------------------------------- | ------------------------------------------------------- |
+| `title`                | string  | `"김철수 ♥ 이영희 결혼합니다"`                      | 카카오톡 카드 상단 굵은 글씨                            |
+| `description`          | string  | `"2026년 5월 17일 토요일 낮 12시 · 더채플 광화문"`  | 카드 본문 한 줄                                         |
+| `thumbnailUrl`         | string  | `"https://invitation-kit.vercel.app/images/og.png"` | **절대 URL 필수.** 800×400 권장 비율                    |
+| `buttons.site.enabled` | bool?   | 미설정 시 `true`                                    | 카드 좌측 "청첩장 보기" 버튼. URL 자동 = `meta.siteUrl` |
+| `buttons.site.label`   | string? | `"청첩장 보기"`                                     | 버튼 라벨 커스텀                                        |
+| `buttons.map.enabled`  | bool?   | 미설정 시 `false`                                   | 카드 우측 "지도 보기" 버튼. URL 자동 조립               |
+| `buttons.map.label`    | string? | `"지도 보기"`                                       | 버튼 라벨 커스텀                                        |
 
 ### 썸네일 이미지 규칙
 
@@ -276,11 +276,11 @@ interface ShareConfig {
 
 ### buttons 활성 조합
 
-| 조합                              | 카드 동작                                          |
-| --------------------------------- | -------------------------------------------------- |
+| 조합                              | 카드 동작                                             |
+| --------------------------------- | ----------------------------------------------------- |
 | `site: true`, `map: false` (기본) | 청첩장 보기 버튼 1 개. 카드 본체 탭 = 청첩장으로 이동 |
-| `site: true`, `map: true`         | 두 버튼 노출. 카드 본체 탭 = 청첩장                |
-| 둘 다 비활성                      | 버튼 없음. 카드 본체 탭 = `meta.siteUrl`           |
+| `site: true`, `map: true`         | 두 버튼 노출. 카드 본체 탭 = 청첩장                   |
+| 둘 다 비활성                      | 버튼 없음. 카드 본체 탭 = `meta.siteUrl`              |
 
 카카오 feed 템플릿은 최대 2 개 버튼까지 — 본 스키마가 그 제한을 그대로 반영합니다.
 
@@ -296,11 +296,11 @@ interface GuestbookConfig {
 }
 ```
 
-| 필드                | 타입    | 기본값 | 효과                                                       |
-| ------------------- | ------- | ------ | ---------------------------------------------------------- |
-| `enabled`           | boolean | -      | `false` 시 방명록 섹션 자체가 렌더링되지 않음. Firebase 키도 생략 가능 |
-| `minPasswordLength` | number? | `4`    | 메시지 작성 시 비밀번호 최소 길이                          |
-| `profanityFilter`   | boolean?| `true` | 욕설 필터 활성. 부모 세대 이름 false positive 발생 시 `false` 로 비활성 |
+| 필드                | 타입     | 기본값 | 효과                                                                    |
+| ------------------- | -------- | ------ | ----------------------------------------------------------------------- |
+| `enabled`           | boolean  | -      | `false` 시 방명록 섹션 자체가 렌더링되지 않음. Firebase 키도 생략 가능  |
+| `minPasswordLength` | number?  | `4`    | 메시지 작성 시 비밀번호 최소 길이                                       |
+| `profanityFilter`   | boolean? | `true` | 욕설 필터 활성. 부모 세대 이름 false positive 발생 시 `false` 로 비활성 |
 
 방명록 데이터는 Firebase Firestore 에 저장됩니다. 사용 절차는 [`api-keys.md`](./api-keys.md) 의 2 절 참조.
 
@@ -319,9 +319,9 @@ music?: {
 }
 ```
 
-| 필드      | 타입    | 효과                                          |
-| --------- | ------- | --------------------------------------------- |
-| `enabled` | boolean | `true` 시 음악 토글 버튼 노출                |
+| 필드      | 타입    | 효과                                             |
+| --------- | ------- | ------------------------------------------------ |
+| `enabled` | boolean | `true` 시 음악 토글 버튼 노출                    |
 | `src`     | string  | `public/` 기준 상대 경로 (예: `"/audio/bg.mp3"`) |
 
 **iOS Safari 의 자동 재생 차단을 전제로 설계되어 있습니다** — 사용자가 직접 토글 버튼을 눌러야만 재생됩니다. 무음 모드일 때도 차단됩니다.
@@ -341,10 +341,10 @@ closing?: {
 }
 ```
 
-| 필드        | 타입    | 예시                                       |
-| ----------- | ------- | ------------------------------------------ |
+| 필드        | 타입    | 예시                                            |
+| ----------- | ------- | ----------------------------------------------- |
 | `message`   | string? | `"귀한 걸음으로 축복해 주시면 감사하겠습니다."` |
-| `signature` | string? | `"김철수 · 이영희 드림"`                    |
+| `signature` | string? | `"김철수 · 이영희 드림"`                        |
 
 생략 가능. 두 필드 모두 비워두면 closing 섹션이 렌더링되지 않습니다.
 

@@ -19,17 +19,17 @@
 
 `app/globals.css` 의 `@theme` 블록과 두 override 블록이 다루는 9 변수:
 
-| 변수                  | 역할                                | Classic                  | Modern                  | Floral                   |
-| --------------------- | ----------------------------------- | ------------------------ | ----------------------- | ------------------------ |
-| `--color-primary`     | hero 텍스트 · CTA · 강조 컬러       | `#c9a87c` (웜 골드)       | `#0f172a` (slate-900)   | `#d4a5a5` (로즈)         |
-| `--color-secondary`   | 보조 텍스트 · 라인                  | `#8b7355` (웜 브라운)     | `#475569` (slate-600)   | `#8b6b6b` (마우브 브라운)|
-| `--color-background`  | 페이지 배경                         | `#faf6ee` (크림)          | `#fafafa` (오프 화이트) | `#fdf8f5` (웜 오프 화이트)|
-| `--color-text`        | 본문 텍스트                         | `#3d342c` (다크 브라운)   | `#0f172a` (니어 블랙)   | `#3d2929` (딥 마우브)    |
-| `--color-accent`      | 하이라이트 · 가벼운 구분            | `#e8dfd0` (라이트 베이지) | `#e2e8f0` (slate-200)   | `#e8d0cc` (라이트 로즈)  |
-| `--font-sans`         | UI · 본문 (한국어)                  | `var(--font-pretendard)` | (Classic 상속)          | (Classic 상속)           |
-| `--font-serif`        | 영문 헤드라인 · D-day               | `var(--font-cormorant)`  | `var(--font-playfair)`  | `var(--font-italiana)`   |
-| `--radius-sm`         | 버튼·카드 모서리                    | `0.375rem` (6 px)        | `0` (sharp)             | `0.625rem` (10 px)       |
-| `--animate-fade-in-up`| 진입 애니메이션 (모든 테마 공유)    | `fade-in-up 0.6s ease-out both` | (동일)            | (동일)                   |
+| 변수                   | 역할                             | Classic                         | Modern                  | Floral                     |
+| ---------------------- | -------------------------------- | ------------------------------- | ----------------------- | -------------------------- |
+| `--color-primary`      | hero 텍스트 · CTA · 강조 컬러    | `#c9a87c` (웜 골드)             | `#0f172a` (slate-900)   | `#d4a5a5` (로즈)           |
+| `--color-secondary`    | 보조 텍스트 · 라인               | `#8b7355` (웜 브라운)           | `#475569` (slate-600)   | `#8b6b6b` (마우브 브라운)  |
+| `--color-background`   | 페이지 배경                      | `#faf6ee` (크림)                | `#fafafa` (오프 화이트) | `#fdf8f5` (웜 오프 화이트) |
+| `--color-text`         | 본문 텍스트                      | `#3d342c` (다크 브라운)         | `#0f172a` (니어 블랙)   | `#3d2929` (딥 마우브)      |
+| `--color-accent`       | 하이라이트 · 가벼운 구분         | `#e8dfd0` (라이트 베이지)       | `#e2e8f0` (slate-200)   | `#e8d0cc` (라이트 로즈)    |
+| `--font-sans`          | UI · 본문 (한국어)               | `var(--font-pretendard)`        | (Classic 상속)          | (Classic 상속)             |
+| `--font-serif`         | 영문 헤드라인 · D-day            | `var(--font-cormorant)`         | `var(--font-playfair)`  | `var(--font-italiana)`     |
+| `--radius-sm`          | 버튼·카드 모서리                 | `0.375rem` (6 px)               | `0` (sharp)             | `0.625rem` (10 px)         |
+| `--animate-fade-in-up` | 진입 애니메이션 (모든 테마 공유) | `fade-in-up 0.6s ease-out both` | (동일)                  | (동일)                     |
 
 **관찰**: 색상 5 + 폰트 2 + 모서리 1 + 애니메이션 1 = 9 변수. 새 테마는 이 9 개 중 색상 5 + 모서리 1 (필수) + 폰트 1 (선택, 영문 serif 만 갈아끼울 수 있음) 을 override 하면 됩니다.
 
@@ -57,13 +57,13 @@ export type ThemeName = "classic" | "modern" | "floral" | "vintage";
 
 ```css
 :root[data-theme="vintage"] {
-  --color-primary: #8b4513;      /* 새들 브라운 */
-  --color-secondary: #654321;     /* 다크 브라운 */
-  --color-background: #f5e6d3;    /* 빈티지 페이퍼 */
-  --color-text: #3e2723;          /* 짙은 갈색 */
-  --color-accent: #d2b48c;        /* 탠 */
-  --font-serif: var(--font-vintage-serif);  /* (3 단계에서 새 폰트 추가 시) */
-  --radius-sm: 0.125rem;          /* 거의 직각, 살짝만 둥글게 */
+  --color-primary: #8b4513; /* 새들 브라운 */
+  --color-secondary: #654321; /* 다크 브라운 */
+  --color-background: #f5e6d3; /* 빈티지 페이퍼 */
+  --color-text: #3e2723; /* 짙은 갈색 */
+  --color-accent: #d2b48c; /* 탠 */
+  --font-serif: var(--font-vintage-serif); /* (3 단계에서 새 폰트 추가 시) */
+  --radius-sm: 0.125rem; /* 거의 직각, 살짝만 둥글게 */
 }
 ```
 
@@ -128,15 +128,15 @@ const cinzel = Cinzel({
 
 ### 변경 토큰 7 개
 
-| 변수                | Classic                  | Modern                  | 변화                       |
-| ------------------- | ------------------------ | ----------------------- | -------------------------- |
-| `--color-primary`   | `#c9a87c` 웜 골드         | `#0f172a` 니어 블랙     | 따뜻함 → 강한 대비          |
-| `--color-secondary` | `#8b7355` 웜 브라운       | `#475569` slate-600     | 갈색 → 차가운 회색          |
-| `--color-background`| `#faf6ee` 크림            | `#fafafa` 오프 화이트   | 노란 기 → 중성              |
-| `--color-text`      | `#3d342c` 다크 브라운     | `#0f172a` 니어 블랙     | 갈색 → 검정                 |
-| `--color-accent`    | `#e8dfd0` 라이트 베이지   | `#e2e8f0` slate-200     | 베이지 → 라이트 그레이      |
-| `--font-serif`      | `Cormorant_Garamond`     | `Playfair_Display`      | 부드러운 serif → 강한 contrast serif |
-| `--radius-sm`       | `0.375rem` 6 px          | `0`                     | 둥근 모서리 → 직각          |
+| 변수                 | Classic                 | Modern                | 변화                                 |
+| -------------------- | ----------------------- | --------------------- | ------------------------------------ |
+| `--color-primary`    | `#c9a87c` 웜 골드       | `#0f172a` 니어 블랙   | 따뜻함 → 강한 대비                   |
+| `--color-secondary`  | `#8b7355` 웜 브라운     | `#475569` slate-600   | 갈색 → 차가운 회색                   |
+| `--color-background` | `#faf6ee` 크림          | `#fafafa` 오프 화이트 | 노란 기 → 중성                       |
+| `--color-text`       | `#3d342c` 다크 브라운   | `#0f172a` 니어 블랙   | 갈색 → 검정                          |
+| `--color-accent`     | `#e8dfd0` 라이트 베이지 | `#e2e8f0` slate-200   | 베이지 → 라이트 그레이               |
+| `--font-serif`       | `Cormorant_Garamond`    | `Playfair_Display`    | 부드러운 serif → 강한 contrast serif |
+| `--radius-sm`        | `0.375rem` 6 px         | `0`                   | 둥근 모서리 → 직각                   |
 
 ### 실제 코드
 

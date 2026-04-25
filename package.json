@@ -1,6 +1,6 @@
 {
   "name": "invitation-kit",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "private": true,
   "description": "한국 결혼식에 최적화된 오픈소스 모바일 청첩장 템플릿. Config 파일 하나로 5분 배포.",
   "license": "MIT",

@@ -4,9 +4,18 @@
 
 포맷은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/) 을 따르며, 버전 표기는 [Semantic Versioning](https://semver.org/lang/ko/) 을 따릅니다.
 
-## [Unreleased]
+## [1.1.0] - 2026-04-26
 
-v1.1+ 첫 호흡 — 12주차 closure 시점 v1.1 마일스톤 (`docs/00-roadmap.md:299-307`) 의 1순위 후보 7종 중 가벼운 보완부터 진입.
+12주차 closure 후 첫 v1.1+ 호흡 누적 4 호흡. 가벼운 보완 2 + 큰 신기능 2. v1.0.1 → v1.1.0 누적 4 코드 커밋 + 본 release 커밋. 본인 결혼식 D-21 일 시점 운영 준비 마무리.
+
+**4 호흡 요약**:
+
+1. **OG 썸네일 PNG → JPG 최적화** (`59c0092`) — 631 KB → 143 KB (−77%) + 카카오 CDN 캐시 무효화 `?v=2`
+2. **`text-primary` contrast WCAG AA 4.5:1 충족** (`bb6c894`) — Classic + Floral 동시 fix. 10주차 D-3 보류 항목 closure
+3. **RSVP — 참석 의사 응답 신기능** (`a280aeb`, ADR 008) — Firestore `rsvp` 컬렉션 + 첫 방문 자동 모달 + 재신청 버튼 + 마감일 + read 차단
+4. **배경 음악 토글** (`1d0da3e`) — 우상단 floating + iOS Safari 호환 (`new Audio()` 동적 생성 + `.then()` 체인 + 낙관적 setState) + fade 300ms
+
+ADR 1 신규 (008 RSVP). 음원 파일은 OSS 라이선스 위생상 ship X — 사용자가 본인 CC0/Public Domain 음원 추가 후 활성.
 
 ### Performance
 

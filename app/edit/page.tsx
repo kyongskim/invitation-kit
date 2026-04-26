@@ -25,6 +25,7 @@ import { GuestbookConfigForm } from "./_sections/GuestbookConfigForm";
 import { MainForm } from "./_sections/MainForm";
 import { MetaForm } from "./_sections/MetaForm";
 import { RSVPConfigForm } from "./_sections/RSVPConfigForm";
+import { ShareForm } from "./_sections/ShareForm";
 import { VenueForm } from "./_sections/VenueForm";
 
 const THEME_OPTIONS: { value: ThemeName; label: string }[] = [
@@ -77,6 +78,7 @@ export default function EditPage() {
           <AccountsForm />
           <RSVPConfigForm />
           <GuestbookConfigForm />
+          <ShareForm />
           <MetaForm />
 
           <section className="flex flex-col gap-2">

@@ -39,6 +39,40 @@ type UploadStatus =
   | { kind: "success"; commitUrl: string | null }
   | { kind: "error"; message: string };
 
+/**
+ * 업로드 직전 client 단에서 이미지 픽셀 너비/높이 추출.
+ * Next.js `<Image>` CLS 방지용 — 사용자 수동 입력 마찰 제거.
+ * createImageBitmap 우선 (빠름) + Image 객체 fallback (구형 브라우저).
+ * 실패 시 undefined 반환 — 업로드 흐름 자체는 계속 진행.
+ */
+async function readImageDimensions(
+  file: File,
+): Promise<{ width: number; height: number } | undefined> {
+  if (typeof createImageBitmap === "function") {
+    try {
+      const bitmap = await createImageBitmap(file);
+      const dims = { width: bitmap.width, height: bitmap.height };
+      bitmap.close();
+      return dims;
+    } catch {
+      // fall through to Image fallback
+    }
+  }
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      resolve({ width: img.naturalWidth, height: img.naturalHeight });
+      URL.revokeObjectURL(url);
+    };
+    img.onerror = () => {
+      resolve(undefined);
+      URL.revokeObjectURL(url);
+    };
+    img.src = url;
+  });
+}
+
 export function GalleryForm() {
   const gallery = useEditorStore((s) => s.config.gallery);
   const setField = useEditorStore((s) => s.setField);
@@ -93,6 +127,7 @@ export function GalleryForm() {
     setStatuses((prev) => ({ ...prev, [idx]: { kind: "uploading" } }));
 
     try {
+      const dimensions = await readImageDimensions(file);
       const result = await uploadImage({
         token: github.token,
         owner: publishedRepo.owner,
@@ -109,6 +144,9 @@ export function GalleryForm() {
         ...(current ?? EMPTY_IMAGE),
         src: result.src,
         alt: nextAlt,
+        ...(dimensions
+          ? { width: dimensions.width, height: dimensions.height }
+          : {}),
       });
       setStatuses((prev) => ({
         ...prev,

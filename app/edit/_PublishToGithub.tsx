@@ -5,6 +5,10 @@ import type { FormEvent } from "react";
 
 import { generateRepo } from "@/lib/editor/github-create-repo";
 import { useEditorStore } from "@/lib/editor/store";
+import {
+  buildDeployButtonUrl,
+  selectEnvKeys,
+} from "@/lib/editor/vercel-deploy-url";
 
 /**
  * GitHub 연결 후 노출되는 publish 흐름.
@@ -313,6 +317,12 @@ function RepublishMode(props: {
         <p className="text-xs leading-relaxed text-red-600">{errorMsg}</p>
       )}
 
+      <DeployToVercel
+        repoUrl={props.publishedRepoUrl}
+        projectName={props.repo}
+        config={props.config}
+      />
+
       <button
         type="button"
         onClick={props.onForget}
@@ -321,5 +331,62 @@ function RepublishMode(props: {
         다른 repo 에 새로 만들기
       </button>
     </section>
+  );
+}
+
+/**
+ * Vercel 배포 위임 섹션.
+ * ADR 012 결정 5 — re-publish 모드 (publishedRepo 있을 때) 안에 노출.
+ * Deploy Button URL 만 발급. 사용자가 본인 Vercel UI 안에서 import + env
+ * + 첫 배포 진행. 우리 토큰 보유 0.
+ */
+function DeployToVercel(props: {
+  repoUrl: string;
+  projectName: string;
+  config: ReturnType<typeof useEditorStore.getState>["config"];
+}) {
+  const deployUrl = buildDeployButtonUrl({
+    repoUrl: props.repoUrl,
+    projectName: props.projectName,
+    config: props.config,
+  });
+  const envKeys = selectEnvKeys(props.config);
+
+  return (
+    <div className="border-secondary/20 mt-2 flex flex-col gap-2 border-t pt-3">
+      <h3 className="text-primary font-serif text-base">Vercel 에 배포</h3>
+      <p className="text-secondary text-xs leading-relaxed">
+        본인 Vercel 계정에 배포합니다. 처음이라면 Vercel 가입 + Vercel for
+        GitHub App install 도 같은 흐름 안에서 진행됩니다.
+      </p>
+
+      <a
+        href={deployUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="border-accent text-secondary hover:text-primary hover:border-primary self-start rounded-sm border px-3 py-1.5 text-xs tracking-wider uppercase transition-colors"
+      >
+        Deploy with Vercel ↗
+      </a>
+
+      <details className="text-secondary/70 text-xs">
+        <summary className="cursor-pointer">
+          필요한 환경 변수 {envKeys.length} 개
+        </summary>
+        <ul className="mt-1 ml-4 list-disc">
+          {envKeys.map((key) => (
+            <li key={key} className="font-mono">
+              {key}
+            </li>
+          ))}
+        </ul>
+      </details>
+
+      <p className="text-secondary/70 text-xs leading-relaxed">
+        배포 완료 후 Vercel deployment URL 을 좌측 form 의 &quot;meta - 사이트
+        URL&quot; 에 입력하고 다시 &quot;변경사항 commit&quot; 을 누르면 OG ·
+        카카오 공유 썸네일이 정상화됩니다.
+      </p>
+    </div>
   );
 }

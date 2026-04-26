@@ -8,7 +8,9 @@ const CEREMONY_DURATION_MS = 90 * 60 * 1000;
 export function DDayBadge() {
   const isClient = useIsClient();
   const now = useNow();
-  if (!isClient) return null;
+  // now === 0 은 hydration 직후 subscribe 완료 전 sentinel — useNow 의
+  // SSR snapshot 이 0 이라 잘못된 값으로 잠시 render 되는 것 방지.
+  if (!isClient || now === 0) return null;
 
   const target = new Date(config.date).getTime();
   const remaining = target - now;

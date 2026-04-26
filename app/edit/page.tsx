@@ -17,6 +17,7 @@ import {
 } from "@/invitation.config";
 import { useEditorStore } from "@/lib/editor/store";
 
+import { AccountsForm } from "./_sections/AccountsForm";
 import { CalendarForm } from "./_sections/CalendarForm";
 import { GreetingForm } from "./_sections/GreetingForm";
 import { GuestbookConfigForm } from "./_sections/GuestbookConfigForm";
@@ -71,6 +72,7 @@ export default function EditPage() {
           <GreetingForm />
           <CalendarForm />
           <VenueForm />
+          <AccountsForm />
           <RSVPConfigForm />
           <GuestbookConfigForm />
           <MetaForm />

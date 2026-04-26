@@ -1,4 +1,4 @@
-import type { InvitationConfig } from "@/invitation.config";
+import type { InvitationConfig } from "@/invitation.config.types";
 
 export function Greeting({
   greeting,

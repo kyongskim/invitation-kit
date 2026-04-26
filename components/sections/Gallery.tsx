@@ -4,7 +4,7 @@ import { AnimatePresence, motion, type PanInfo } from "framer-motion";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 
-import type { GalleryImage } from "@/invitation.config";
+import type { GalleryImage } from "@/invitation.config.types";
 
 const SWIPE_THRESHOLD = 100;
 

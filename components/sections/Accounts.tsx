@@ -2,7 +2,7 @@
 
 import { useId, useState } from "react";
 
-import type { InvitationConfig } from "@/invitation.config";
+import type { InvitationConfig } from "@/invitation.config.types";
 import { copyText } from "@/lib/clipboard";
 
 type Side = "groom" | "bride";

@@ -1,6 +1,6 @@
 "use client";
 
-import type { Account } from "@/invitation.config";
+import type { Account } from "@/invitation.config.types";
 import { Field } from "@/lib/editor/Field";
 import { useEditorStore } from "@/lib/editor/store";
 

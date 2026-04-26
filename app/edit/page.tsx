@@ -11,10 +11,8 @@ import { Main } from "@/components/sections/Main";
 import { RSVP } from "@/components/sections/RSVP";
 import { Share } from "@/components/sections/Share";
 import { Venue } from "@/components/sections/Venue";
-import {
-  config as moduleDefaultConfig,
-  type ThemeName,
-} from "@/invitation.config";
+import { config as moduleDefaultConfig } from "@/invitation.config";
+import type { ThemeName } from "@/invitation.config.types";
 import { useEditorStore } from "@/lib/editor/store";
 
 import { AccountsForm } from "./_sections/AccountsForm";

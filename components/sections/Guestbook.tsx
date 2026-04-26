@@ -18,7 +18,7 @@ import {
   type QueryDocumentSnapshot,
 } from "firebase/firestore";
 
-import type { GuestbookConfig } from "@/invitation.config";
+import type { GuestbookConfig } from "@/invitation.config.types";
 import { db } from "@/lib/firebase";
 import { hashPassword, verifyPassword } from "@/lib/hash";
 import { useIsClient } from "@/lib/hooks";

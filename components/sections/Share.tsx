@@ -3,7 +3,11 @@
 import Script from "next/script";
 import { useState } from "react";
 
-import type { InvitationConfig, ShareConfig, Venue } from "@/invitation.config";
+import type {
+  InvitationConfig,
+  ShareConfig,
+  Venue,
+} from "@/invitation.config.types";
 import { copyText } from "@/lib/clipboard";
 import { initKakao, shareInvitation } from "@/lib/kakao";
 

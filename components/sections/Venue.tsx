@@ -1,4 +1,4 @@
-import type { Venue as VenueData } from "@/invitation.config";
+import type { Venue as VenueData } from "@/invitation.config.types";
 import { kakaoMapDeeplink, naverMapDeeplink, tmapDeeplink } from "@/lib/map";
 
 import { MapEmbed } from "./venue/MapEmbed";

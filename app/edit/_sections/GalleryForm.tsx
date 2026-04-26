@@ -1,6 +1,6 @@
 "use client";
 
-import type { GalleryImage } from "@/invitation.config";
+import type { GalleryImage } from "@/invitation.config.types";
 import { Field } from "@/lib/editor/Field";
 import { useEditorStore } from "@/lib/editor/store";
 

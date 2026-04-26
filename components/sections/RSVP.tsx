@@ -4,7 +4,7 @@ import { useState, useSyncExternalStore } from "react";
 import { AnimatePresence } from "framer-motion";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
-import type { RSVPConfig } from "@/invitation.config";
+import type { RSVPConfig } from "@/invitation.config.types";
 import { db } from "@/lib/firebase";
 
 import type { RSVPSubmitInput } from "./rsvp/RSVPForm";

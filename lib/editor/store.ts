@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 import { config as defaultConfig } from "@/invitation.config";
-import type { InvitationConfig } from "@/invitation.config";
+import type { InvitationConfig } from "@/invitation.config.types";
 
 /**
  * v2.0 editor 의 단일 store. ADR 010 결정 3 (state 관리 = Zustand + persist).

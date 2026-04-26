@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import type { InvitationConfig, Person } from "@/invitation.config";
+import type { InvitationConfig, Person } from "@/invitation.config.types";
 
 /**
  * Hero (첫 화면). hero.backgroundImage 가 있으면 풀스크린 사진 +

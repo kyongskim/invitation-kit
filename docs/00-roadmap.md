@@ -3,7 +3,7 @@
 > **살아있는 문서 (Living document).** 매 주차 끝날 때 이 문서를 업데이트하세요.
 > 지난 주차는 "실제 한 것" 기준으로 기록하고, 남은 주차는 필요에 따라 재설계해도 됩니다.
 
-**마지막 업데이트:** 2026-04-25 (12주차 마지막 호흡 — v1.0.0 closure)
+**마지막 업데이트:** 2026-04-26 (v1.1.x closure + v2.0 Phase 1 진입 — ADR 010 채택)
 
 ---
 
@@ -322,13 +322,48 @@
 - **Floral 디자인 재설정** — 8주차 1차 구현 인상 부족. `project_floral_theme_redesign_pending.md` 메모리 항목
 - **Modern accent 색 재검토** (`#e2e8f0` 약함) — 실 사용자 피드백 시
 
-### v2.0 (별도 호흡 의도서 — 본 v1.x 폐기 X)
+### v2.0 — SaaS-lite editor (Phase 1 진입, 2026-04-26~)
 
-> 12주차 마무리 호흡 중 사용자 제안: **비개발자 사용자가 UI 부터 단계별 입력해서 결과물이 딱 나오는 시나리오** (웹 에디터 / SaaS). 본 OSS 템플릿 정체성 (개발자 fork 모델) 과 정체성 자체가 다른 별도 프로젝트로 분리. 본 v1.x 는 그대로 유지.
+> v1.1.x closure 호흡 마지막에 사용자 의지 명시화 + 4 옵션 비교 → **옵션 3 (SaaS-lite)** 채택 (회고 `v1.1.x.md` 5절). form 입력 → `invitation.config.ts` 자동 생성 → 사용자 본인 GitHub repo fork + commit → Vercel API 자동 배포. **우리 인프라 0, 데이터 보관 X, GitHub 토큰은 OAuth callback 동안 client 메모리만**. v1.x 의 client-only 정체성을 깨지 않는 자동화 확장.
 
-- **트리거 조건**: 본인 결혼식 후 + 운영 인프라·결제·법적 주체 (개인정보보호법 준수) 결정
-- **분리 형태**: 별도 레포 또는 본 레포 안 `v2/` 디렉토리 (TBD). 큰 결정이라 그 시점에 결정
-- **현 상태**: 본 12주 호흡 스코프 밖. 의지 박아두기만
+#### Phase 1 — 기획·결정 (1 호흡, ✅ 완료)
+
+- ✅ **ADR 010** — editor 위치 (같은 repo `app/edit/`) · 이미지 처리 (GitHub Contents API commit) · state 관리 (Zustand + persist). 거부 대안 9 종 + 도메인 적정 트레이드오프 + 미래 트리거 5 종
+
+#### Phase 2 — Form UI MVP + Live preview (3 호흡, 다음 후보)
+
+- `npm install zustand` + `lib/editor/store.ts` (persist middleware, GitHub 토큰 partialize 제외)
+- `app/edit/page.tsx` 골격 + section 별 form 컨트롤 (Main · Greeting · Gallery · Venue · Accounts · RSVP · Guestbook · Share · Theme · Meta)
+- live preview pane — 청첩장 컴포넌트 (`components/sections/*`) 재사용, store config 를 props 주입
+- 무계정 demo 모드 — GitHub 미연결 상태에서 form + preview 동작, 이미지는 ObjectURL 임시 미리보기
+
+#### Phase 3 — GitHub OAuth + API (2~3 호흡)
+
+- GitHub App 등록 + OAuth callback (`app/api/github/oauth/route.ts`)
+- 사용자 fork 자동 생성 (`POST /repos/{template}/generate` 또는 fork)
+- `invitation.config.ts` + 이미지 commit (`PUT /repos/{owner}/{repo}/contents/{path}`)
+- 토큰은 client 메모리만, 우리 서버에 영구 저장 X
+
+#### Phase 4 — Vercel API (2~3 호흡)
+
+- Vercel OAuth + 프로젝트 생성 (`POST /v1/projects`)
+- GitHub repo 연결 + 환경변수 등록 (Firebase 6 키 + Kakao 키)
+- 첫 배포 트리거 + 배포 URL 반환 → editor UI 에 "배포 완료, https://... 에서 확인" 노출
+
+#### Phase 5 — 이미지·polish·docs (1~2 호흡)
+
+- 이미지 client resize (max 1920px, JPEG quality 80%) — `lib/editor/image-resize.ts`
+- editor 자체 사용법 README 또는 별도 가이드
+- 무계정 demo 모드 → OAuth 연결 흐름 UX 다듬기
+- editor 의존성·OAuth 흐름이 누적되면 `.claude/rules/editor.md` (또는 `github-oauth.md`) 분리 후보
+
+#### 호흡 분량 추정
+
+총 8~10 호흡 (약 3~4 주). v1.1.x 에서 14 commit 한 세션이 가능했던 패턴을 보면 압축은 가능, 다만 OAuth + 외부 API 통합이라 production 검증 사이클이 길어질 가능성 존재.
+
+#### 도메인 적정 트레이드오프
+
+청첩장 도메인 (결혼식 1 회 + 사진 9~20장 + 한 번 setup + archive) 가정에 정합. **다른 도메인 fork 시 부적합 명시** — 콘퍼런스/이벤트 invitation 같이 사진 빈번 교체·다수 호스트·매년 재사용 시나리오는 GitHub commit 이미지 누적 + multi-tenant 부재로 별도 SaaS (옵션 4) 가 합리. ADR 010 4절 참조
 
 ---
 

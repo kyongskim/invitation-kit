@@ -68,6 +68,37 @@ export const useEditorStore = create<EditorState>()(
     }),
     {
       name: "invitation-kit-editor",
+      version: 1,
+      /**
+       * v0 → v1 migration: sample placeholder `/audio/wedding.mp3` + enabled
+       * true 가 localStorage 에 stuck 인 사용자 자동 회수. 음원 파일이 OSS 에
+       * ship 안 되는데 enabled 만 true 면 매번 404 에러. 명시 안내로
+       * enabled false reset.
+       */
+      migrate: (persistedState, version) => {
+        if (
+          version < 1 &&
+          persistedState &&
+          typeof persistedState === "object"
+        ) {
+          const state = persistedState as {
+            config?: { music?: { enabled?: boolean; src?: string } };
+          };
+          if (
+            state.config?.music?.enabled === true &&
+            state.config?.music?.src === "/audio/wedding.mp3"
+          ) {
+            return {
+              ...state,
+              config: {
+                ...state.config,
+                music: { ...state.config.music, enabled: false },
+              },
+            };
+          }
+        }
+        return persistedState;
+      },
       partialize: (state) => ({
         config: state.config,
         publishedRepo: state.publishedRepo,

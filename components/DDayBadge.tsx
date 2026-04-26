@@ -66,7 +66,9 @@ export function DDayBadge() {
       <span className="text-secondary font-serif text-2xl tracking-[0.2em]">
         {badge}
       </span>
-      <span className="text-secondary text-sm tabular-nums">{countdown}</span>
+      <span className="text-text text-2xl font-light tabular-nums">
+        {countdown}
+      </span>
     </div>
   );
 }

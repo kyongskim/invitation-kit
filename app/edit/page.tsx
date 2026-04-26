@@ -19,6 +19,7 @@ import { useEditorStore } from "@/lib/editor/store";
 
 import { AccountsForm } from "./_sections/AccountsForm";
 import { CalendarForm } from "./_sections/CalendarForm";
+import { GalleryForm } from "./_sections/GalleryForm";
 import { GreetingForm } from "./_sections/GreetingForm";
 import { GuestbookConfigForm } from "./_sections/GuestbookConfigForm";
 import { MainForm } from "./_sections/MainForm";
@@ -70,6 +71,7 @@ export default function EditPage() {
         <div className="flex flex-col gap-10">
           <MainForm />
           <GreetingForm />
+          <GalleryForm />
           <CalendarForm />
           <VenueForm />
           <AccountsForm />

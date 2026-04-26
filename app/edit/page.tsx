@@ -49,6 +49,15 @@ const THEME_OPTIONS: { value: ThemeName; label: string }[] = [
 export default function EditPage() {
   const config = useEditorStore((s) => s.config);
   const setField = useEditorStore((s) => s.setField);
+  const reset = useEditorStore((s) => s.reset);
+
+  function handleReset() {
+    if (
+      window.confirm("모든 입력을 샘플 데이터로 되돌립니다. 진행하시겠습니까?")
+    ) {
+      reset();
+    }
+  }
 
   useEffect(() => {
     const root = document.documentElement;
@@ -101,6 +110,21 @@ export default function EditPage() {
                 </option>
               ))}
             </select>
+          </section>
+
+          <section className="flex flex-col gap-2">
+            <h2 className="text-primary font-serif text-lg">초기화</h2>
+            <button
+              type="button"
+              onClick={handleReset}
+              className="border-accent text-secondary hover:text-primary hover:border-primary rounded-sm border py-2 text-xs tracking-wider uppercase transition-colors"
+            >
+              샘플 데이터로 되돌리기
+            </button>
+            <p className="text-secondary/70 text-xs">
+              브라우저 localStorage 의 저장값을 지우고 김철수♥이영희 데모로
+              복귀합니다.
+            </p>
           </section>
         </div>
 

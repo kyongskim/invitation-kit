@@ -1,6 +1,6 @@
 {
   "name": "invitation-kit",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "description": "한국 결혼식에 최적화된 오픈소스 모바일 청첩장 템플릿. Config 파일 하나로 5분 배포.",
   "license": "MIT",
@@ -20,7 +20,8 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "geocode": "node scripts/geocode.mjs"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

@@ -138,6 +138,16 @@ interface Venue {
 
 ### 좌표 얻는 법
 
+#### 옵션 A — `npm run geocode` (CLI 자동, 추천)
+
+1. Kakao Developer Console > 앱 키 > **REST API 키** 복사 (JavaScript 키와 별개, 같은 앱 안에 있음)
+2. `.env.local` 에 추가: `KAKAO_REST_API_KEY=발급받은_키`
+3. `invitation.config.ts` 의 `venue.address` 정확하게 입력 (도로명 주소 권장)
+4. 터미널에서 `npm run geocode` 실행
+5. 출력된 `coords: { lat, lng }` 한 줄을 `invitation.config.ts` 의 `venue.coords` 자리에 paste
+
+#### 옵션 B — 지도에서 직접 따내기 (수동)
+
 1. [카카오맵](https://map.kakao.com) 또는 [네이버 지도](https://map.naver.com) 에서 식장 검색.
 2. **카카오맵**: 결과 > 우측 상단 "공유" > URL 의 좌표 파라미터 복사. 또는 지도에서 식장 핀 위 우클릭 > "좌표 보기".
 3. **네이버 지도**: 식장 핀 우클릭 > "이 위치 좌표".

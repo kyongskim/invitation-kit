@@ -4,9 +4,18 @@
 
 포맷은 [Keep a Changelog](https://keepachangelog.com/ko/1.1.0/) 을 따르며, 버전 표기는 [Semantic Versioning](https://semver.org/lang/ko/) 을 따릅니다.
 
-## [Unreleased]
+## [1.1.1] - 2026-04-26
 
-v1.1.0 release 직후 추가 호흡.
+v1.1.0 release 직후 같은 날 추가 호흡 누적 — 디자인 다듬기 + 기능 보완 + 작은 fix 묶음. v1.1.0 → v1.1.1 코드/문서 변경 다수 + 본 release 커밋.
+
+**호흡 요약**:
+
+- **디자인** — 카운트다운 위치 (Hero → Calendar 섹션), 4-박스 grid 표기, 섹션 배경 alternating (cream ↔ white), Hero 사진 배경 옵션 (`config.hero.backgroundImage`), bouncing scroll arrow
+- **새 기능** — App Check (ADR 009) · Apple Calendar 추가 → 제거 · 결혼식 달의 달력 섹션 · Kakao Maps 인터랙티브 임베드 · 실시간 D-day 카운트다운 · T맵 길찾기 버튼 · 방명록 본인 수정 (ADR 007 update 확장) · `npm run geocode` CLI
+- **fix** — 카운트다운 freeze (useSyncExternalStore → useState + setInterval) · Maps SDK domain 등록 안내 · 달력 셀 정렬 균일화 · Maps SDK 프로토콜 명시 (`https://`) · App Check graceful skip
+- **샘플 데이터** — 양가 부모 6 계좌 (다양한 한국 은행 sample 풍부도)
+- **ADR 신규** — 008 RSVP, 009 App Check
+- **거부 대안** — Hero 사진 미설정 fallback, T맵 웹 폴백 거부 (앱 only), geocode CLI 자동 갱신 거부 (regex 프래질 회피)
 
 ### Fixed
 

@@ -71,7 +71,7 @@ export function MapEmbed({ lat, lng, title }: Props) {
   return (
     <>
       <Script
-        src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&autoload=false`}
+        src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&autoload=false`}
         strategy="afterInteractive"
         onReady={initMap}
       />

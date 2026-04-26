@@ -18,3 +18,24 @@ const getServerSnapshot = () => false;
 export function useIsClient(): boolean {
   return useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
 }
+
+const clockSubscribe = (callback: () => void) => {
+  const id = window.setInterval(callback, 1000);
+  return () => window.clearInterval(id);
+};
+const clockGetSnapshot = () => Date.now();
+const clockGetServerSnapshot = () => 0;
+
+/**
+ * 1초 간격으로 갱신되는 현재 timestamp.
+ * useSyncExternalStore 패턴 — useEffect + setState 로 setInterval 거는
+ * 패턴 대비 React 19 `react-hooks/set-state-in-effect` 룰 안전 + SSR
+ * 결정성 (서버는 항상 0 반환, 클라이언트 hydration 후에만 실 시각 노출).
+ */
+export function useNow(): number {
+  return useSyncExternalStore(
+    clockSubscribe,
+    clockGetSnapshot,
+    clockGetServerSnapshot,
+  );
+}

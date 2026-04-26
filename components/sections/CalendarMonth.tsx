@@ -67,13 +67,13 @@ export function CalendarMonth() {
           {cells.map((cell, idx) => (
             <span
               key={idx}
-              className={
+              className={`mx-auto flex h-8 w-8 items-center justify-center rounded-full ${
                 cell.isWedding
-                  ? "bg-primary mx-auto flex h-8 w-8 items-center justify-center rounded-full text-white"
+                  ? "bg-primary text-white"
                   : cell.inMonth
                     ? "text-text"
                     : "text-secondary/30"
-              }
+              }`}
             >
               {cell.date}
             </span>

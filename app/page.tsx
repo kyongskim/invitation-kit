@@ -32,8 +32,8 @@ export default function Home() {
       )}
       <Main />
       <Greeting />
-      <CalendarMonth />
       <Gallery />
+      <CalendarMonth />
       <Venue />
       <Accounts />
       {config.rsvp.enabled && <RSVP />}

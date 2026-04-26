@@ -2,6 +2,8 @@ import { config } from "@/invitation.config";
 import { appleCalendarUrl, googleCalendarUrl } from "@/lib/calendar";
 import { kakaoMapDeeplink, naverMapDeeplink } from "@/lib/map";
 
+import { MapEmbed } from "./venue/MapEmbed";
+
 export function Venue() {
   const { venue, groom, bride, date, meta } = config;
   const kakaoUrl = kakaoMapDeeplink({ name: venue.name, coords: venue.coords });
@@ -45,6 +47,12 @@ export function Venue() {
         <p className="text-text mt-6 text-sm leading-relaxed">
           {venue.address}
         </p>
+
+        <MapEmbed
+          lat={venue.coords.lat}
+          lng={venue.coords.lng}
+          title={venue.name}
+        />
 
         <div className="mt-8 flex flex-col gap-3">
           <a

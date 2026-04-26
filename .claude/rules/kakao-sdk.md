@@ -6,8 +6,9 @@
 
 **이 규칙의 적용 범위**:
 
-- 카카오톡 공유 (Kakao JavaScript SDK `Kakao.Share`)
-- 카카오맵 딥링크 — SDK 없이 순수 URL. 편의상 같은 파일에서 규칙화
+- 카카오톡 공유 (Kakao JavaScript SDK `Kakao.Share`, `window.Kakao` 대문자 namespace)
+- 카카오맵 딥링크 — SDK 없이 순수 URL
+- **카카오 Maps SDK** — `dapi.kakao.com/v2/maps/sdk.js`, `window.kakao.maps` 소문자 namespace. Share SDK 와 같은 JavaScript 키 재사용
 
 **적용 범위 밖 (별도 규칙 파일 없이 당장 도입 금지)**:
 
@@ -111,6 +112,33 @@ if (
   1. `site` — `"청첩장 보기"` → `meta.siteUrl` (기본 ON)
   2. `map` — `"지도 보기"` → 아래 카카오맵 딥링크 (기본 OFF)
 - `buttons` 를 전부 끄거나 미설정 시 카드 전체가 `meta.siteUrl` 로 이동하는 효과 (Kakao feed 기본 동작). MVP 는 `site` 하나만으로도 충분.
+
+## Kakao Maps SDK (인터랙티브 임베드)
+
+`Venue` 섹션의 지도 임베드 (`components/sections/venue/MapEmbed.tsx`) 가 사용. Share SDK 와 별도 스크립트지만 **같은 JavaScript 키 + 같은 등록 도메인** 재사용 — 사용자가 추가 키 발급 / 환경 변수 추가 안 함.
+
+```tsx
+// 의사코드 — components/sections/venue/MapEmbed.tsx 에 캡슐화
+import Script from "next/script";
+
+<Script
+  src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_APP_KEY}&autoload=false`}
+  strategy="afterInteractive"
+  onReady={() => {
+    window.kakao.maps.load(() => {
+      const center = new window.kakao.maps.LatLng(lat, lng);
+      const map = new window.kakao.maps.Map(container, { center, level: 3 });
+      new window.kakao.maps.Marker({ map, position: center });
+    });
+  }}
+/>;
+```
+
+- **`autoload=false` + `kakao.maps.load(cb)`** — 카카오 공식 권장. Script onLoad 시점엔 `kakao.maps` 객체만 정의돼있고 실제 API 는 `load()` 호출 시 초기화. 즉시 `new kakao.maps.Map()` 호출 시 race condition 으로 마커 누락·지도 백지 발생.
+- **`window.kakao.maps` 소문자.** Share SDK 의 `window.Kakao` (대문자) 와 분리된 namespace. TypeScript 선언도 별도.
+- **next/script `onReady`** (NOT `onLoad`) — mount 마다 fire. 라우트 변경 / 페이지 재mount 에서도 init 안전.
+- **graceful skip**: `NEXT_PUBLIC_KAKAO_APP_KEY` 부재 시 컴포넌트 자체가 `null` 반환. 카카오 미설정 사용자도 청첩장 정상 동작.
+- **카카오 Developer Console 활성**: 등록한 앱의 "플랫폼 > Web" 에 등록한 도메인이 그대로 Maps SDK 도메인 검증에 쓰임. 별도 "Maps API 활성" 토글이 보이면 켤 것 (UI 가 자주 바뀜).
 
 ## 카카오맵 딥링크 (SDK 미사용)
 

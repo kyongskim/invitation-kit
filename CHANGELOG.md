@@ -8,7 +8,19 @@
 
 v1.1.0 release 직후 추가 호흡.
 
+### Fixed
+
+- **달력 셀 정렬** — 결혼식 날 셀의 `h-8 w-8` 만 적용된 게 다른 셀과 행 높이 어긋나게 만들었던 버그. 모든 셀을 동일 32×32 (`mx-auto flex h-8 w-8`) 로 통일, 결혼식 날만 `bg-primary` + 흰 텍스트 분기.
+
+### Changed
+
+- **페이지 섹션 순서** — `Greeting → Calendar → Gallery` → `Greeting → Gallery → Calendar` 로 재배열. 감정 (Main → Greeting → Gallery) → 실용 (Calendar → Venue → Accounts) → 상호작용 (RSVP → Guestbook → Share) 의 3 단계 자연 흐름 복원. Calendar 가 감정 흐름 중간에 끼어 톤 단절시키던 문제 해결.
+
 ### Added
+
+- **Kakao Maps SDK 인터랙티브 지도 임베드** — `components/sections/venue/MapEmbed.tsx` 신규 (Client Component). Venue 섹션의 주소 아래 지도 위젯 노출, 결혼식장 좌표에 마커. `dapi.kakao.com/v2/maps/sdk.js?appkey=...&autoload=false` + `kakao.maps.load(cb)` 패턴 (카카오 공식 권장 — `autoload=false` 안 쓰면 race condition 으로 마커 누락). Share SDK 와 별도 스크립트지만 **같은 `NEXT_PUBLIC_KAKAO_APP_KEY` + 같은 등록 도메인** 재사용. graceful degradation: env var 누락 시 컴포넌트 자체 `null` 반환, 카카오 미설정 사용자도 정상 동작. `.claude/rules/kakao-sdk.md` Scope 에 Maps SDK 추가. v1.1+ 호흡 8번째.
+
+- **실시간 D-day 카운트다운** — 기존 `DDayBadge` enhance. "D-N" 아래 "21일 14시간 38분 21초" 라이브 표시 (1초 갱신). `lib/hooks.ts` 에 `useNow()` 추가 — `useSyncExternalStore` 패턴으로 setInterval 1초 구독, React 19 `react-hooks/set-state-in-effect` 룰 안전 + SSR 결정성 (서버는 0 반환, 클라이언트 hydration 후 실 시각). 결혼식 시각 지나면 90분간 "진행 중" 안내, 그 후 badge 자체 hide. `tabular-nums` 로 숫자 폭 고정 (jitter 방지). v1.1+ 호흡 9번째.
 
 - **결혼식 달의 달력 섹션** — `components/sections/CalendarMonth.tsx` 신규. Server Component, `config.date` 의 ISO 문자열에서 year/month/day 자동 유도. 7×N 그리드 (한국 표준 일요일 시작), 결혼식 날 셀에 `--color-primary` 원 강조 + 그 아래 "2026년 5월 17일 토 12:00" 한 줄. 다른 달 날짜는 `text-secondary/30` 흐림 처리. 다중 테마 토큰 그대로 사용 — Classic/Modern/Floral 자동 일관. 페이지 배치는 Greeting 과 Gallery 사이. 사용자 config 수정 0 (date 한 필드에서 모두 derive). v1.1+ 호흡 7번째.
 

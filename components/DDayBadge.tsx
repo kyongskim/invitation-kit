@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-import { config } from "@/invitation.config";
 import { useIsClient } from "@/lib/hooks";
 
 const CEREMONY_DURATION_MS = 90 * 60 * 1000;
@@ -18,7 +17,7 @@ const CEREMONY_DURATION_MS = 90 * 60 * 1000;
  * useState lazy init + setInterval 로 SSR-safe (server 0 / client
  * Date.now()), useIsClient 가드로 hydration mismatch 차단.
  */
-export function DDayBadge() {
+export function DDayBadge({ date }: { date: string }) {
   const isClient = useIsClient();
   const [now, setNow] = useState<number>(() =>
     typeof window !== "undefined" ? Date.now() : 0,
@@ -32,7 +31,7 @@ export function DDayBadge() {
 
   if (!isClient || now === 0) return null;
 
-  const target = new Date(config.date).getTime();
+  const target = new Date(date).getTime();
   const remaining = target - now;
   const elapsedAfterStart = -remaining;
 

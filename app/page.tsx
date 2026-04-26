@@ -30,15 +30,15 @@ export default function Home() {
       {config.music?.enabled && config.music.src && (
         <MusicToggle src={config.music.src} />
       )}
-      <Main />
-      <Greeting />
-      <Gallery />
-      <CalendarMonth />
-      <Venue />
-      <Accounts />
-      {config.rsvp.enabled && <RSVP />}
-      {config.guestbook.enabled && <Guestbook />}
-      <Share />
+      <Main groom={config.groom} bride={config.bride} hero={config.hero} />
+      <Greeting greeting={config.greeting} />
+      <Gallery gallery={config.gallery} />
+      <CalendarMonth date={config.date} />
+      <Venue venue={config.venue} />
+      <Accounts accounts={config.accounts} />
+      {config.rsvp.enabled && <RSVP rsvp={config.rsvp} />}
+      {config.guestbook.enabled && <Guestbook guestbook={config.guestbook} />}
+      <Share share={config.share} meta={config.meta} venue={config.venue} />
     </main>
   );
 }

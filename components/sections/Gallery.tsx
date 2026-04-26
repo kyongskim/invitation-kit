@@ -4,12 +4,11 @@ import { AnimatePresence, motion, type PanInfo } from "framer-motion";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 
-import { config } from "@/invitation.config";
+import type { GalleryImage } from "@/invitation.config";
 
 const SWIPE_THRESHOLD = 100;
 
-export function Gallery() {
-  const { gallery } = config;
+export function Gallery({ gallery }: { gallery: GalleryImage[] }) {
   const total = gallery.length;
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
 

@@ -18,7 +18,7 @@ import {
   type QueryDocumentSnapshot,
 } from "firebase/firestore";
 
-import { config } from "@/invitation.config";
+import type { GuestbookConfig } from "@/invitation.config";
 import { db } from "@/lib/firebase";
 import { hashPassword, verifyPassword } from "@/lib/hash";
 import { useIsClient } from "@/lib/hooks";
@@ -54,10 +54,10 @@ function toEntry(doc: QueryDocumentSnapshot): GuestbookEntry {
   };
 }
 
-export function Guestbook() {
+export function Guestbook({ guestbook }: { guestbook: GuestbookConfig }) {
   const isClient = useIsClient();
-  const minPasswordLength = config.guestbook.minPasswordLength ?? 4;
-  const profanityFilterOn = config.guestbook.profanityFilter !== false;
+  const minPasswordLength = guestbook.minPasswordLength ?? 4;
+  const profanityFilterOn = guestbook.profanityFilter !== false;
 
   const [entries, setEntries] = useState<GuestbookEntry[]>([]);
   const [status, setStatus] = useState<FetchStatus>("loading");

@@ -4,7 +4,7 @@ import { useState, useSyncExternalStore } from "react";
 import { AnimatePresence } from "framer-motion";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
-import { config } from "@/invitation.config";
+import type { RSVPConfig } from "@/invitation.config";
 import { db } from "@/lib/firebase";
 
 import type { RSVPSubmitInput } from "./rsvp/RSVPForm";
@@ -56,13 +56,12 @@ function useShouldAutoPopup(closed: boolean): boolean {
   );
 }
 
-export function RSVP() {
-  const showCompanions = config.rsvp.fields?.companions !== false;
-  const showMessage = config.rsvp.fields?.message !== false;
-  const closed = isClosed(config.rsvp.deadline);
+export function RSVP({ rsvp }: { rsvp: RSVPConfig }) {
+  const showCompanions = rsvp.fields?.companions !== false;
+  const showMessage = rsvp.fields?.message !== false;
+  const closed = isClosed(rsvp.deadline);
   const guideMessage =
-    config.rsvp.message ??
-    "참석 여부를 알려주시면\n결혼식 준비에 큰 도움이 됩니다.";
+    rsvp.message ?? "참석 여부를 알려주시면\n결혼식 준비에 큰 도움이 됩니다.";
 
   const shouldAutoPopup = useShouldAutoPopup(closed);
 

@@ -3,11 +3,19 @@
 import Script from "next/script";
 import { useState } from "react";
 
-import { config } from "@/invitation.config";
+import type { InvitationConfig, ShareConfig, Venue } from "@/invitation.config";
 import { copyText } from "@/lib/clipboard";
 import { initKakao, shareInvitation } from "@/lib/kakao";
 
-export function Share() {
+export function Share({
+  share,
+  meta,
+  venue,
+}: {
+  share: ShareConfig;
+  meta: InvitationConfig["meta"];
+  venue: Venue;
+}) {
   const [toast, setToast] = useState<string | null>(null);
 
   const showToast = (message: string) => {
@@ -18,15 +26,15 @@ export function Share() {
   const handleShare = async () => {
     try {
       shareInvitation({
-        title: config.share.title,
-        description: config.share.description,
-        thumbnailUrl: config.share.thumbnailUrl,
-        siteUrl: config.meta.siteUrl,
-        buttons: config.share.buttons,
-        venue: { name: config.venue.name, coords: config.venue.coords },
+        title: share.title,
+        description: share.description,
+        thumbnailUrl: share.thumbnailUrl,
+        siteUrl: meta.siteUrl,
+        buttons: share.buttons,
+        venue: { name: venue.name, coords: venue.coords },
       });
     } catch {
-      const ok = await copyText(config.meta.siteUrl);
+      const ok = await copyText(meta.siteUrl);
       showToast(ok ? "링크가 복사되었습니다" : "공유에 실패했습니다");
     }
   };

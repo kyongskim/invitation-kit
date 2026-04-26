@@ -1,22 +1,21 @@
 import { DDayBadge } from "@/components/DDayBadge";
-import { config } from "@/invitation.config";
 
 const KOREAN_WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"] as const;
 
 /**
  * 결혼식 달의 달력을 렌더링하는 정적 섹션.
- * `config.date` 에서 year/month/day 자동 유도 — 사용자 config 수정 0.
+ * `date` prop 에서 year/month/day 자동 유도 — 사용자 config 수정 0.
  *
  * 7×N 그리드:
  * - 일요일 시작 (한국 표준)
  * - 결혼식 날 셀에 `--color-primary` 원 강조
  * - 다른 달 날짜는 흐림 처리 (그리드 정렬용 보충)
  *
- * Server Component — 클라이언트 hydration 불필요. `config.date` 는
+ * Server Component — 클라이언트 hydration 불필요. `date` 는
  * ISO 8601 + 타임존이라 빌드 시점에 모두 결정됨.
  */
-export function CalendarMonth() {
-  const wedding = new Date(config.date);
+export function CalendarMonth({ date }: { date: string }) {
+  const wedding = new Date(date);
   const year = wedding.getFullYear();
   const month = wedding.getMonth(); // 0-indexed
   const weddingDay = wedding.getDate();
@@ -85,7 +84,7 @@ export function CalendarMonth() {
           {year}년 {month + 1}월 {weddingDay}일 {weekdayLabel} {timeLabel}
         </p>
 
-        <DDayBadge />
+        <DDayBadge date={date} />
       </div>
     </section>
   );

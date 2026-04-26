@@ -1,10 +1,9 @@
-import { config } from "@/invitation.config";
+import type { Venue as VenueData } from "@/invitation.config";
 import { kakaoMapDeeplink, naverMapDeeplink, tmapDeeplink } from "@/lib/map";
 
 import { MapEmbed } from "./venue/MapEmbed";
 
-export function Venue() {
-  const { venue } = config;
+export function Venue({ venue }: { venue: VenueData }) {
   const kakaoUrl = kakaoMapDeeplink({ name: venue.name, coords: venue.coords });
   const naverUrl = naverMapDeeplink({ name: venue.name, coords: venue.coords });
   const tmapUrl = tmapDeeplink({ name: venue.name, coords: venue.coords });

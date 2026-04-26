@@ -2,12 +2,16 @@
 
 import { useId, useState } from "react";
 
-import { config } from "@/invitation.config";
+import type { InvitationConfig } from "@/invitation.config";
 import { copyText } from "@/lib/clipboard";
 
 type Side = "groom" | "bride";
 
-export function Accounts() {
+export function Accounts({
+  accounts,
+}: {
+  accounts: InvitationConfig["accounts"];
+}) {
   const [expanded, setExpanded] = useState(false);
   const [side, setSide] = useState<Side>("groom");
   const [toast, setToast] = useState<string | null>(null);
@@ -25,8 +29,7 @@ export function Accounts() {
     else showToast("복사에 실패했어요. 번호를 길게 눌러 복사해주세요");
   };
 
-  const list =
-    side === "groom" ? config.accounts.groomSide : config.accounts.brideSide;
+  const list = side === "groom" ? accounts.groomSide : accounts.brideSide;
 
   return (
     <>

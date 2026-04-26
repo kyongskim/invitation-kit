@@ -1,17 +1,25 @@
 import Image from "next/image";
 
-import { config } from "@/invitation.config";
+import type { InvitationConfig, Person } from "@/invitation.config";
 
 /**
- * Hero (첫 화면). config.hero.backgroundImage 가 있으면 풀스크린 사진 +
+ * Hero (첫 화면). hero.backgroundImage 가 있으면 풀스크린 사진 +
  * gradient overlay + 흰 텍스트, 없으면 cream 단색 + 진한 텍스트.
  *
  * 카운트다운은 CalendarMonth 섹션으로 이동 — Hero 는 신랑·신부 이름 자체가
  * emotional anchor 로 단독.
  */
-export function Main() {
-  const heroImage = config.hero?.backgroundImage;
-  const heroAlt = config.hero?.alt ?? "결혼식 메인 사진";
+export function Main({
+  groom,
+  bride,
+  hero,
+}: {
+  groom: Person;
+  bride: Person;
+  hero?: InvitationConfig["hero"];
+}) {
+  const heroImage = hero?.backgroundImage;
+  const heroAlt = hero?.alt ?? "결혼식 메인 사진";
   const hasImage = Boolean(heroImage);
 
   return (
@@ -51,11 +59,11 @@ export function Main() {
             hasImage ? "text-white" : "text-primary"
           }`}
         >
-          <span>{config.groom.name}</span>
+          <span>{groom.name}</span>
           <span className={hasImage ? "text-white/70" : "text-secondary"}>
             &amp;
           </span>
-          <span>{config.bride.name}</span>
+          <span>{bride.name}</span>
         </h1>
       </div>
 

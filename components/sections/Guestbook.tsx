@@ -14,6 +14,7 @@ import {
   query,
   serverTimestamp,
   Timestamp,
+  updateDoc,
   type QueryDocumentSnapshot,
 } from "firebase/firestore";
 
@@ -23,6 +24,7 @@ import { hashPassword, verifyPassword } from "@/lib/hash";
 import { useIsClient } from "@/lib/hooks";
 
 import { DeleteConfirmModal } from "./guestbook/DeleteConfirmModal";
+import { EditConfirmModal } from "./guestbook/EditConfirmModal";
 import {
   GuestbookForm,
   type GuestbookSubmitInput,
@@ -61,6 +63,7 @@ export function Guestbook() {
   const [status, setStatus] = useState<FetchStatus>("loading");
   const [toast, setToast] = useState<string | null>(null);
   const [fetchTrigger, setFetchTrigger] = useState(0);
+  const [editingEntry, setEditingEntry] = useState<GuestbookEntry | null>(null);
   const [deletingEntry, setDeletingEntry] = useState<GuestbookEntry | null>(
     null,
   );
@@ -113,6 +116,42 @@ export function Guestbook() {
       ...prev,
     ]);
     showToast("메시지가 등록되었습니다");
+  };
+
+  // 비밀번호 검증 + 수정. 실패 시 throw — 모달이 inline 에러로 표시.
+  // ADR 007 C' 경로의 update 확장 — 같은 도메인 적정 트레이드오프
+  // (DevTools 우회 가능). passwordHash · createdAt 은 firestore.rules
+  // 에서 잠금돼 server 측에서도 변경 차단.
+  const handleEdit = async (
+    entry: GuestbookEntry,
+    password: string,
+    newName: string,
+    newMessage: string,
+  ) => {
+    const ref = doc(db, COLLECTION, entry.id);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) {
+      setEntries((prev) => prev.filter((e) => e.id !== entry.id));
+      setEditingEntry(null);
+      showToast("이미 삭제된 메시지입니다");
+      return;
+    }
+    const hash = snap.data().passwordHash as string | undefined;
+    if (!hash || hash.length !== 60) {
+      throw new Error("invalid_hash");
+    }
+    const ok = await verifyPassword(password, hash);
+    if (!ok) {
+      throw new Error("password_mismatch");
+    }
+    await updateDoc(ref, { name: newName, message: newMessage });
+    setEntries((prev) =>
+      prev.map((e) =>
+        e.id === entry.id ? { ...e, name: newName, message: newMessage } : e,
+      ),
+    );
+    setEditingEntry(null);
+    showToast("메시지가 수정되었습니다");
   };
 
   // 비밀번호 검증 + 삭제. 실패 시 throw — 모달이 inline 에러로 표시.
@@ -171,6 +210,7 @@ export function Guestbook() {
             entries={entries}
             status={status}
             onRetry={retryFetch}
+            onEditRequest={setEditingEntry}
             onDeleteRequest={setDeletingEntry}
           />
 
@@ -187,6 +227,13 @@ export function Guestbook() {
       </section>
 
       <AnimatePresence>
+        {editingEntry && (
+          <EditConfirmModal
+            entry={editingEntry}
+            onConfirm={handleEdit}
+            onCancel={() => setEditingEntry(null)}
+          />
+        )}
         {deletingEntry && (
           <DeleteConfirmModal
             entry={deletingEntry}

@@ -1,21 +1,13 @@
 import { config } from "@/invitation.config";
-import { appleCalendarUrl, googleCalendarUrl } from "@/lib/calendar";
-import { kakaoMapDeeplink, naverMapDeeplink } from "@/lib/map";
+import { kakaoMapDeeplink, naverMapDeeplink, tmapDeeplink } from "@/lib/map";
 
 import { MapEmbed } from "./venue/MapEmbed";
 
 export function Venue() {
-  const { venue, groom, bride, date, meta } = config;
+  const { venue } = config;
   const kakaoUrl = kakaoMapDeeplink({ name: venue.name, coords: venue.coords });
   const naverUrl = naverMapDeeplink({ name: venue.name, coords: venue.coords });
-  const calendarParams = {
-    title: `${groom.name} ♥ ${bride.name} 결혼식`,
-    start: date,
-    location: `${venue.name} ${venue.address}`,
-    description: `모바일 청첩장: ${meta.siteUrl}`,
-  };
-  const googleUrl = googleCalendarUrl(calendarParams);
-  const appleUrl = appleCalendarUrl(calendarParams);
+  const tmapUrl = tmapDeeplink({ name: venue.name, coords: venue.coords });
   const transportEntries: { label: string; value: string }[] = [];
   if (venue.transportation?.subway)
     transportEntries.push({
@@ -72,19 +64,10 @@ export function Venue() {
             네이버 지도로 보기
           </a>
           <a
-            href={googleUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+            href={tmapUrl}
             className="border-secondary text-secondary hover:bg-secondary inline-block rounded-sm border px-6 py-3 text-sm tracking-wider transition-colors hover:text-white"
           >
-            Google 캘린더에 추가
-          </a>
-          <a
-            href={appleUrl}
-            download="wedding.ics"
-            className="border-secondary text-secondary hover:bg-secondary inline-block rounded-sm border px-6 py-3 text-sm tracking-wider transition-colors hover:text-white"
-          >
-            Apple 캘린더에 추가
+            T맵으로 보기
           </a>
         </div>
 

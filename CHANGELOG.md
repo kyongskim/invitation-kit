@@ -18,6 +18,14 @@ v1.1.0 release 직후 추가 호흡.
 
 ### Added
 
+- **방명록 본인 수정 (비밀번호 일치)** — 각 entry 에 [수정] 버튼 추가. 클릭 시 password + name + message 폼 모달, 비밀번호 일치 시 `updateDoc` 으로 갱신. ADR 007 의 C' 경로를 delete 외에 update 까지 확장 — `firestore.rules` 의 `allow update` 가 `passwordHash` · `createdAt` 잠금 (서버 측 위변조 차단). 같은 도메인 적정 트레이드오프 (DevTools 우회 가능, 위협 모델 약함). `components/sections/guestbook/EditConfirmModal.tsx` 신규.
+
+- **T맵 길찾기 버튼** — Venue 섹션의 카카오맵·네이버 지도 다음 줄에 "T맵으로 보기". `lib/map.ts` 에 `tmapDeeplink` 추가 (`tmap://route?goalname=...&goalx=lng&goaly=lat` 커스텀 스킴). T맵은 웹 폴백 없어 앱 미설치 시 동작 안 함 — 카카오맵·네이버 지도가 우회 경로. 한국 결혼식 하객 다수 T맵 사용자라 운영상 가치 있음.
+
+### Removed
+
+- **Venue 의 Google·Apple 캘린더 추가 버튼** — 사용 빈도 낮은 판단으로 UI 에서 제거. `lib/calendar.ts` 의 `googleCalendarUrl` · `appleCalendarUrl` 함수는 유지 — 사용자가 fork 후 재활성하고 싶을 때 한 줄 추가로 복원 가능.
+
 - **Kakao Maps SDK 인터랙티브 지도 임베드** — `components/sections/venue/MapEmbed.tsx` 신규 (Client Component). Venue 섹션의 주소 아래 지도 위젯 노출, 결혼식장 좌표에 마커. `dapi.kakao.com/v2/maps/sdk.js?appkey=...&autoload=false` + `kakao.maps.load(cb)` 패턴 (카카오 공식 권장 — `autoload=false` 안 쓰면 race condition 으로 마커 누락). Share SDK 와 별도 스크립트지만 **같은 `NEXT_PUBLIC_KAKAO_APP_KEY` + 같은 등록 도메인** 재사용. graceful degradation: env var 누락 시 컴포넌트 자체 `null` 반환, 카카오 미설정 사용자도 정상 동작. `.claude/rules/kakao-sdk.md` Scope 에 Maps SDK 추가. v1.1+ 호흡 8번째.
 
 - **실시간 D-day 카운트다운** — 기존 `DDayBadge` enhance. "D-N" 아래 "21일 14시간 38분 21초" 라이브 표시 (1초 갱신). `lib/hooks.ts` 에 `useNow()` 추가 — `useSyncExternalStore` 패턴으로 setInterval 1초 구독, React 19 `react-hooks/set-state-in-effect` 룰 안전 + SSR 결정성 (서버는 0 반환, 클라이언트 hydration 후 실 시각). 결혼식 시각 지나면 90분간 "진행 중" 안내, 그 후 badge 자체 hide. `tabular-nums` 로 숫자 폭 고정 (jitter 방지). v1.1+ 호흡 9번째.

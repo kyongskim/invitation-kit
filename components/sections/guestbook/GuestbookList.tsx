@@ -6,6 +6,7 @@ type Props = {
   entries: GuestbookEntry[];
   status: FetchStatus;
   onRetry: () => void;
+  onEditRequest: (entry: GuestbookEntry) => void;
   onDeleteRequest: (entry: GuestbookEntry) => void;
 };
 
@@ -27,6 +28,7 @@ export function GuestbookList({
   entries,
   status,
   onRetry,
+  onEditRequest,
   onDeleteRequest,
 }: Props) {
   return (
@@ -68,7 +70,15 @@ export function GuestbookList({
             <p className="text-text mt-2 text-sm leading-relaxed whitespace-pre-line">
               {entry.message}
             </p>
-            <div className="mt-3 flex justify-end">
+            <div className="mt-3 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => onEditRequest(entry)}
+                aria-label={`${entry.name} 님의 메시지 수정`}
+                className="text-secondary hover:text-text text-xs underline underline-offset-4 transition-colors"
+              >
+                수정
+              </button>
               <button
                 type="button"
                 onClick={() => onDeleteRequest(entry)}

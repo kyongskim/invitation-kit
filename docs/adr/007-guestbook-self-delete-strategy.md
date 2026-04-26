@@ -1,8 +1,22 @@
-# ADR 007 · 방명록 본인 삭제 — 클라이언트 검증 + 도메인 적정 모델 채택
+# ADR 007 · 방명록 본인 삭제·수정 — 클라이언트 검증 + 도메인 적정 모델 채택
 
 - 상태: Accepted
-- 날짜: 2026-04-25 (12주차 Day 1)
+- 날짜: 2026-04-25 (12주차 Day 1, 삭제 도입), **2026-04-26 (수정 확장 — v1.1+ 호흡)**
 - 관련: `.claude/rules/firebase.md` (삭제 전략 섹션), `firestore.rules`, `lib/hash.ts`, `components/sections/guestbook/`, `docs/blog-posts/2026-04-25-12week-retrospective.md`
+
+---
+
+## 2026-04-26 갱신 — 본인 수정 확장
+
+본 ADR 의 C' 경로 (클라이언트 verifyPassword + Firestore rule allow) 를 **delete 외에 update 까지 확장**. 패턴 동일:
+
+- 클라이언트가 verifyPassword 후 일치 시에만 `updateDoc` 호출
+- `firestore.rules` 의 `allow update: if <validation>` 에서 `passwordHash` · `createdAt` 잠금 (서버 측 위변조 차단)
+- name · message 필드만 변경 허용 (1~20자 / 1~500자)
+
+거부 대안 1 종 (E. update 미지원, 다시 작성 + 운영자 dedup) — UX 손해 (실명 한 번 박힌 상태에서 오타 수정도 새 글로 처리해야) + delete 와 결의 비대칭. C' 경로 자체가 이미 클라이언트 검증 우회 가능성을 도메인 적정 트레이드오프로 수용했으므로 update 도 같은 모델 일관 적용이 자연스러움.
+
+DevTools 우회 가능성 동일 — vandalism 시나리오에서 update 가 delete 보다 더 위험할 수 있음 (악성 메시지로 교체). 단, **본인 message 만 갈아끼울 수 있고 다른 사람 message 는 firestore rule 의 passwordHash 잠금으로 password 알아야 함** (즉 다른 사람 글을 자기 글로 위변조 못함, 다만 자기 글 변경은 password 알면 자유). 이는 delete 와 동일한 위협 모델.
 
 ---
 

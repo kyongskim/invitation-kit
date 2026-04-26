@@ -190,7 +190,18 @@ service cloud.firestore {
         && request.resource.data.passwordHash.size() == 60
         && request.resource.data.createdAt == request.time;
 
-      allow update: if false;
+      // 본인 수정 — ADR 007 의 C' 확장 (2026-04-26).
+      allow update: if
+        request.resource.data.keys().hasOnly(['name', 'message', 'passwordHash', 'createdAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 1
+        && request.resource.data.name.size() <= 20
+        && request.resource.data.message is string
+        && request.resource.data.message.size() >= 1
+        && request.resource.data.message.size() <= 500
+        && request.resource.data.passwordHash == resource.data.passwordHash
+        && request.resource.data.createdAt == resource.data.createdAt;
+
       allow delete: if true;
     }
 

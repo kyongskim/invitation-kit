@@ -11,16 +11,15 @@ import { useEditorStore } from "@/lib/editor/store";
  * ADR 011 결정 2·4 — template generate 로 사용자 본인 repo 생성 +
  * `serializeConfig` server-side prettier 로 `invitation.config.ts` commit.
  *
- * 흐름:
- * 1. repo 이름 + private 토글 입력
- * 2. submit → `generateRepo` (client → GitHub API 직접) →
- *    신규 repo 생성 (template 의 모든 파일 squash 된 single initial commit)
- * 3. → POST `/api/github/commit` (server-side serialize + Contents API PUT)
- *    로 사용자 form 입력 반영된 invitation.config.ts 덮어쓰기
- * 4. 결과 URL 노출 — 사용자가 본인 repo 에서 확인
+ * 두 모드:
+ * - 첫 publish 모드 (`publishedRepo === null`): repo 이름 + private 토글
+ *   입력 → generateRepo + /api/github/commit. 성공 시 publishedRepo 저장
+ * - re-commit 모드 (`publishedRepo` 있음): 같은 repo 에 config 만 다시
+ *   commit. 갤러리 이미지 업로드 (Phase 3-b) 후 src 갱신을 반영하는
+ *   주된 사용처
  *
- * 토큰: 메모리의 `github.token` 을 client 에서 직접 GitHub API 호출 +
- * commit 호출 시 Authorization 헤더로 forward. server 비저장 (ADR 010·011).
+ * 토큰: 메모리의 `github.token` 을 client → GitHub API + commit endpoint
+ * 모두 Authorization 헤더로 forward. server 비저장 (ADR 010·011).
  */
 
 const REPO_NAME_PATTERN = "[a-zA-Z0-9_.-]+";
@@ -35,30 +34,69 @@ type SuccessResult = {
 export function PublishToGithub() {
   const github = useEditorStore((s) => s.github);
   const config = useEditorStore((s) => s.config);
+  const publishedRepo = useEditorStore((s) => s.publishedRepo);
+  const setPublishedRepo = useEditorStore((s) => s.setPublishedRepo);
 
+  if (!github.token || !github.user) return null;
+
+  if (publishedRepo) {
+    return (
+      <RepublishMode
+        token={github.token}
+        publishedRepoUrl={publishedRepo.htmlUrl}
+        owner={publishedRepo.owner}
+        repo={publishedRepo.name}
+        config={config}
+        onForget={() => setPublishedRepo(null)}
+      />
+    );
+  }
+
+  return (
+    <FirstPublishMode
+      token={github.token}
+      user={github.user}
+      config={config}
+      onSuccess={(repo) =>
+        setPublishedRepo({
+          owner: repo.owner,
+          name: repo.name,
+          htmlUrl: repo.htmlUrl,
+          branch: repo.branch,
+        })
+      }
+    />
+  );
+}
+
+function FirstPublishMode(props: {
+  token: string;
+  user: string;
+  config: ReturnType<typeof useEditorStore.getState>["config"];
+  onSuccess: (repo: {
+    owner: string;
+    name: string;
+    htmlUrl: string;
+    branch: string;
+  }) => void;
+}) {
   const [repoName, setRepoName] = useState("our-wedding");
   const [isPrivate, setIsPrivate] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [result, setResult] = useState<SuccessResult | null>(null);
 
-  if (!github.token || !github.user) return null;
-
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!github.token || !github.user) return;
-    const token = github.token;
-    const user = github.user;
-
     setStatus("submitting");
     setErrorMsg(null);
     setResult(null);
 
     try {
       const repo = await generateRepo({
-        token,
+        token: props.token,
         name: repoName,
-        description: `${config.groom.name} ♥ ${config.bride.name} 청첩장`,
+        description: `${props.config.groom.name} ♥ ${props.config.bride.name} 청첩장`,
         isPrivate,
       });
 
@@ -66,12 +104,12 @@ export function PublishToGithub() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${props.token}`,
         },
         body: JSON.stringify({
-          owner: user,
+          owner: props.user,
           repo: repoName,
-          config,
+          config: props.config,
         }),
       });
 
@@ -83,6 +121,13 @@ export function PublishToGithub() {
       if (!commitRes.ok) {
         throw new Error(commitData.error ?? `commit ${commitRes.status}`);
       }
+
+      props.onSuccess({
+        owner: repo.owner.login,
+        name: repo.name,
+        htmlUrl: repo.html_url,
+        branch: repo.default_branch,
+      });
 
       setStatus("success");
       setResult({
@@ -160,8 +205,8 @@ export function PublishToGithub() {
             </a>
           )}
           <p className="text-secondary/70 mt-1">
-            다음 단계 (Phase 4): Vercel 배포 자동화. 지금은 본인 Vercel 에서 이
-            repo 를 import 해야 청첩장이 배포됩니다.
+            이제 갤러리에 본인 사진을 업로드하거나 form 을 더 수정한 후
+            &quot;변경사항 commit&quot; 으로 같은 repo 에 반영할 수 있습니다.
           </p>
         </div>
       )}
@@ -169,6 +214,112 @@ export function PublishToGithub() {
       {status === "error" && errorMsg && (
         <p className="text-xs leading-relaxed text-red-600">{errorMsg}</p>
       )}
+    </section>
+  );
+}
+
+function RepublishMode(props: {
+  token: string;
+  publishedRepoUrl: string;
+  owner: string;
+  repo: string;
+  config: ReturnType<typeof useEditorStore.getState>["config"];
+  onForget: () => void;
+}) {
+  const [status, setStatus] = useState<Status>("idle");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [commitUrl, setCommitUrl] = useState<string | null>(null);
+
+  async function handleRecommit() {
+    setStatus("submitting");
+    setErrorMsg(null);
+    setCommitUrl(null);
+
+    try {
+      const commitRes = await fetch("/api/github/commit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${props.token}`,
+        },
+        body: JSON.stringify({
+          owner: props.owner,
+          repo: props.repo,
+          config: props.config,
+        }),
+      });
+
+      const commitData = (await commitRes.json().catch(() => ({}))) as {
+        commitUrl?: string | null;
+        error?: string;
+      };
+
+      if (!commitRes.ok) {
+        throw new Error(commitData.error ?? `commit ${commitRes.status}`);
+      }
+
+      setStatus("success");
+      setCommitUrl(commitData.commitUrl ?? null);
+    } catch (err) {
+      setStatus("error");
+      setErrorMsg(err instanceof Error ? err.message : String(err));
+    }
+  }
+
+  return (
+    <section className="flex flex-col gap-3">
+      <h2 className="text-primary font-serif text-lg">청첩장 commit</h2>
+      <p className="text-secondary text-xs leading-relaxed">
+        저장 위치:{" "}
+        <a
+          href={props.publishedRepoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary underline"
+        >
+          {props.owner}/{props.repo}
+        </a>
+      </p>
+
+      <button
+        type="button"
+        onClick={handleRecommit}
+        disabled={status === "submitting"}
+        className="border-accent text-secondary hover:text-primary hover:border-primary self-start rounded-sm border px-3 py-1.5 text-xs tracking-wider uppercase transition-colors disabled:opacity-50"
+      >
+        {status === "submitting" ? "commit 중…" : "변경사항 commit"}
+      </button>
+
+      {status === "success" && (
+        <div className="flex flex-col gap-1 rounded-sm border border-emerald-700/30 bg-emerald-50/50 px-3 py-2 text-xs">
+          <p className="text-emerald-900">commit 완료.</p>
+          {commitUrl && (
+            <a
+              href={commitUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-secondary underline"
+            >
+              {commitUrl}
+            </a>
+          )}
+          <p className="text-secondary/70 mt-1">
+            Vercel 자동 재배포가 트리거됩니다 (보통 1~2 분).
+          </p>
+        </div>
+      )}
+
+      {status === "error" && errorMsg && (
+        <p className="text-xs leading-relaxed text-red-600">{errorMsg}</p>
+      )}
+
+      <button
+        type="button"
+        onClick={props.onForget}
+        className="text-secondary/70 hover:text-secondary self-start text-xs underline-offset-2 hover:underline"
+      >
+        다른 repo 에 새로 만들기
+      </button>
     </section>
   );
 }

@@ -15,6 +15,7 @@ import { config as moduleDefaultConfig } from "@/invitation.config";
 import type { ThemeName } from "@/invitation.config.types";
 import { useEditorStore } from "@/lib/editor/store";
 
+import { GithubConnect } from "./_GithubConnect";
 import { AccountsForm } from "./_sections/AccountsForm";
 import { CalendarForm } from "./_sections/CalendarForm";
 import { GalleryForm } from "./_sections/GalleryForm";
@@ -110,6 +111,8 @@ export default function EditPage() {
             </select>
           </section>
 
+          <GithubConnect />
+
           <section className="flex flex-col gap-2">
             <h2 className="text-primary font-serif text-lg">초기화</h2>
             <button
@@ -127,9 +130,8 @@ export default function EditPage() {
         </div>
 
         <p className="text-secondary/70 mt-10 text-xs leading-relaxed">
-          입력은 자동 저장됩니다 (브라우저 localStorage).
-          <br />
-          GitHub 연결·배포는 Phase 3~4 에서 추가됩니다.
+          입력은 자동 저장됩니다 (브라우저 localStorage). 본인 repo commit 과
+          Vercel 배포는 다음 호흡에서 연결됩니다.
         </p>
       </aside>
 

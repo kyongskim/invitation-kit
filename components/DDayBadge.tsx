@@ -8,14 +8,15 @@ import { useIsClient } from "@/lib/hooks";
 const CEREMONY_DURATION_MS = 90 * 60 * 1000;
 
 /**
- * 결혼식까지 남은 시간을 일·시·분·초로 1초마다 갱신.
+ * 결혼식까지 남은 시간을 일/시/분/초 4-박스 grid 로 1초마다 갱신.
+ * 한국 청첩장 SaaS 의 표준 카운트다운 패턴 — `border-accent` 박스
+ * 안에 큰 숫자 + 작은 단위 라벨.
  *
- * `useSyncExternalStore` 시계 패턴은 production 빌드에서 hydration
- * transition 후 client snapshot 반영이 일관되지 않은 사례 발견 — 단순한
- * `useState` 라지 init + setInterval 로 전환. lazy init 으로 client 첫
- * 렌더부터 정상 시각 반환, useIsClient 가드로 SSR 단계 hydration mismatch
- * 차단. setInterval 의 setState 는 callback 내부 비동기라 React 19
- * `react-hooks/set-state-in-effect` 룰과 무관.
+ * 결혼식 진행 중 (시작 ~ +90분) 은 "진행 중" 문구로 분기, 종료 후엔
+ * badge 자체 hide.
+ *
+ * useState lazy init + setInterval 로 SSR-safe (server 0 / client
+ * Date.now()), useIsClient 가드로 hydration mismatch 차단.
  */
 export function DDayBadge() {
   const isClient = useIsClient();
@@ -35,10 +36,8 @@ export function DDayBadge() {
   const remaining = target - now;
   const elapsedAfterStart = -remaining;
 
-  // 결혼식 종료 후 (시작 + 90분 이상 지남) — badge 자체 숨김
   if (elapsedAfterStart > CEREMONY_DURATION_MS) return null;
 
-  // 결혼식 진행 중 — 카운트다운 대신 안내
   if (remaining <= 0 && elapsedAfterStart <= CEREMONY_DURATION_MS) {
     return (
       <div className="animate-fade-in-up mt-10 flex flex-col items-center gap-2">
@@ -58,17 +57,23 @@ export function DDayBadge() {
   const minutes = Math.floor(totalSeconds / 60) % 60;
   const seconds = totalSeconds % 60;
 
-  const badge = days === 0 ? "D-DAY" : `D-${days}`;
-  const countdown = `${days}일 ${pad(hours)}시간 ${pad(minutes)}분 ${pad(seconds)}초`;
-
   return (
-    <div className="animate-fade-in-up mt-10 flex flex-col items-center gap-2">
-      <span className="text-secondary font-serif text-2xl tracking-[0.2em]">
-        {badge}
+    <div className="animate-fade-in-up mt-10 grid grid-cols-4 gap-3">
+      <CountBox n={String(days)} unit="일" />
+      <CountBox n={pad(hours)} unit="시" />
+      <CountBox n={pad(minutes)} unit="분" />
+      <CountBox n={pad(seconds)} unit="초" />
+    </div>
+  );
+}
+
+function CountBox({ n, unit }: { n: string; unit: string }) {
+  return (
+    <div className="border-accent flex min-w-[60px] flex-col items-center justify-center rounded-sm border px-3 py-3">
+      <span className="text-text font-serif text-3xl font-light tabular-nums">
+        {n}
       </span>
-      <span className="text-text text-2xl font-light tabular-nums">
-        {countdown}
-      </span>
+      <span className="text-secondary mt-1 text-xs tracking-wider">{unit}</span>
     </div>
   );
 }

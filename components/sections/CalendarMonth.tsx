@@ -1,3 +1,4 @@
+import { DDayBadge } from "@/components/DDayBadge";
 import { config } from "@/invitation.config";
 
 const KOREAN_WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"] as const;
@@ -46,7 +47,7 @@ export function CalendarMonth() {
   const timeLabel = `${hour}:${String(minute).padStart(2, "0")}`;
 
   return (
-    <section className="flex flex-col items-center px-6 py-24">
+    <section className="bg-background-alt flex flex-col items-center px-6 py-24">
       <div className="animate-fade-in-up flex w-full max-w-md flex-col items-center text-center">
         <p className="text-secondary font-serif text-sm tracking-[0.3em] uppercase">
           The Date
@@ -83,6 +84,8 @@ export function CalendarMonth() {
         <p className="text-secondary mt-10 text-sm tracking-wider">
           {year}년 {month + 1}월 {weddingDay}일 {weekdayLabel} {timeLabel}
         </p>
+
+        <DDayBadge />
       </div>
     </section>
   );

@@ -148,7 +148,7 @@ export function Guestbook() {
 
   return (
     <>
-      <section className="flex flex-col items-center px-6 py-24">
+      <section className="bg-background-alt flex flex-col items-center px-6 py-24">
         <div className="animate-fade-in-up flex w-full max-w-md flex-col">
           <div className="flex flex-col items-center text-center">
             <p className="text-secondary font-serif text-sm tracking-[0.3em] uppercase">

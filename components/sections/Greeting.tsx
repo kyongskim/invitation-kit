@@ -2,7 +2,7 @@ import { config } from "@/invitation.config";
 
 export function Greeting() {
   return (
-    <section className="flex flex-col items-center px-6 py-24">
+    <section className="bg-background-alt flex flex-col items-center px-6 py-24">
       <div className="animate-fade-in-up flex flex-col items-center text-center">
         {config.greeting.title && (
           <h2 className="text-secondary font-serif text-2xl font-light tracking-wide">

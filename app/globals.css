@@ -6,6 +6,7 @@
   --color-primary: #896536;
   --color-secondary: #6b5942;
   --color-background: #faf6ee;
+  --color-background-alt: #ffffff;
   --color-text: #3d342c;
   --color-accent: #e8dfd0;
   --font-sans: var(--font-pretendard);
@@ -18,6 +19,7 @@
   --color-primary: #0f172a;
   --color-secondary: #475569;
   --color-background: #fafafa;
+  --color-background-alt: #ffffff;
   --color-text: #0f172a;
   --color-accent: #e2e8f0;
   --font-serif: var(--font-playfair);
@@ -28,6 +30,7 @@
   --color-primary: #9a6464;
   --color-secondary: #6b4f4f;
   --color-background: #fdf8f5;
+  --color-background-alt: #ffffff;
   --color-text: #3d2929;
   --color-accent: #e8d0cc;
   --font-serif: var(--font-italiana);

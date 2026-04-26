@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 
+import { MusicToggle } from "@/components/MusicToggle";
 import { Accounts } from "@/components/sections/Accounts";
 import { CalendarMonth } from "@/components/sections/CalendarMonth";
 import { Gallery } from "@/components/sections/Gallery";
@@ -24,6 +25,7 @@ import { GreetingForm } from "./_sections/GreetingForm";
 import { GuestbookConfigForm } from "./_sections/GuestbookConfigForm";
 import { MainForm } from "./_sections/MainForm";
 import { MetaForm } from "./_sections/MetaForm";
+import { MusicForm } from "./_sections/MusicForm";
 import { RSVPConfigForm } from "./_sections/RSVPConfigForm";
 import { ShareForm } from "./_sections/ShareForm";
 import { VenueForm } from "./_sections/VenueForm";
@@ -88,6 +90,7 @@ export default function EditPage() {
           <RSVPConfigForm />
           <GuestbookConfigForm />
           <ShareForm />
+          <MusicForm />
           <MetaForm />
 
           <section className="flex flex-col gap-2">
@@ -138,6 +141,9 @@ export default function EditPage() {
       </aside>
 
       <div className="flex-1 lg:h-dvh lg:overflow-y-auto">
+        {config.music?.enabled && config.music.src && (
+          <MusicToggle src={config.music.src} />
+        )}
         <Main groom={config.groom} bride={config.bride} hero={config.hero} />
         <Greeting greeting={config.greeting} />
         <Gallery gallery={config.gallery} />

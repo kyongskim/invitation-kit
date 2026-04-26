@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { MusicToggle } from "@/components/MusicToggle";
 import { Accounts } from "@/components/sections/Accounts";
 import { CalendarMonth } from "@/components/sections/CalendarMonth";
+import { Closing } from "@/components/sections/Closing";
 import { Gallery } from "@/components/sections/Gallery";
 import { Greeting } from "@/components/sections/Greeting";
 import { Guestbook } from "@/components/sections/Guestbook";
@@ -20,6 +21,7 @@ import { GithubConnect } from "./_GithubConnect";
 import { PublishToGithub } from "./_PublishToGithub";
 import { AccountsForm } from "./_sections/AccountsForm";
 import { CalendarForm } from "./_sections/CalendarForm";
+import { ClosingForm } from "./_sections/ClosingForm";
 import { GalleryForm } from "./_sections/GalleryForm";
 import { GreetingForm } from "./_sections/GreetingForm";
 import { GuestbookConfigForm } from "./_sections/GuestbookConfigForm";
@@ -91,6 +93,7 @@ export default function EditPage() {
           <GuestbookConfigForm />
           <ShareForm />
           <MusicForm />
+          <ClosingForm />
           <MetaForm />
 
           <section className="flex flex-col gap-2">
@@ -154,6 +157,7 @@ export default function EditPage() {
         {config.guestbook.enabled && (
           <Guestbook guestbook={config.guestbook} previewMode />
         )}
+        {config.closing && <Closing closing={config.closing} />}
         <Share share={config.share} meta={config.meta} venue={config.venue} />
       </div>
     </main>

@@ -4,6 +4,7 @@ import { InAppBrowserNotice } from "@/components/InAppBrowserNotice";
 import { MusicToggle } from "@/components/MusicToggle";
 import { Accounts } from "@/components/sections/Accounts";
 import { CalendarMonth } from "@/components/sections/CalendarMonth";
+import { Closing } from "@/components/sections/Closing";
 import { Gallery } from "@/components/sections/Gallery";
 import { Greeting } from "@/components/sections/Greeting";
 import { Main } from "@/components/sections/Main";
@@ -38,6 +39,7 @@ export default function Home() {
       <Accounts accounts={config.accounts} />
       {config.rsvp.enabled && <RSVP rsvp={config.rsvp} />}
       {config.guestbook.enabled && <Guestbook guestbook={config.guestbook} />}
+      {config.closing && <Closing closing={config.closing} />}
       <Share share={config.share} meta={config.meta} venue={config.venue} />
     </main>
   );

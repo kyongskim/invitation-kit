@@ -1,15 +1,34 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import { config } from "@/invitation.config";
-import { useIsClient, useNow } from "@/lib/hooks";
+import { useIsClient } from "@/lib/hooks";
 
 const CEREMONY_DURATION_MS = 90 * 60 * 1000;
 
+/**
+ * 결혼식까지 남은 시간을 일·시·분·초로 1초마다 갱신.
+ *
+ * `useSyncExternalStore` 시계 패턴은 production 빌드에서 hydration
+ * transition 후 client snapshot 반영이 일관되지 않은 사례 발견 — 단순한
+ * `useState` 라지 init + setInterval 로 전환. lazy init 으로 client 첫
+ * 렌더부터 정상 시각 반환, useIsClient 가드로 SSR 단계 hydration mismatch
+ * 차단. setInterval 의 setState 는 callback 내부 비동기라 React 19
+ * `react-hooks/set-state-in-effect` 룰과 무관.
+ */
 export function DDayBadge() {
   const isClient = useIsClient();
-  const now = useNow();
-  // now === 0 은 hydration 직후 subscribe 완료 전 sentinel — useNow 의
-  // SSR snapshot 이 0 이라 잘못된 값으로 잠시 render 되는 것 방지.
+  const [now, setNow] = useState<number>(() =>
+    typeof window !== "undefined" ? Date.now() : 0,
+  );
+
+  useEffect(() => {
+    if (!isClient) return;
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, [isClient]);
+
   if (!isClient || now === 0) return null;
 
   const target = new Date(config.date).getTime();
@@ -33,8 +52,6 @@ export function DDayBadge() {
     );
   }
 
-  // 자정 기준 일수 (1일=24시간 단위 floor) — daysUntil 의 자정 비교와 다름.
-  // 카운트다운은 절대 시각 차이라 시·분·초가 필요해 직접 계산.
   const totalSeconds = Math.floor(remaining / 1000);
   const days = Math.floor(totalSeconds / 86_400);
   const hours = Math.floor(totalSeconds / 3_600) % 24;

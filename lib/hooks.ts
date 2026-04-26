@@ -19,30 +19,6 @@ export function useIsClient(): boolean {
   return useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
 }
 
-const clockSubscribe = (callback: () => void) => {
-  const id = window.setInterval(callback, 1000);
-  return () => window.clearInterval(id);
-};
-const clockGetSnapshot = () => Date.now();
-const clockGetServerSnapshot = () => 0;
-
-/**
- * 1초 간격으로 갱신되는 현재 timestamp.
- *
- * React 공식 docs 의 `useSyncExternalStore` 시계 예제 패턴 그대로.
- * getSnapshot 이 호출마다 `Date.now()` 반환하지만 React 18+ 의 tearing
- * protection 이 같은 render cycle 안에선 일관 값으로 처리. setInterval
- * tick 이 callback 으로 React 에 알려 다음 render 에서 새 값 노출.
- *
- * **함정 — subscribe 안에서 callback 동기 호출 금지** (React 가 infinite
- * loop 위험으로 bail-out → 화면 freeze). 첫 render 에선 server snapshot
- * 0 이 나오므로 호출측에서 `now === 0` 가드로 hydration 직후 잘못된 값
- * 노출 방지.
- */
-export function useNow(): number {
-  return useSyncExternalStore(
-    clockSubscribe,
-    clockGetSnapshot,
-    clockGetServerSnapshot,
-  );
-}
+// `useNow` (시계 hook) 은 useSyncExternalStore 패턴이 production 빌드에서
+// hydration transition 시 client snapshot 반영 불일치를 보였던 사례로
+// 폐기. DDayBadge 가 useState lazy init + setInterval 로 직접 관리.

@@ -54,13 +54,28 @@ function toEntry(doc: QueryDocumentSnapshot): GuestbookEntry {
   };
 }
 
-export function Guestbook({ guestbook }: { guestbook: GuestbookConfig }) {
+export function Guestbook({
+  guestbook,
+  previewMode = false,
+}: {
+  guestbook: GuestbookConfig;
+  /**
+   * v2.0 editor preview 에서 firebase 실 호출 차단.
+   * true 면 fetch skip + 빈 entries + submit/edit/delete 가 로컬 state 만 갱신
+   * (비밀번호 검증도 skip — 데모 동작).
+   */
+  previewMode?: boolean;
+}) {
   const isClient = useIsClient();
   const minPasswordLength = guestbook.minPasswordLength ?? 4;
   const profanityFilterOn = guestbook.profanityFilter !== false;
 
   const [entries, setEntries] = useState<GuestbookEntry[]>([]);
-  const [status, setStatus] = useState<FetchStatus>("loading");
+  // previewMode 면 첫 렌더부터 "ready" — useEffect 안 동기 setState 회피
+  // (React 19 react-hooks/set-state-in-effect 룰).
+  const [status, setStatus] = useState<FetchStatus>(
+    previewMode ? "ready" : "loading",
+  );
   const [toast, setToast] = useState<string | null>(null);
   const [fetchTrigger, setFetchTrigger] = useState(0);
   const [editingEntry, setEditingEntry] = useState<GuestbookEntry | null>(null);
@@ -70,6 +85,7 @@ export function Guestbook({ guestbook }: { guestbook: GuestbookConfig }) {
 
   useEffect(() => {
     if (!isClient) return;
+    if (previewMode) return;
     let cancelled = false;
     getDocs(
       query(
@@ -91,7 +107,7 @@ export function Guestbook({ guestbook }: { guestbook: GuestbookConfig }) {
     return () => {
       cancelled = true;
     };
-  }, [isClient, fetchTrigger]);
+  }, [isClient, fetchTrigger, previewMode]);
 
   const showToast = (m: string) => {
     setToast(m);
@@ -99,16 +115,22 @@ export function Guestbook({ guestbook }: { guestbook: GuestbookConfig }) {
   };
 
   const handleSubmit = async (input: GuestbookSubmitInput) => {
-    const passwordHash = await hashPassword(input.password);
-    const ref = await addDoc(collection(db, COLLECTION), {
-      name: input.name,
-      message: input.message,
-      passwordHash,
-      createdAt: serverTimestamp(),
-    });
+    let id: string;
+    if (previewMode) {
+      id = `preview-${Date.now()}`;
+    } else {
+      const passwordHash = await hashPassword(input.password);
+      const ref = await addDoc(collection(db, COLLECTION), {
+        name: input.name,
+        message: input.message,
+        passwordHash,
+        createdAt: serverTimestamp(),
+      });
+      id = ref.id;
+    }
     setEntries((prev) => [
       {
-        id: ref.id,
+        id,
         name: input.name,
         message: input.message,
         createdAt: new Date(),
@@ -128,23 +150,25 @@ export function Guestbook({ guestbook }: { guestbook: GuestbookConfig }) {
     newName: string,
     newMessage: string,
   ) => {
-    const ref = doc(db, COLLECTION, entry.id);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) {
-      setEntries((prev) => prev.filter((e) => e.id !== entry.id));
-      setEditingEntry(null);
-      showToast("이미 삭제된 메시지입니다");
-      return;
+    if (!previewMode) {
+      const ref = doc(db, COLLECTION, entry.id);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) {
+        setEntries((prev) => prev.filter((e) => e.id !== entry.id));
+        setEditingEntry(null);
+        showToast("이미 삭제된 메시지입니다");
+        return;
+      }
+      const hash = snap.data().passwordHash as string | undefined;
+      if (!hash || hash.length !== 60) {
+        throw new Error("invalid_hash");
+      }
+      const ok = await verifyPassword(password, hash);
+      if (!ok) {
+        throw new Error("password_mismatch");
+      }
+      await updateDoc(ref, { name: newName, message: newMessage });
     }
-    const hash = snap.data().passwordHash as string | undefined;
-    if (!hash || hash.length !== 60) {
-      throw new Error("invalid_hash");
-    }
-    const ok = await verifyPassword(password, hash);
-    if (!ok) {
-      throw new Error("password_mismatch");
-    }
-    await updateDoc(ref, { name: newName, message: newMessage });
     setEntries((prev) =>
       prev.map((e) =>
         e.id === entry.id ? { ...e, name: newName, message: newMessage } : e,
@@ -157,24 +181,26 @@ export function Guestbook({ guestbook }: { guestbook: GuestbookConfig }) {
   // 비밀번호 검증 + 삭제. 실패 시 throw — 모달이 inline 에러로 표시.
   // 보안 모델은 docs/adr/007 의 C' 경로 (도메인 적정 트레이드오프).
   const handleDelete = async (entry: GuestbookEntry, password: string) => {
-    const ref = doc(db, COLLECTION, entry.id);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) {
-      // 다른 사용자가 먼저 삭제. 로컬 entries 에서 제거하고 모달 닫기.
-      setEntries((prev) => prev.filter((e) => e.id !== entry.id));
-      setDeletingEntry(null);
-      showToast("이미 삭제된 메시지입니다");
-      return;
+    if (!previewMode) {
+      const ref = doc(db, COLLECTION, entry.id);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) {
+        // 다른 사용자가 먼저 삭제. 로컬 entries 에서 제거하고 모달 닫기.
+        setEntries((prev) => prev.filter((e) => e.id !== entry.id));
+        setDeletingEntry(null);
+        showToast("이미 삭제된 메시지입니다");
+        return;
+      }
+      const hash = snap.data().passwordHash as string | undefined;
+      if (!hash || hash.length !== 60) {
+        throw new Error("invalid_hash");
+      }
+      const ok = await verifyPassword(password, hash);
+      if (!ok) {
+        throw new Error("password_mismatch");
+      }
+      await deleteDoc(ref);
     }
-    const hash = snap.data().passwordHash as string | undefined;
-    if (!hash || hash.length !== 60) {
-      throw new Error("invalid_hash");
-    }
-    const ok = await verifyPassword(password, hash);
-    if (!ok) {
-      throw new Error("password_mismatch");
-    }
-    await deleteDoc(ref);
     setEntries((prev) => prev.filter((e) => e.id !== entry.id));
     setDeletingEntry(null);
     showToast("메시지가 삭제되었습니다");

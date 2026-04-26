@@ -56,14 +56,25 @@ function useShouldAutoPopup(closed: boolean): boolean {
   );
 }
 
-export function RSVP({ rsvp }: { rsvp: RSVPConfig }) {
+export function RSVP({
+  rsvp,
+  previewMode = false,
+}: {
+  rsvp: RSVPConfig;
+  /**
+   * v2.0 editor preview 에서 firebase 실 호출 + 자동 popup 차단.
+   * true 면 modal 자동 노출 안 됨 + submit 시 Firestore 미기록.
+   */
+  previewMode?: boolean;
+}) {
   const showCompanions = rsvp.fields?.companions !== false;
   const showMessage = rsvp.fields?.message !== false;
   const closed = isClosed(rsvp.deadline);
   const guideMessage =
     rsvp.message ?? "참석 여부를 알려주시면\n결혼식 준비에 큰 도움이 됩니다.";
 
-  const shouldAutoPopup = useShouldAutoPopup(closed);
+  const autoPopupSignal = useShouldAutoPopup(closed);
+  const shouldAutoPopup = autoPopupSignal && !previewMode;
 
   const [submitted, setSubmitted] = useState(false);
   // null = 아직 사용자 인터랙션 없음. auto popup 만 따라감.
@@ -75,14 +86,16 @@ export function RSVP({ rsvp }: { rsvp: RSVPConfig }) {
     override === "open" || (override === null && shouldAutoPopup);
 
   const handleSubmit = async (input: RSVPSubmitInput) => {
-    await addDoc(collection(db, COLLECTION), {
-      name: input.name,
-      attendance: input.attendance,
-      side: input.side,
-      companions: input.companions,
-      message: input.message,
-      createdAt: serverTimestamp(),
-    });
+    if (!previewMode) {
+      await addDoc(collection(db, COLLECTION), {
+        name: input.name,
+        attendance: input.attendance,
+        side: input.side,
+        companions: input.companions,
+        message: input.message,
+        createdAt: serverTimestamp(),
+      });
+    }
     setSubmitted(true);
     setOverride("closed");
     writeAutoShown();

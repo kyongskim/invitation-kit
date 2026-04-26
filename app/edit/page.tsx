@@ -6,7 +6,9 @@ import { Accounts } from "@/components/sections/Accounts";
 import { CalendarMonth } from "@/components/sections/CalendarMonth";
 import { Gallery } from "@/components/sections/Gallery";
 import { Greeting } from "@/components/sections/Greeting";
+import { Guestbook } from "@/components/sections/Guestbook";
 import { Main } from "@/components/sections/Main";
+import { RSVP } from "@/components/sections/RSVP";
 import { Share } from "@/components/sections/Share";
 import { Venue } from "@/components/sections/Venue";
 import {
@@ -88,6 +90,10 @@ export default function EditPage() {
         <CalendarMonth date={config.date} />
         <Venue venue={config.venue} />
         <Accounts accounts={config.accounts} />
+        {config.rsvp.enabled && <RSVP rsvp={config.rsvp} previewMode />}
+        {config.guestbook.enabled && (
+          <Guestbook guestbook={config.guestbook} previewMode />
+        )}
         <Share share={config.share} meta={config.meta} venue={config.venue} />
       </div>
     </main>

@@ -1,21 +1,69 @@
+import Image from "next/image";
+
 import { config } from "@/invitation.config";
 
+/**
+ * Hero (첫 화면). config.hero.backgroundImage 가 있으면 풀스크린 사진 +
+ * gradient overlay + 흰 텍스트, 없으면 cream 단색 + 진한 텍스트.
+ *
+ * 카운트다운은 CalendarMonth 섹션으로 이동 — Hero 는 신랑·신부 이름 자체가
+ * emotional anchor 로 단독.
+ */
 export function Main() {
+  const heroImage = config.hero?.backgroundImage;
+  const heroAlt = config.hero?.alt ?? "결혼식 메인 사진";
+  const hasImage = Boolean(heroImage);
+
   return (
-    <section className="bg-background text-text relative flex min-h-dvh flex-col items-center justify-center px-6 py-24">
+    <section
+      className={`relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-6 py-24 ${
+        hasImage ? "text-white" : "bg-background text-text"
+      }`}
+    >
+      {hasImage && (
+        <>
+          <Image
+            src={heroImage!}
+            alt={heroAlt}
+            fill
+            priority
+            sizes="100vw"
+            className="-z-20 object-cover"
+          />
+          {/* 사진 위 텍스트 legibility 보장 — 검은 overlay 30% 균일 */}
+          <div
+            aria-hidden
+            className="absolute inset-0 -z-10 bg-gradient-to-b from-black/40 via-black/25 to-black/45"
+          />
+        </>
+      )}
+
       <div className="animate-fade-in-up flex flex-col items-center">
-        <p className="text-secondary font-serif text-sm tracking-[0.3em] uppercase">
+        <p
+          className={`font-serif text-sm tracking-[0.3em] uppercase ${
+            hasImage ? "text-white/90" : "text-secondary"
+          }`}
+        >
           Wedding Invitation
         </p>
-        <h1 className="text-primary mt-10 flex items-center gap-6 font-serif text-5xl font-light">
+        <h1
+          className={`mt-10 flex items-center gap-6 font-serif text-5xl font-light ${
+            hasImage ? "text-white" : "text-primary"
+          }`}
+        >
           <span>{config.groom.name}</span>
-          <span className="text-secondary">&amp;</span>
+          <span className={hasImage ? "text-white/70" : "text-secondary"}>
+            &amp;
+          </span>
           <span>{config.bride.name}</span>
         </h1>
       </div>
+
       <div
         aria-hidden
-        className="text-secondary absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce"
+        className={`absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce ${
+          hasImage ? "text-white/80" : "text-secondary"
+        }`}
       >
         <ScrollArrow />
       </div>

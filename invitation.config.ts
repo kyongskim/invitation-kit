@@ -125,6 +125,17 @@ export interface InvitationConfig {
   /** 테마 선택 */
   theme: ThemeName;
 
+  /**
+   * Hero (메인 화면) 배경 사진. 미설정 시 cream 단색 배경 + 진한 텍스트.
+   * 설정 시 풀스크린 사진 + gradient overlay + 흰 텍스트.
+   */
+  hero?: {
+    /** `public/images/` 기준 상대 경로 또는 절대 URL */
+    backgroundImage: string;
+    /** 접근성 alt — 미설정 시 "결혼식 메인 사진" */
+    alt?: string;
+  };
+
   /** 신랑 */
   groom: Person;
   /** 신부 */
@@ -186,6 +197,11 @@ export const config: InvitationConfig = {
   },
 
   theme: "classic",
+
+  hero: {
+    backgroundImage: "/images/gallery/sample-01.jpg",
+    alt: "신랑·신부 웨딩 촬영",
+  },
 
   groom: {
     name: "김철수",
@@ -292,6 +308,12 @@ export const config: InvitationConfig = {
         number: "110-123-456789",
         holder: "김아버지",
       },
+      {
+        label: "신랑 어머니",
+        bank: "우리은행",
+        number: "1002-345-678901",
+        holder: "박어머니",
+      },
     ],
     brideSide: [
       {
@@ -299,6 +321,18 @@ export const config: InvitationConfig = {
         bank: "카카오뱅크",
         number: "3333-01-1234567",
         holder: "이영희",
+      },
+      {
+        label: "신부 아버지",
+        bank: "농협은행",
+        number: "312-1234-5678-91",
+        holder: "이아버지",
+      },
+      {
+        label: "신부 어머니",
+        bank: "하나은행",
+        number: "123-456789-01234",
+        holder: "최어머니",
       },
     ],
   },

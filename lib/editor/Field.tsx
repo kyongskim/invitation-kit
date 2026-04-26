@@ -18,7 +18,8 @@ type CommonProps = {
 type FieldProps =
   | (CommonProps & {
       multiline?: false;
-      type?: "text" | "url" | "datetime-local";
+      type?: "text" | "url" | "datetime-local" | "number";
+      step?: string;
     })
   | (CommonProps & { multiline: true; rows?: number });
 
@@ -43,6 +44,7 @@ export function Field(props: FieldProps) {
       ) : (
         <input
           type={props.type ?? "text"}
+          step={props.type === "number" ? (props.step ?? "any") : undefined}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}

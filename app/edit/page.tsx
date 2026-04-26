@@ -19,8 +19,11 @@ import { useEditorStore } from "@/lib/editor/store";
 
 import { CalendarForm } from "./_sections/CalendarForm";
 import { GreetingForm } from "./_sections/GreetingForm";
+import { GuestbookConfigForm } from "./_sections/GuestbookConfigForm";
 import { MainForm } from "./_sections/MainForm";
 import { MetaForm } from "./_sections/MetaForm";
+import { RSVPConfigForm } from "./_sections/RSVPConfigForm";
+import { VenueForm } from "./_sections/VenueForm";
 
 const THEME_OPTIONS: { value: ThemeName; label: string }[] = [
   { value: "classic", label: "Classic" },
@@ -67,6 +70,9 @@ export default function EditPage() {
           <MainForm />
           <GreetingForm />
           <CalendarForm />
+          <VenueForm />
+          <RSVPConfigForm />
+          <GuestbookConfigForm />
           <MetaForm />
 
           <section className="flex flex-col gap-2">

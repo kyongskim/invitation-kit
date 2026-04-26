@@ -16,6 +16,7 @@ import type { ThemeName } from "@/invitation.config.types";
 import { useEditorStore } from "@/lib/editor/store";
 
 import { GithubConnect } from "./_GithubConnect";
+import { PublishToGithub } from "./_PublishToGithub";
 import { AccountsForm } from "./_sections/AccountsForm";
 import { CalendarForm } from "./_sections/CalendarForm";
 import { GalleryForm } from "./_sections/GalleryForm";
@@ -112,6 +113,7 @@ export default function EditPage() {
           </section>
 
           <GithubConnect />
+          <PublishToGithub />
 
           <section className="flex flex-col gap-2">
             <h2 className="text-primary font-serif text-lg">초기화</h2>

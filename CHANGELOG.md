@@ -10,6 +10,8 @@ v1.1.0 release 직후 추가 호흡.
 
 ### Added
 
+- **결혼식 달의 달력 섹션** — `components/sections/CalendarMonth.tsx` 신규. Server Component, `config.date` 의 ISO 문자열에서 year/month/day 자동 유도. 7×N 그리드 (한국 표준 일요일 시작), 결혼식 날 셀에 `--color-primary` 원 강조 + 그 아래 "2026년 5월 17일 토 12:00" 한 줄. 다른 달 날짜는 `text-secondary/30` 흐림 처리. 다중 테마 토큰 그대로 사용 — Classic/Modern/Floral 자동 일관. 페이지 배치는 Greeting 과 Gallery 사이. 사용자 config 수정 0 (date 한 필드에서 모두 derive). v1.1+ 호흡 7번째.
+
 - **Apple Calendar 추가 버튼** — `lib/calendar.ts` 에 `appleCalendarUrl` 신규. RFC 5545 minimal VEVENT 를 `data:text/calendar` URL 로 self-contained 인코딩. iOS Safari 에서 탭 시 Calendar 앱의 "이벤트 추가" 시트 자동 호출, 데스크톱·Android 는 `wedding.ics` 다운로드 → 더블클릭으로 기본 캘린더 앱 열림. `webcal://` 대신 data URL 채택 — 별도 호스팅 없이 동작 (OSS 템플릿 정체성 일관). Venue 섹션 기존 "캘린더에 일정 추가" 단일 버튼이 "Google 캘린더에 추가" + "Apple 캘린더에 추가" 두 버튼으로 분리. v1.2+ 로드맵 후보 → v1.1+ 호흡 6번째로 앞당겨 진입.
 
 ### Security

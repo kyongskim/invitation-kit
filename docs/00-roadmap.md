@@ -306,6 +306,10 @@
 - **본인 삭제 서버 매개 (ADR 007 B 경로)** — Vercel Route Handler + Admin SDK. 트리거 충족 시 (vandalism 사례 또는 작성자 풀 100명+)
 - **Pretendard dynamic-subset** — Performance 90+ 시도. 12주차 lazy import 후 PSI 결과에 따라 우선순위. 큰 호흡 (next/font 우회 결정)
 
+### v1.1.x 사용자 트리거 추가 (로드맵 외 즉흥)
+
+- ✅ **결혼식 달의 달력 섹션** — Greeting 과 Gallery 사이 7×N 그리드 + 결혼식 날 원 강조 + "2026년 5월 17일 토 12:00" 한 줄. 한국 청첩장 표준 패턴, 사용자 D-21 시점 즉흥 요청. v1.1+ 7번째 호흡
+
 ### v1.2+ (여유 시 후보)
 
 - ✅ **BGM** — 우상단 floating 토글 + fade 300ms + loop. 자동재생 시도 X (iOS 무음 모드 호환). 음원 ship X (OSS 라이선스). v1.1+ 호흡 4번째로 앞당겨 진입

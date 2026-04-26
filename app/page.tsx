@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import { InAppBrowserNotice } from "@/components/InAppBrowserNotice";
 import { MusicToggle } from "@/components/MusicToggle";
 import { Accounts } from "@/components/sections/Accounts";
+import { CalendarMonth } from "@/components/sections/CalendarMonth";
 import { Gallery } from "@/components/sections/Gallery";
 import { Greeting } from "@/components/sections/Greeting";
 import { Main } from "@/components/sections/Main";
@@ -31,6 +32,7 @@ export default function Home() {
       )}
       <Main />
       <Greeting />
+      <CalendarMonth />
       <Gallery />
       <Venue />
       <Accounts />

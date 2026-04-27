@@ -9,6 +9,15 @@ import { useEditorStore } from "@/lib/editor/store";
  * ADR 011 결정 1·3 — popup OAuth + postMessage 토큰 수신 + state nonce
  * CSRF 검증.
  *
+ * **Install + Authorize 통합 entrypoint** — `/login/oauth/authorize` 단독은
+ * user 토큰만 발급되고 App installation 은 누락돼 template generate 가
+ * 403 "Resource not accessible by integration" 으로 실패. 신규 사용자는
+ * install 단계 자체가 필요. `/apps/<slug>/installations/new` URL 에 App
+ * 설정의 "Request user authorization (OAuth) during installation" ON 을
+ * 결합하면 install + authorize 가 한 흐름에 처리되고 같은 callback 으로
+ * 돌아온다 (`installation_id` + `code` + `state` 포함). 2026-04-27 v2.0
+ * 검증 중 새 GitHub 계정 시나리오에서 발견된 gap 반영.
+ *
  * 토큰은 Zustand store 의 `github.token` 에 메모리만 저장 (ADR 010 의
  * partialize 약속). 새로고침 시 휘발 — 사용자는 commit/배포 단계만 짧게
  * 토큰을 보유.
@@ -60,6 +69,7 @@ export function GithubConnect() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const clientId = process.env.NEXT_PUBLIC_GITHUB_APP_CLIENT_ID;
+  const appSlug = process.env.NEXT_PUBLIC_GITHUB_APP_SLUG;
 
   useEffect(() => {
     function onMessage(event: MessageEvent) {
@@ -94,17 +104,24 @@ export function GithubConnect() {
       );
       return;
     }
+    if (!appSlug) {
+      setStatus("error");
+      setErrorMsg(
+        "GitHub App slug 환경변수 미설정 (NEXT_PUBLIC_GITHUB_APP_SLUG). App 의 public URL 마지막 segment 입니다.",
+      );
+      return;
+    }
     const nonce = crypto.randomUUID();
     sessionStorage.setItem(STATE_KEY, nonce);
-    const redirectUri = `${window.location.origin}/api/github/oauth`;
-    const authUrl =
-      `https://github.com/login/oauth/authorize` +
-      `?client_id=${encodeURIComponent(clientId)}` +
-      `&state=${encodeURIComponent(nonce)}` +
-      `&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    // Install + authorize 통합 URL — App 설정의 "Request user authorization
+    // (OAuth) during installation" ON 전제. callback 은 `code` + `state` +
+    // `installation_id` + `setup_action` 을 같이 받음.
+    const installUrl =
+      `https://github.com/apps/${encodeURIComponent(appSlug)}/installations/new` +
+      `?state=${encodeURIComponent(nonce)}`;
     setStatus("pending");
     setErrorMsg(null);
-    const popup = window.open(authUrl, "github-oauth", POPUP_FEATURES);
+    const popup = window.open(installUrl, "github-oauth", POPUP_FEATURES);
     if (!popup) {
       setStatus("error");
       setErrorMsg(

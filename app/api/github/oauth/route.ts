@@ -5,11 +5,16 @@ import type { NextRequest } from "next/server";
  * ADR 011 결정 1·3 — GitHub App + popup OAuth + postMessage 토큰 전달.
  *
  * 흐름:
- * 1. editor UI 의 "GitHub 연결" 버튼이 popup 으로 GitHub 인증 페이지 open
- * 2. GitHub 가 사용자 동의 후 우리 callback (이 route) 으로 redirect
- *    (?code=... &state=...)
+ * 1. editor UI 의 "GitHub 연결" 버튼이 popup 으로 GitHub install URL open
+ *    (`/apps/<slug>/installations/new?state=...`). App 설정의 "Request user
+ *    authorization (OAuth) during installation" ON 으로 install + authorize
+ *    한 흐름 통합 (2026-04-27 v2.0 검증 gap 반영, ADR 011 참조)
+ * 2. GitHub 가 사용자 install + 인증 동의 후 우리 callback (이 route) 으로
+ *    redirect (`?code=... &state=... &installation_id=... &setup_action=install`)
  * 3. 이 route 가 server-side 에서 code → access_token 교환
- *    (client_secret 사용, 우리 서버 외부 노출 X)
+ *    (client_secret 사용, 우리 서버 외부 노출 X). `installation_id` 는
+ *    별도 사용 안 함 — user-to-server 토큰 자체가 install 된 권한
+ *    (Contents · Administration) 을 포함
  * 4. 응답 HTML 의 인라인 script 가 window.opener.postMessage 로
  *    토큰 + user 전달 + window.close()
  * 5. opener (/edit) 가 message 수신 → origin 검증 → state 검증 →

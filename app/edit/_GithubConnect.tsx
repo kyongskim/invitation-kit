@@ -116,9 +116,14 @@ export function GithubConnect() {
     // Install + authorize 통합 URL — App 설정의 "Request user authorization
     // (OAuth) during installation" ON 전제. callback 은 `code` + `state` +
     // `installation_id` + `setup_action` 을 같이 받음.
+    // `redirect_uri` 는 multi-Callback URL 환경에서 명시 필수 — 미설정 시
+    // GitHub 이 Callback URL 목록의 첫 번째로 redirect 해서 prod 에서
+    // 시도해도 localhost 로 회귀하는 회귀 발화 (2026-04-27 검증).
+    const redirectUri = `${window.location.origin}/api/github/oauth`;
     const installUrl =
       `https://github.com/apps/${encodeURIComponent(appSlug)}/installations/new` +
-      `?state=${encodeURIComponent(nonce)}`;
+      `?state=${encodeURIComponent(nonce)}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}`;
     setStatus("pending");
     setErrorMsg(null);
     const popup = window.open(installUrl, "github-oauth", POPUP_FEATURES);

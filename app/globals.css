@@ -61,6 +61,20 @@
   }
 }
 
+/* 스크롤 진입 시 fade-in (animation-timeline: view 지원 브라우저).
+   Safari 17.4+ / Chrome 115+ 지원. 미지원 브라우저는 기존 시간 기반
+   fade-in 으로 graceful degradation — 즉, 페이지 로드 시 한 번에 모두
+   fade. JS Intersection Observer 없이 CSS 만으로 구현 (CLAUDE.md 의
+   CSS keyframe 우선 원칙). entry 0% (요소 상단이 viewport 하단에 도달)
+   부터 cover 30% (요소가 viewport 30% 진입) 까지 progress 진행. */
+@supports (animation-timeline: view()) {
+  .animate-fade-in-up {
+    animation: fade-in-up linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 30%;
+  }
+}
+
 body {
   background: var(--color-background);
   color: var(--color-text);

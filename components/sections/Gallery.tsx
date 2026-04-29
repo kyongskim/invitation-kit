@@ -1,16 +1,21 @@
 "use client";
 
-import { AnimatePresence, motion, type PanInfo } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { GalleryImage } from "@/invitation.config.types";
 
-const SWIPE_THRESHOLD = 100;
+// 네이티브 touch 이벤트 기반 swipe — framer-motion `drag` 의 모바일
+// 안정성 이슈 회피 (iOS Safari 의 pointer event + body touchAction:none
+// 조합에서 일관 미발화 사례). threshold 는 50px — 네이티브 정확도가
+// 높아 100px 보다 낮춰도 오감 없음.
+const SWIPE_THRESHOLD = 50;
 
 export function Gallery({ gallery }: { gallery: GalleryImage[] }) {
   const total = gallery.length;
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
+  const touchStartX = useRef<number | null>(null);
 
   const close = useCallback(() => setActiveIdx(null), []);
   const prev = useCallback(() => {
@@ -44,9 +49,15 @@ export function Gallery({ gallery }: { gallery: GalleryImage[] }) {
     };
   }, [activeIdx]);
 
-  const handleDragEnd = (_: unknown, info: PanInfo) => {
-    if (info.offset.x > SWIPE_THRESHOLD) prev();
-    else if (info.offset.x < -SWIPE_THRESHOLD) next();
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+    if (deltaX > SWIPE_THRESHOLD) prev();
+    else if (deltaX < -SWIPE_THRESHOLD) next();
+    touchStartX.current = null;
   };
 
   const active = activeIdx !== null ? gallery[activeIdx] : null;
@@ -96,6 +107,8 @@ export function Gallery({ gallery }: { gallery: GalleryImage[] }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={close}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/95"
           >
             <button
@@ -134,10 +147,6 @@ export function Gallery({ gallery }: { gallery: GalleryImage[] }) {
 
             <motion.div
               key={activeIdx}
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.2}
-              onDragEnd={handleDragEnd}
               onClick={(e) => e.stopPropagation()}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

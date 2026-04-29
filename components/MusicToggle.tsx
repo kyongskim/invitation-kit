@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { fadeIn, fadeOutAndPause } from "@/lib/audio";
 
@@ -12,17 +12,20 @@ type PlaybackState = "paused" | "playing" | "error";
 
 /**
  * 우상단 floating 음악 토글. 첫 클릭 = 재생 (fade-in 300ms),
- * 다시 클릭 = 정지 (fade-out 300ms 후 pause). 자동재생 시도 안 함 —
- * iOS Safari 무음 모드 + Low Power Mode + autoplay 정책 변수가 너무
- * 많아 시도 자체가 음수 ROI (CLAUDE.md 4번 원칙).
+ * 다시 클릭 = 정지 (fade-out 300ms 후 pause).
+ *
+ * **첫 사용자 상호작용 시 autoplay** (2026-04-29 변경) — click / touch /
+ * scroll / keydown 중 첫 발화 시 자동 재생. 마운트 즉시 audio.play() 시도는
+ * 모바일 브라우저 autoplay 정책에 막히므로 의미 없고, 반대로 사용자
+ * 상호작용 안에서의 play() 는 iOS Safari 도 정상 처리. 기존 "토글 클릭만
+ * 재생" 정책에서 한 발 양보 — 청첩장 도메인은 BGM 이 분위기 핵심이라
+ * 사용자 첫 동작 시점에 자연 재생이 OFF 보다 압도적 정합.
  *
  * iOS Safari 호환 패턴 (실기기 검증 누적):
- * - **JSX `<audio>` 태그 폐기, 첫 click 시 `new Audio(src)` 로 lazy 생성** —
- *   HTML `<audio>` element 는 SSR/hydration/preload 변수가 많아 iOS 가
- *   "preview only" 로 취급하는 정황. JS-constructed Audio 는 user gesture
- *   안에서 만들어지면 fetch + play 가 한 번에 트리거. 동일 .mp3 가 주소창
- *   직접 입력 시 iOS 네이티브 플레이어로 잘 재생되는데 element 내부에선
- *   readyState 1 에서 멈추는 비대칭이 결정적 신호.
+ * - **JSX `<audio>` 태그 폐기, 첫 user gesture 시 `new Audio(src)` 로 lazy
+ *   생성** — HTML `<audio>` element 는 SSR/hydration/preload 변수가 많아
+ *   iOS 가 "preview only" 로 취급하는 정황. JS-constructed Audio 는 user
+ *   gesture 안에서 만들어지면 fetch + play 가 한 번에 트리거.
  * - async/await 대신 `.then()` 체인 — async 함수 리턴이 즉시라 일부 webkit
  *   빌드에서 user gesture lifetime 흔들림. 동기 호출 유지
  * - 낙관적 setState — play() Promise resolve 전에 버튼 즉시 갱신, 실패 시
@@ -31,9 +34,10 @@ type PlaybackState = "paused" | "playing" | "error";
  */
 export function MusicToggle({ src }: Props) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const initiatedRef = useRef(false);
   const [state, setState] = useState<PlaybackState>("paused");
 
-  const handleClick = () => {
+  const startPlayback = () => {
     let audio = audioRef.current;
     if (!audio) {
       // user gesture 안에서 첫 생성 — iOS 가 "사용자가 직접 트리거한
@@ -42,13 +46,52 @@ export function MusicToggle({ src }: Props) {
       audio.loop = true;
       audioRef.current = audio;
     }
+    setState("playing");
+    audio
+      .play()
+      .then(() => fadeIn(audio!))
+      .catch((err) => {
+        console.error("[music] play failed", err);
+        setState("error");
+      });
+  };
+
+  // 첫 사용자 상호작용 시 자동 재생. once: true 로 단발 listener.
+  useEffect(() => {
+    const onFirstInteraction = () => {
+      if (initiatedRef.current) return;
+      initiatedRef.current = true;
+      startPlayback();
+    };
+    const opts = { once: true, passive: true } as const;
+    window.addEventListener("click", onFirstInteraction, opts);
+    window.addEventListener("touchstart", onFirstInteraction, opts);
+    window.addEventListener("scroll", onFirstInteraction, opts);
+    window.addEventListener("keydown", onFirstInteraction, opts);
+    return () => {
+      window.removeEventListener("click", onFirstInteraction);
+      window.removeEventListener("touchstart", onFirstInteraction);
+      window.removeEventListener("scroll", onFirstInteraction);
+      window.removeEventListener("keydown", onFirstInteraction);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleClick = () => {
+    initiatedRef.current = true;
+    const audio = audioRef.current;
+    if (!audio) {
+      // 토글 첫 클릭이 첫 상호작용인 경우 — startPlayback 이 Audio 생성
+      // 부터 처리. 이후 클릭은 아래 paused/playing 분기.
+      startPlayback();
+      return;
+    }
 
     if (audio.paused) {
-      // 낙관적 — Promise resolve 기다리지 않고 즉시 버튼 갱신.
       setState("playing");
       audio
         .play()
-        .then(() => fadeIn(audio!))
+        .then(() => fadeIn(audio))
         .catch((err) => {
           console.error("[music] play failed", err);
           setState("error");

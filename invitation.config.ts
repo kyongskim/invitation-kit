@@ -193,7 +193,7 @@ export const config: InvitationConfig = {
   // public/audio/ 에 두고 enabled: true + src 경로 갱신.
   // iOS 무음 모드 (ringer 스위치 OFF) 에선 들리지 않습니다.
   music: {
-    enabled: false,
+    enabled: true,
     src: "/audio/wedding.mp3",
   },
 

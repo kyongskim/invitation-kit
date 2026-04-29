@@ -12,16 +12,28 @@ import type { GalleryImage } from "@/invitation.config.types";
 // 높아 100px 보다 낮춰도 오감 없음.
 const SWIPE_THRESHOLD = 50;
 
+// AnimatePresence variants — direction 별 slide. enter/exit 의 x 부호를
+// 반대로 두어 "다음 누르면 새 이미지가 오른쪽에서 들어오고 이전 이미지는
+// 왼쪽으로 빠지는" 자연스러운 carousel 동작.
+const slideVariants = {
+  enter: (dir: number) => ({ x: dir > 0 ? "100%" : "-100%", opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit: (dir: number) => ({ x: dir > 0 ? "-100%" : "100%", opacity: 0 }),
+};
+
 export function Gallery({ gallery }: { gallery: GalleryImage[] }) {
   const total = gallery.length;
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
+  const [direction, setDirection] = useState<1 | -1>(1);
   const touchStartX = useRef<number | null>(null);
 
   const close = useCallback(() => setActiveIdx(null), []);
   const prev = useCallback(() => {
+    setDirection(-1);
     setActiveIdx((i) => (i === null ? null : (i - 1 + total) % total));
   }, [total]);
   const next = useCallback(() => {
+    setDirection(1);
     setActiveIdx((i) => (i === null ? null : (i + 1) % total));
   }, [total]);
 
@@ -145,23 +157,33 @@ export function Gallery({ gallery }: { gallery: GalleryImage[] }) {
               ›
             </button>
 
-            <motion.div
-              key={activeIdx}
-              onClick={(e) => e.stopPropagation()}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.15 }}
-              className="relative h-[100dvh] w-full"
-            >
-              <Image
-                src={active.src}
-                alt={active.alt}
-                fill
-                sizes="100vw"
-                priority
-                style={{ objectFit: "contain" }}
-              />
-            </motion.div>
+            <AnimatePresence mode="wait" custom={direction} initial={false}>
+              <motion.div
+                key={activeIdx}
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: "tween", duration: 0.3, ease: "easeOut" },
+                  opacity: { duration: 0.2 },
+                }}
+                onClick={(e) => e.stopPropagation()}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <div className="relative h-[100dvh] w-full">
+                  <Image
+                    src={active.src}
+                    alt={active.alt}
+                    fill
+                    sizes="100vw"
+                    priority
+                    style={{ objectFit: "contain" }}
+                  />
+                </div>
+              </motion.div>
+            </AnimatePresence>
 
             <p className="pointer-events-none absolute bottom-6 left-1/2 -translate-x-1/2 text-sm tracking-wider text-white/80">
               {activeIdx + 1} / {total}

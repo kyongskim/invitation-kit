@@ -157,7 +157,7 @@ export function Gallery({ gallery }: { gallery: GalleryImage[] }) {
               ›
             </button>
 
-            <AnimatePresence mode="wait" custom={direction} initial={false}>
+            <AnimatePresence custom={direction} initial={false}>
               <motion.div
                 key={activeIdx}
                 custom={direction}
